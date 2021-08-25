@@ -27,14 +27,52 @@
 class LIBRAGEPHOTO_EXPORT RagePhoto
 {
 public:
+    enum class Error : uint8_t {
+        DescMallocError = 30,
+        DescReadError = 31,
+        IncompatibleFormat = 2,
+        IncompleteChecksum = 6,
+        IncompleteDescBuffer = 29,
+        IncompleteDescMarker = 27,
+        IncompleteDescOffset = 10,
+        IncompleteEOF = 7,
+        IncompleteHeader = 3,
+        IncompleteJendMarker = 32,
+        IncompleteJpegMarker = 11,
+        IncompleteJsonBuffer = 19,
+        IncompleteJsonMarker = 17,
+        IncompleteJsonOffset = 8,
+        IncompletePhotoBuffer = 13,
+        IncompletePhotoSize = 14,
+        IncompleteTitleBuffer = 24,
+        IncompleteTitleMarker = 22,
+        IncompleteTitleOffset = 9,
+        IncorrectDescMarker = 28,
+        IncorrectJendMarker = 33,
+        IncorrectJpegMarker = 12,
+        IncorrectJsonMarker = 18,
+        IncorrectTitleMarker = 23,
+        JsonMallocError = 20,
+        JsonReadError = 21,
+        NoError = 255,
+        NoFormatIdentifier = 1,
+        PhotoMallocError = 15,
+        PhotoReadError = 16,
+        TitleMallocError = 25,
+        TitleReadError = 26,
+        UnicodeHeaderError = 5,
+        UnicodeInitError = 4,
+        Uninitialised = 0,
+    };
     enum class PhotoFormat : uint32_t {
         GTA5 = 0x01000000U,
         RDR2 = 0x04000000U,
-        Undefined = 0,
     };
     RagePhoto();
     ~RagePhoto();
+    void clear();
     bool load(const char *data, size_t length);
+    Error error();
     const char *photoData();
     const uint32_t photoSize();
     const std::string description();
@@ -43,13 +81,15 @@ public:
     const std::string title();
 
 private:
-    inline size_t bRead(const char *input, char *output, size_t *pos, size_t len);
-    inline size_t bRead(const char *input, char *output, size_t *pos, size_t len, size_t inputLen);
+    inline size_t readBuffer(const char *input, char *output, size_t *pos, size_t len);
+    inline size_t readBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen);
     inline uint32_t charToUInt32BE(char *x);
     inline uint32_t charToUInt32LE(char *x);
     inline void uInt32ToCharBE(uint32_t x, char *y);
     inline void uInt32ToCharLE(uint32_t x, char *y);
+    bool p_photoLoaded;
     char* p_photoData;
+    Error p_error;
     std::string p_descriptionString;
     std::string p_jsonString;
     std::string p_photoString;

@@ -22,48 +22,81 @@
 int main(int argc, char *argv[])
 {
     if (argc != 3) {
-        std::cout << "Usage: " << argv[0] << " [snapmatic] [jpegout]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " [photo] [jpegout]" << std::endl;
         return 0;
     }
 
-    // Initialise RagePhoto
-    RagePhoto ragePhoto;
+    // Make it crash when RagePhoto have a bug which make the deinitialisation to fail
+    {
+        // Initialise RagePhoto
+        RagePhoto ragePhoto;
 
-    // Read file
-    FILE *file = fopen(argv[1], "rb");
-    if (!file)
-        return -1;
-    const int fseek_end_value = fseek(file, 0, SEEK_END);
-    if (fseek_end_value == -1) {
+        // Read file
+        FILE *file = fopen(argv[1], "rb");
+        if (!file) {
+            std::cout << "Failed to open import file" << std::endl;
+            return -1;
+        }
+        const int fseek_end_value = fseek(file, 0, SEEK_END);
+        if (fseek_end_value == -1) {
+            fclose(file);
+            std::cout << "Failed to read file" << std::endl;
+            return -1;
+        }
+        const size_t file_size = ftell(file);
+        if (file_size == -1) {
+            fclose(file);
+            std::cout << "Failed to read file" << std::endl;
+            return -1;
+        }
+        const int fseek_set_value = fseek(file, 0, SEEK_SET);
+        if (fseek_set_value == -1) {
+            fclose(file);
+            std::cout << "Failed to read file" << std::endl;
+            return -1;
+        }
+        char *data = static_cast<char*>(malloc(file_size));
+        const size_t file_rsize = fread(data, 1, file_size, file);
+        if (file_size != file_rsize) {
+            fclose(file);
+            std::cout << "Failed to read file" << std::endl;
+            return -1;
+        }
         fclose(file);
-        return -1;
-    }
-    size_t file_size = ftell(file);
-    if (file_size == -1) {
-        fclose(file);
-        return -1;
-    }
-    const int fseek_set_value = fseek(file, 0, SEEK_SET);
-    if (fseek_set_value == -1) {
-        fclose(file);
-        return -1;
-    }
-    char *data = static_cast<char*>(malloc(file_size));
-    const size_t file_rsize = fread(data, 1, file_size, file);
-    if (file_size != file_rsize) {
-        fclose(file);
-        return -1;
-    }
 
-    ragePhoto.load(data, file_size);
-    fclose(file);
+        // Load Photo
+        const bool loaded = ragePhoto.load(data, file_size);
 
-    // Write jpeg
-    file = fopen(argv[2], "wb");
-    if (!file)
-        return -1;
-    fwrite(ragePhoto.photoData(), sizeof(char), ragePhoto.photoSize(), file);
-    fclose(file);
+        // Deinitialise data after Photo loaded
+        free(data);
+
+        if (!loaded) {
+            const RagePhoto::Error error = ragePhoto.error();
+            if (error <= RagePhoto::Error::PhotoReadError) {
+                std::cout << "Failed to load photo" << std::endl;
+                return 1;
+            }
+        }
+
+        // Write jpeg
+        file = fopen(argv[2], "wb");
+        if (!file) {
+            std::cout << "Failed to open export file" << std::endl;
+            return -1;
+        }
+        const size_t written = fwrite(ragePhoto.photoData(), sizeof(char), ragePhoto.photoSize(), file);
+        fclose(file);
+
+        if (written != ragePhoto.photoSize()) {
+            std::cout << "Failed to write file" << std::endl;
+            return -1;
+        }
+
+        std::cout << "Photo successfully exported" << std::endl;
+
+        // Clear RagePhoto (provocate crash when pointer leak)
+        ragePhoto.clear();
+    }
 
     return 0;
 }

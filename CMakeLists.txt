@@ -6,14 +6,20 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (WIN32)
-    set(LIBRAGEPHOTO_NAME libragephoto)
-    set(LIBRAGEPHOTO_DEFINES USE_WINAPI)
+    list(APPEND LIBRAGEPHOTO_DEFINES
+        USE_WINAPI
+    )
+endif()
+
+message("-- Testing iconv")
+try_run(ICONV_RUN ICONV_COMPILE ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/tests/IconvTest.cpp)
+if (ICONV_COMPILE)
+    list(APPEND LIBRAGEPHOTO_DEFINES
+        USE_ICONV
+    )
+    message("-- Testing iconv - yes")
 else()
-    set(LIBRAGEPHOTO_NAME ragephoto)
-    try_run(ICONV_RUN ICONV_COMPILE ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/tests/IconvTest.cpp)
-    if (ICONV_COMPILE)
-        set(LIBRAGEPHOTO_DEFINES USE_ICONV)
-    endif()
+    message("-- Testing iconv - no")
 endif()
 
 option(WITH_BENCHMARK "Benchmark RagePhoto Parsing Engine" OFF)
@@ -23,17 +29,17 @@ if (WITH_BENCHMARK)
     )
 endif()
 
-project(${LIBRAGEPHOTO_NAME} LANGUAGES CXX)
-add_library(${LIBRAGEPHOTO_NAME} SHARED
+project(ragephoto LANGUAGES CXX)
+add_library(ragephoto SHARED
     src/libragephoto_global.h
     src/RagePhoto.cpp
     src/RagePhoto.h
 )
-target_compile_definitions(${LIBRAGEPHOTO_NAME} PRIVATE
+target_compile_definitions(ragephoto PRIVATE
     LIBRAGEPHOTO_LIBRARY
     ${LIBRAGEPHOTO_DEFINES}
 )
-install(TARGETS ${LIBRAGEPHOTO_NAME} DESTINATION lib)
+install(TARGETS ragephoto DESTINATION lib)
 install(FILES
     src/RagePhoto.h
     src/libragephoto_global.h
@@ -47,5 +53,5 @@ add_executable(ragephoto-extract
     src/RagePhoto-Extract.cpp
     src/RagePhoto.h
 )
-target_link_libraries(ragephoto-extract ${LIBRAGEPHOTO_NAME})
+target_link_libraries(ragephoto-extract ragephoto)
 install(TARGETS ragephoto-extract DESTINATION bin)
