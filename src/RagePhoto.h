@@ -81,7 +81,6 @@ public:
     const std::string title();
 
 private:
-    inline size_t readBuffer(const char *input, char *output, size_t *pos, size_t len);
     inline size_t readBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen);
     inline uint32_t charToUInt32BE(char *x);
     inline uint32_t charToUInt32LE(char *x);

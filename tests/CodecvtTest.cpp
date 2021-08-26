@@ -16,13 +16,14 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include <cstdio>
+#include <codecvt>
 #include <cstring>
-#include <iconv.h>
+#include <locale>
+#include <iostream>
 
 int main(int argc, char *argv[])
 {
-    char photoHeader[256] = {
+    const char photoHeader[256] = {
         0x50, 0x00, 0x48, 0x00, 0x4f, 0x00, 0x54, 0x00,
         0x4f, 0x00, 0x20, 0x00, 0x2d, 0x00, 0x20, 0x00,
         0x30, 0x00, 0x32, 0x00, 0x2f, 0x00, 0x30, 0x00,
@@ -56,18 +57,10 @@ int main(int argc, char *argv[])
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    char photoString[256];
-    iconv_t iconv_in = iconv_open("UTF-8", "UTF-16LE");
-    if (iconv_in == (iconv_t)-1)
-        return -1;
-    size_t src_s = sizeof(photoHeader);
-    size_t dst_s = sizeof(photoString);
-    char *src = photoHeader;
-    char *dst = photoString;
-    size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
-    iconv_close(iconv_in);
-    if (ret == static_cast<size_t>(-1)) {
-        return -1;
-    }
-    return strcmp(photoString, "PHOTO - 02/01/17 08:42:44");
+    char16_t photoHeader16[128];
+    memcpy(photoHeader16, photoHeader, sizeof(char) * 256);
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
+    std::string photoString = convert.to_bytes(photoHeader16);
+    std::cout << photoString << std::endl;
+    return strcmp(photoString.c_str(), "PHOTO - 02/01/17 08:42:44");
 }

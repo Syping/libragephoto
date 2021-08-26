@@ -25,8 +25,11 @@
 #include <chrono>
 #endif
 
-#ifdef USE_ICONV
-#include "iconv.h"
+#ifdef CODECVT_COMPATIBLE
+#include <codecvt>
+#include <locale>
+#elif defined ICONV_COMPATIBLE
+#include <iconv.h>
 #endif
 
 RagePhoto::RagePhoto()
@@ -81,7 +84,12 @@ bool RagePhoto::load(const char *data, size_t length)
             return false;
         }
 
-#ifdef USE_ICONV
+#ifdef CODECVT_COMPATIBLE
+        char16_t photoHeader16[128];
+        memcpy(photoHeader16, photoHeader, sizeof(char) * 256);
+        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
+        p_photoString = convert.to_bytes(photoHeader16);
+#elif defined ICONV_COMPATIBLE
         iconv_t iconv_in = iconv_open("UTF-8", "UTF-16LE");
         if (iconv_in == (iconv_t)-1) {
             p_error = Error::UnicodeInitError; // 4
@@ -336,19 +344,6 @@ const std::string RagePhoto::title()
     return p_titleString;
 }
 
-size_t RagePhoto::readBuffer(const char *input, char *output, size_t *pos, size_t len)
-{
-#ifdef READ_USE_FOR
-    for (size_t i = 0; i < len; i++) {
-        output[i] = input[*pos+i];
-    }
-#else
-    memcpy(output, &input[*pos], sizeof(char) * len);
-#endif
-    *pos = *pos + len;
-    return len;
-}
-
 size_t RagePhoto::readBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen)
 {
     size_t readLen = 0;
@@ -357,13 +352,7 @@ size_t RagePhoto::readBuffer(const char *input, char *output, size_t *pos, size_
     readLen = inputLen - *pos;
     if (readLen > len)
         readLen = len;
-#ifdef READ_USE_FOR
-    for (size_t i = 0; i < readLen; i++) {
-        output[i] = input[*pos+i];
-    }
-#else
     memcpy(output, &input[*pos], sizeof(char) * readLen);
-#endif
     *pos = *pos + readLen;
     return readLen;
 }
