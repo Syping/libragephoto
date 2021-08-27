@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
     char16_t photoHeader16[128];
-    memcpy(photoHeader16, photoHeader, sizeof(char) * 256);
+    memcpy(photoHeader16, photoHeader, 256);
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
     std::string photoString = convert.to_bytes(photoHeader16);
     std::cout << photoString << std::endl;

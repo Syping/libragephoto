@@ -86,7 +86,7 @@ bool RagePhoto::load(const char *data, size_t length)
 
 #ifdef CODECVT_COMPATIBLE
         char16_t photoHeader16[128];
-        memcpy(photoHeader16, photoHeader, sizeof(char) * 256);
+        memcpy(photoHeader16, photoHeader, 256);
         std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
         p_photoString = convert.to_bytes(photoHeader16);
 #elif defined ICONV_COMPATIBLE
@@ -352,7 +352,7 @@ size_t RagePhoto::readBuffer(const char *input, char *output, size_t *pos, size_
     readLen = inputLen - *pos;
     if (readLen > len)
         readLen = len;
-    memcpy(output, &input[*pos], sizeof(char) * readLen);
+    memcpy(output, &input[*pos], readLen);
     *pos = *pos + readLen;
     return readLen;
 }

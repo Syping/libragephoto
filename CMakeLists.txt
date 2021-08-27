@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 message("-- Testing codecvt")
 try_run(CODECVT_RUN CODECVT_COMPILE ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/tests/CodecvtTest.cpp)
-if (CODECVT_COMPILE)
+if (CODECVT_COMPILE AND CODECVT_RUN EQUAL 0)
     list(APPEND LIBRAGEPHOTO_DEFINES
         CODECVT_COMPATIBLE
     )
@@ -18,7 +18,7 @@ endif()
 
 message("-- Testing iconv")
 try_run(ICONV_RUN ICONV_COMPILE ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/tests/IconvTest.cpp)
-if (ICONV_COMPILE)
+if (ICONV_COMPILE AND ICONV_RUN EQUAL 0)
     list(APPEND LIBRAGEPHOTO_DEFINES
         ICONV_COMPATIBLE
     )
@@ -59,6 +59,11 @@ target_compile_definitions(ragephoto PRIVATE
 )
 install(TARGETS ragephoto DESTINATION lib)
 install(FILES ${RAGEPHOTO_HEADERS} DESTINATION include)
+
+option(WITH_EXAMPLES "Build ragephoto examples" OFF)
+if (WITH_EXAMPLES)
+    add_subdirectory(examples/ragephoto-gtkviewer)
+endif()
 
 option(WITH_EXTRACT "Build ragephoto-extract" ON)
 if (WITH_EXTRACT)
