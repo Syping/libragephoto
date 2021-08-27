@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.7)
-enable_language(CXX)
+project(ragephoto LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 11)
@@ -60,12 +60,17 @@ target_compile_definitions(ragephoto PRIVATE
 install(TARGETS ragephoto DESTINATION lib)
 install(FILES ${RAGEPHOTO_HEADERS} DESTINATION include)
 
-option(WITH_EXAMPLES "Build ragephoto examples" OFF)
-if (WITH_EXAMPLES)
+option(WITH_GTK_EXAMPLE "Build libragephoto with GTK Photo Viewer" OFF)
+if (WITH_GTK_EXAMPLE)
     add_subdirectory(examples/ragephoto-gtkviewer)
 endif()
 
-option(WITH_EXTRACT "Build ragephoto-extract" ON)
+option(WITH_QT_EXAMPLE "Build libragephoto with Qt Photo Viewer" OFF)
+if (WITH_QT_EXAMPLE)
+    add_subdirectory(examples/ragephoto-qtviewer)
+endif()
+
+option(WITH_EXTRACT "Build libragephoto with ragephoto-extract" ON)
 if (WITH_EXTRACT)
     project(ragephoto-extract LANGUAGES CXX)
     set(EXTRACT_SOURCES

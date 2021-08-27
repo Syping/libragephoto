@@ -22,7 +22,7 @@
 #include <RagePhoto.h>
 #include <iostream>
 
-PhotoViewer::PhotoViewer(Gtk::Label *title_label, Gtk::Label *json_label) : p_title_label(title_label), p_json_label(json_label)
+PhotoViewer::PhotoViewer(Gtk::Window *win) : p_win(win)
 {
 }
 
@@ -75,10 +75,7 @@ void PhotoViewer::open_file(const char *filename)
     GdkPixbuf *c_pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
     p_image = Glib::wrap(c_pixbuf);
 
-    p_title_label->set_text("Title: " + ragePhoto.title());
-    // p_title_label->show();
-
-    get_parent_window()->set_title("RagePhoto GTK Photo Viewer - " + ragePhoto.title());
+    p_win->set_title("RagePhoto GTK Photo Viewer - " + ragePhoto.title());
 
     free(photoData);
 

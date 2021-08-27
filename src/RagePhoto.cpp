@@ -85,10 +85,8 @@ bool RagePhoto::load(const char *data, size_t length)
         }
 
 #ifdef CODECVT_COMPATIBLE
-        char16_t photoHeader16[128];
-        memcpy(photoHeader16, photoHeader, 256);
         std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
-        p_photoString = convert.to_bytes(photoHeader16);
+        p_photoString = convert.to_bytes(reinterpret_cast<char16_t*>(photoHeader));
 #elif defined ICONV_COMPATIBLE
         iconv_t iconv_in = iconv_open("UTF-8", "UTF-16LE");
         if (iconv_in == (iconv_t)-1) {

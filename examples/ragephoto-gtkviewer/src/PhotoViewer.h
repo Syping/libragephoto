@@ -19,21 +19,20 @@
 #ifndef PHOTOVIEWER_H
 #define PHOTOVIEWER_H
 
-#include <gtkmm/drawingarea.h>
-#include <gtkmm/label.h>
 #include <gdkmm/pixbuf.h>
+#include <gtkmm/drawingarea.h>
+#include <gtkmm/window.h>
 
 class PhotoViewer : public Gtk::DrawingArea
 {
 public:
-    PhotoViewer(Gtk::Label *title_label, Gtk::Label *json_label);
+    PhotoViewer(Gtk::Window *win);
     void open_file(const char *filename);
 
 protected:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
     Glib::RefPtr<Gdk::Pixbuf> p_image;
-    Gtk::Label *p_title_label;
-    Gtk::Label *p_json_label;
+    Gtk::Window *p_win;
 };
 
 #endif // PHOTOVIEWER_H

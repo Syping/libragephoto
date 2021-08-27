@@ -36,24 +36,25 @@ int main(int argc, char *argv[])
     win.set_resizable(false);
 
     Gtk::Box vertical_box(Gtk::ORIENTATION_VERTICAL);
+    vertical_box.set_margin_bottom(6);
+    vertical_box.set_spacing(6);
 
-    Gtk::Label title_label;
-    Gtk::Label json_label;
-    PhotoViewer photo_viewer(&title_label, &json_label);
+    PhotoViewer photo_viewer(&win);
     vertical_box.add(photo_viewer);
-    vertical_box.add(title_label);
-    vertical_box.add(json_label);
     photo_viewer.show();
 
     Gtk::Box horizontal_box(Gtk::ORIENTATION_HORIZONTAL);
+    horizontal_box.set_margin_left(6);
+    horizontal_box.set_margin_right(6);
+    horizontal_box.set_spacing(6);
     vertical_box.add(horizontal_box);
 
     Gtk::Button open_button;
     open_button.set_label("Open");
     open_button.set_hexpand(true);
-    open_button.set_can_default(false);
+    open_button.set_size_request(100);
     open_button.signal_clicked().connect([&](){
-        Gtk::FileChooserDialog dialog("Open Photo", Gtk::FILE_CHOOSER_ACTION_OPEN);
+        Gtk::FileChooserDialog dialog("Open Photo...", Gtk::FILE_CHOOSER_ACTION_OPEN);
         dialog.set_transient_for(win);
 
         dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
@@ -62,6 +63,7 @@ int main(int argc, char *argv[])
         Glib::RefPtr<Gtk::FileFilter> filter_photo = Gtk::FileFilter::create();
         filter_photo->set_name("GTA V Photo");
         filter_photo->add_pattern("PGTA5*");
+        dialog.add_filter(filter_photo);
 
         int result = dialog.run();
 
@@ -81,7 +83,7 @@ int main(int argc, char *argv[])
     Gtk::Button close_button;
     close_button.set_label("Close");
     close_button.set_hexpand(true);
-    close_button.set_can_default(false);
+    close_button.set_size_request(100);
     close_button.signal_clicked().connect([&](){
         win.close();
     });
