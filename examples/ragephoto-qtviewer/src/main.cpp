@@ -89,6 +89,8 @@ int main(int argc, char *argv[])
     QPushButton openButton("Open", &mainWindow);
     QObject::connect(&openButton, &QPushButton::clicked, &mainWindow, [&](){
         const QString filename = QFileDialog::getOpenFileName(&mainWindow, "Open Photo...", QString(), "GTA V Photo (PGTA5*)");
+        if (filename.isEmpty())
+            return;
         if (readPhotoFile(filename, &mainWindow, &photoLabel)) {
             QTimer::singleShot(0, &mainWindow, [&](){
                 mainWindow.setFixedSize(mainWindow.sizeHint());

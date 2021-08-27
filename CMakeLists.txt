@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.7)
-project(ragephoto LANGUAGES CXX)
+project(ragephoto VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 11)
@@ -27,16 +27,14 @@ else()
     message("-- Testing iconv - no")
 endif()
 
-project(ragephoto LANGUAGES CXX)
-
-set(RAGEPHOTO_SOURCES
-    src/RagePhoto.cpp
-    src/RagePhoto.h
-)
 set(RAGEPHOTO_HEADERS
     src/libragephoto_global.h
     src/RagePhoto.h
 )
+set(RAGEPHOTO_SOURCES
+    src/RagePhoto.cpp
+)
+configure_file(src/ragephoto.pc.in pkgconfig/ragephoto.pc @ONLY)
 
 option(BUILD_SHARED "Build libragephoto as shared library" ON)
 if (BUILD_SHARED)
@@ -59,6 +57,7 @@ target_compile_definitions(ragephoto PRIVATE
 )
 install(TARGETS ragephoto DESTINATION lib)
 install(FILES ${RAGEPHOTO_HEADERS} DESTINATION include)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/ragephoto.pc DESTINATION lib/pkgconfig)
 
 option(WITH_GTK_EXAMPLE "Build libragephoto with GTK Photo Viewer" OFF)
 if (WITH_GTK_EXAMPLE)
@@ -72,11 +71,10 @@ endif()
 
 option(WITH_EXTRACT "Build libragephoto with ragephoto-extract" ON)
 if (WITH_EXTRACT)
-    project(ragephoto-extract LANGUAGES CXX)
     set(EXTRACT_SOURCES
         src/RagePhoto-Extract.cpp
     )
     add_executable(ragephoto-extract ${RAGEPHOTO_HEADERS} ${EXTRACT_SOURCES})
-    target_link_libraries(ragephoto-extract ragephoto)
+    target_link_libraries(ragephoto-extract PRIVATE ragephoto)
     install(TARGETS ragephoto-extract DESTINATION bin)
 endif()
