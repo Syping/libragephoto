@@ -23,6 +23,7 @@
 #include <gtkmm/filechooserdialog.h>
 #include <gtkmm/filefilter.h>
 #include <gtkmm/label.h>
+#include <gtkmm/messagedialog.h>
 #include <gtkmm/window.h>
 #include <iostream>
 
@@ -53,6 +54,7 @@ int main(int argc, char *argv[])
     open_button.set_label("Open");
     open_button.set_hexpand(true);
     open_button.set_size_request(100);
+    open_button.set_image_from_icon_name("document-open");
     open_button.signal_clicked().connect([&](){
         Gtk::FileChooserDialog dialog("Open Photo...", Gtk::FILE_CHOOSER_ACTION_OPEN);
         dialog.set_transient_for(win);
@@ -84,18 +86,28 @@ int main(int argc, char *argv[])
     close_button.set_label("Close");
     close_button.set_hexpand(true);
     close_button.set_size_request(100);
+    close_button.set_image_from_icon_name("dialog-close");
     close_button.signal_clicked().connect([&](){
         win.close();
     });
     horizontal_box.add(close_button);
     close_button.show();
 
-    app->signal_open().connect([&](const Gio::Application::type_vec_files &files, const Glib::ustring &hint){
-        for (const auto &file : files) {
-            photo_viewer.open_file(file->get_path().c_str());
+    app->signal_open().connect([&](const Gio::Application::type_vec_files &files, const Glib::ustring &hint) {
+        if (files.size() == 1) {
+            for (const auto &file : files) {
+                photo_viewer.open_file(file->get_path().c_str());
+            }
+            app->add_window(win);
+            win.show();
         }
-        app->add_window(win);
-        win.show();
+        else {
+            app->add_window(win);
+            win.show();
+            Gtk::MessageDialog msg(win, "Can't open multiple photos at once!", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
+            msg.set_title("RagePhoto GTK Photo Viewer");
+            msg.run();
+        }
     });
 
     horizontal_box.show();

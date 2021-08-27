@@ -73,20 +73,21 @@ int main(int argc, char *argv[])
     QWidget centralWidget(&mainWindow);
     mainWindow.setCentralWidget(&centralWidget);
 
-    QVBoxLayout verticalLayout(&mainWindow);
+    QVBoxLayout verticalLayout(&centralWidget);
     verticalLayout.setContentsMargins(0, 0, 0, 0);
     verticalLayout.setSpacing(6);
-    centralWidget.setLayout(&verticalLayout);
 
     QLabel photoLabel(&mainWindow);
     verticalLayout.addWidget(&photoLabel);
 
-    QHBoxLayout horizontalLayout(&mainWindow);
+    QHBoxLayout horizontalLayout;
     horizontalLayout.setContentsMargins(6, 0, 6, 6);
     horizontalLayout.setSpacing(6);
     verticalLayout.addLayout(&horizontalLayout);
 
     QPushButton openButton("Open", &mainWindow);
+    if (QIcon::hasThemeIcon("document-open"))
+        openButton.setIcon(QIcon::fromTheme("document-open"));
     QObject::connect(&openButton, &QPushButton::clicked, &mainWindow, [&](){
         const QString filename = QFileDialog::getOpenFileName(&mainWindow, "Open Photo...", QString(), "GTA V Photo (PGTA5*)");
         if (filename.isEmpty())
@@ -100,6 +101,8 @@ int main(int argc, char *argv[])
     horizontalLayout.addWidget(&openButton);
 
     QPushButton closeButton("Close", &mainWindow);
+    if (QIcon::hasThemeIcon("dialog-close"))
+        closeButton.setIcon(QIcon::fromTheme("dialog-close"));
     QObject::connect(&closeButton, &QPushButton::clicked, &mainWindow, &QMainWindow::close);
     horizontalLayout.addWidget(&closeButton);
 

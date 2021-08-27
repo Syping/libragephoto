@@ -19,6 +19,7 @@
 #include "PhotoViewer.h"
 #include <cairomm/context.h>
 #include <gdkmm/general.h>
+#include <gtkmm/messagedialog.h>
 #include <RagePhoto.h>
 #include <iostream>
 
@@ -32,6 +33,9 @@ void PhotoViewer::open_file(const char *filename)
     // Read file
     FILE *file = fopen(filename, "rb");
     if (!file) {
+        Gtk::MessageDialog msg(*p_win, "Failed to read file: " + Glib::ustring(filename), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
+        msg.set_title("Open Photo");
+        msg.run();
         return;
     }
     const int fseek_end_value = fseek(file, 0, SEEK_END);
@@ -60,8 +64,12 @@ void PhotoViewer::open_file(const char *filename)
     free(data);
     if (!loaded) {
         const RagePhoto::Error error = ragePhoto.error();
-        if (error <= RagePhoto::Error::PhotoReadError)
+        if (error <= RagePhoto::Error::PhotoReadError) {
+            Gtk::MessageDialog msg(*p_win, "Failed to read photo: " + Glib::ustring(filename), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
+            msg.set_title("Open Photo");
+            msg.run();
             return;
+        }
     }
 
     guchar *photoData = static_cast<guchar*>(malloc(ragePhoto.photoSize()));
@@ -71,7 +79,7 @@ void PhotoViewer::open_file(const char *filename)
     memcpy(photoData, ragePhoto.photoData(), ragePhoto.photoSize());
 
     GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
-    gdk_pixbuf_loader_write(loader, photoData, static_cast<gsize>(ragePhoto.photoSize()), nullptr);
+    gdk_pixbuf_loader_write(loader, photoData, static_cast<gsize>(ragePhoto.photoSize()), NULL);
     GdkPixbuf *c_pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
     p_image = Glib::wrap(c_pixbuf);
 
