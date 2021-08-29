@@ -29,6 +29,9 @@ PhotoViewer::PhotoViewer(Gtk::Window *win) : p_win(win)
 
 void PhotoViewer::open_file(const char *filename)
 {
+    if (p_image)
+        p_image.clear();
+
     RagePhoto ragePhoto;
     // Read file
     FILE *file = fopen(filename, "rb");
@@ -81,6 +84,7 @@ void PhotoViewer::open_file(const char *filename)
     GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
     gdk_pixbuf_loader_write(loader, photoData, static_cast<gsize>(ragePhoto.photoSize()), NULL);
     GdkPixbuf *c_pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+    gdk_pixbuf_loader_close(loader, NULL);
     p_image = Glib::wrap(c_pixbuf);
 
     p_win->set_title("RagePhoto GTK Photo Viewer - " + ragePhoto.title());

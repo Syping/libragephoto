@@ -75,7 +75,12 @@ bool RagePhoto::load(const char *data, size_t length)
         return false;
     }
 
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+    uint32_t format;
+    memcpy(&format, uInt32Buffer, 4);
+#else
     uint32_t format = charToUInt32LE(uInt32Buffer);
+#endif
     if (format == static_cast<uint32_t>(PhotoFormat::GTA5)) {
         char photoHeader[256];
         size = readBuffer(data, photoHeader, &pos, 256, length);
@@ -112,35 +117,54 @@ bool RagePhoto::load(const char *data, size_t length)
             p_error = Error::IncompleteChecksum; // 6
             return false;
         }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(&p_headerSum, uInt32Buffer, 4);
+#else
         p_headerSum = charToUInt32LE(uInt32Buffer);
+#endif
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompleteEOF; // 7
             return false;
         }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(&p_endOfFile, uInt32Buffer, 4);
+#else
         p_endOfFile = charToUInt32LE(uInt32Buffer);
+#endif
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompleteJsonOffset; // 8
             return false;
         }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(&p_jsonOffset, uInt32Buffer, 4);
+#else
         p_jsonOffset = charToUInt32LE(uInt32Buffer);
-
+#endif
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompleteTitleOffset; // 9
             return false;
         }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(&p_titlOffset, uInt32Buffer, 4);
+#else
         p_titlOffset = charToUInt32LE(uInt32Buffer);
+#endif
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompleteDescOffset; // 10
             return false;
         }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(&p_descOffset, uInt32Buffer, 4);
+#else
         p_descOffset = charToUInt32LE(uInt32Buffer);
+#endif
 
         char markerBuffer[4];
         size = readBuffer(data, markerBuffer, &pos, 4, length);
@@ -158,14 +182,22 @@ bool RagePhoto::load(const char *data, size_t length)
             p_error = Error::IncompletePhotoBuffer; // 13
             return false;
         }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(&p_photoBuffer, uInt32Buffer, 4);
+#else
         p_photoBuffer = charToUInt32LE(uInt32Buffer);
+#endif
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompletePhotoSize; // 14
             return false;
         }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(&p_photoSize, uInt32Buffer, 4);
+#else
         p_photoSize = charToUInt32LE(uInt32Buffer);
+#endif
 
         p_photoData = static_cast<char*>(malloc(p_photoSize));
         if (!p_photoData) {
@@ -197,7 +229,11 @@ bool RagePhoto::load(const char *data, size_t length)
             p_error = Error::IncompleteJsonBuffer; // 19
             return false;
         }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(&p_jsonBuffer, uInt32Buffer, 4);
+#else
         p_jsonBuffer = charToUInt32LE(uInt32Buffer);
+#endif
 
         char *t_jsonData = static_cast<char*>(malloc(p_jsonBuffer));
         if (!t_jsonData) {
@@ -229,7 +265,11 @@ bool RagePhoto::load(const char *data, size_t length)
             p_error = Error::IncompleteTitleBuffer; // 24
             return false;
         }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(&p_titlBuffer, uInt32Buffer, 4);
+#else
         p_titlBuffer = charToUInt32LE(uInt32Buffer);
+#endif
 
         char *t_titlData = static_cast<char*>(malloc(p_titlBuffer));
         if (!t_titlData) {
@@ -261,7 +301,11 @@ bool RagePhoto::load(const char *data, size_t length)
             p_error = Error::IncompleteDescBuffer; // 29
             return false;
         }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(&p_descBuffer, uInt32Buffer, 4);
+#else
         p_descBuffer = charToUInt32LE(uInt32Buffer);
+#endif
 
         char *t_descData = static_cast<char*>(malloc(p_descBuffer));
         if (!t_descData) {

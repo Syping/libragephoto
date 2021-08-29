@@ -80,7 +80,7 @@ public:
     const std::string header();
     const std::string title();
 
-private:
+protected:
     inline size_t readBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen);
     inline uint32_t charToUInt32BE(char *x);
     inline uint32_t charToUInt32LE(char *x);
