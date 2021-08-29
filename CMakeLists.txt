@@ -34,15 +34,17 @@ set(RAGEPHOTO_HEADERS
 set(RAGEPHOTO_SOURCES
     src/RagePhoto.cpp
 )
-configure_file(src/ragephoto.pc.in pkgconfig/ragephoto.pc @ONLY)
 
 option(BUILD_SHARED "Build libragephoto as shared library" ON)
 if (BUILD_SHARED)
     add_library(ragephoto SHARED ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES})
     set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
+    set(LIBRAGEPHOTO_LIBTYPE -DLIBRAGEPHOTO_SHARED)
 else()
     add_library(ragephoto STATIC ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES})
+    set(LIBRAGEPHOTO_LIBTYPE -DLIBRAGEPHOTO_STATIC)
 endif()
+configure_file(src/ragephoto.pc.in pkgconfig/ragephoto.pc @ONLY)
 
 option(WITH_BENCHMARK "Build with libragephoto benchmark" OFF)
 if (WITH_BENCHMARK)
@@ -54,6 +56,9 @@ endif()
 target_compile_definitions(ragephoto PRIVATE
     LIBRAGEPHOTO_LIBRARY
     ${LIBRAGEPHOTO_DEFINES}
+)
+target_compile_definitions(ragephoto PUBLIC
+    ${LIBRAGEPHOTO_LIBTYPE}
 )
 install(TARGETS ragephoto DESTINATION lib)
 install(FILES ${RAGEPHOTO_HEADERS} DESTINATION include)

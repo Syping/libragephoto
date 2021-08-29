@@ -20,10 +20,14 @@
 #define LIBRAGEPHOTO_GLOBAL_H
 
 #ifdef _WIN32
+#ifndef LIBRAGEPHOTO_STATIC
 #ifdef LIBRAGEPHOTO_LIBRARY
 #define LIBRAGEPHOTO_EXPORT __declspec(dllexport)
 #else
 #define LIBRAGEPHOTO_EXPORT __declspec(dllimport)
+#endif
+#else
+#define LIBRAGEPHOTO_EXPORT __attribute__((visibility("default")))
 #endif
 #else
 #define LIBRAGEPHOTO_EXPORT __attribute__((visibility("default")))
