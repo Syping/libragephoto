@@ -125,6 +125,7 @@ bool RagePhoto::load(const char *data, size_t length)
 
         if (format == static_cast<uint32_t>(PhotoFormat::RDR2))
             pos = pos + 8;
+        uint32_t headerSize = pos;
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
@@ -216,10 +217,7 @@ bool RagePhoto::load(const char *data, size_t length)
         }
         p_photoLoaded = true;
 
-        if (format == static_cast<uint32_t>(PhotoFormat::RDR2))
-            pos = p_jsonOffset + 272;
-        else
-            pos = p_jsonOffset + 264;
+        pos = p_jsonOffset + headerSize;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompleteJsonMarker; // 17
@@ -255,10 +253,7 @@ bool RagePhoto::load(const char *data, size_t length)
         p_jsonString = std::string(t_jsonData);
         free(t_jsonData);
 
-        if (format == static_cast<uint32_t>(PhotoFormat::RDR2))
-            pos = p_titlOffset + 272;
-        else
-            pos = p_titlOffset + 264;
+        pos = p_titlOffset + headerSize;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompleteTitleMarker; // 22
@@ -294,10 +289,7 @@ bool RagePhoto::load(const char *data, size_t length)
         p_titleString = std::string(t_titlData);
         free(t_titlData);
 
-        if (format == static_cast<uint32_t>(PhotoFormat::RDR2))
-            pos = p_descOffset + 272;
-        else
-            pos = p_descOffset + 264;
+        pos = p_descOffset + headerSize;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompleteDescMarker; // 27
@@ -333,10 +325,7 @@ bool RagePhoto::load(const char *data, size_t length)
         p_descriptionString = std::string(t_descData);
         free(t_descData);
 
-        if (format == static_cast<uint32_t>(PhotoFormat::RDR2))
-            pos = p_endOfFile + 268;
-        else
-            pos = p_endOfFile + 260;
+        pos = p_endOfFile + headerSize - 4;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompleteJendMarker; // 32
