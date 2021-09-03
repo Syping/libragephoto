@@ -29,6 +29,7 @@ uint32_t photoSize = ragePhoto.photoSize();
 std::string json = ragePhoto.json();
 std::string title = ragePhoto.title();
 RagePhoto::Error error = ragePhoto.error();
+RagePhoto::PhotoFormat format = ragePhoto.format();
 ```
 
 #### How to Use ragephoto-extract

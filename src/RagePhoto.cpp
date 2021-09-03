@@ -36,7 +36,6 @@ RagePhoto::RagePhoto()
 {
     p_photoLoaded = false;
     p_photoData = nullptr;
-    p_error = Error::Uninitialised;
 }
 
 RagePhoto::~RagePhoto()
@@ -56,6 +55,7 @@ void RagePhoto::clear()
     p_photoString.clear();
     p_titleString.clear();
     p_error = Error::Uninitialised;
+    p_photoFormat = PhotoFormat::Undefined;
 }
 
 bool RagePhoto::load(const char *data, size_t length)
@@ -82,6 +82,8 @@ bool RagePhoto::load(const char *data, size_t length)
     uint32_t format = charToUInt32LE(uInt32Buffer);
 #endif
     if (format == static_cast<uint32_t>(PhotoFormat::GTA5) || format == static_cast<uint32_t>(PhotoFormat::RDR2)) {
+        p_photoFormat = static_cast<PhotoFormat>(format);
+
         char photoHeader[256];
         size = readBuffer(data, photoHeader, &pos, 256, length);
         if (size != 256) {
@@ -357,6 +359,11 @@ bool RagePhoto::load(const std::string &data)
 RagePhoto::Error RagePhoto::error()
 {
     return p_error;
+}
+
+RagePhoto::PhotoFormat RagePhoto::format()
+{
+    return p_photoFormat;
 }
 
 const char* RagePhoto::photoData()

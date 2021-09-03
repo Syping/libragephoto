@@ -67,6 +67,7 @@ public:
     enum class PhotoFormat : uint32_t {
         GTA5 = 0x01000000U,
         RDR2 = 0x04000000U,
+        Undefined = 0,
     };
     RagePhoto();
     ~RagePhoto();
@@ -74,6 +75,7 @@ public:
     bool load(const char *data, size_t length);
     bool load(const std::string &data);
     Error error();
+    PhotoFormat format();
     const char *photoData();
     const uint32_t photoSize();
     const std::string description();
@@ -90,6 +92,7 @@ protected:
     bool p_photoLoaded;
     char* p_photoData;
     Error p_error;
+    PhotoFormat p_photoFormat;
     std::string p_descriptionString;
     std::string p_jsonString;
     std::string p_photoString;

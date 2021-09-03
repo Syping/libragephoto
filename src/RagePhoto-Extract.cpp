@@ -92,7 +92,10 @@ int main(int argc, char *argv[])
             return -1;
         }
 
-        std::cout << "Photo successfully exported" << std::endl;
+        if (ragePhoto.format() == RagePhoto::PhotoFormat::GTA5)
+            std::cout << "GTA V Photo successfully exported" << std::endl;
+        else
+            std::cout << "RDR 2 Photo successfully exported" << std::endl;
 
         // Clear RagePhoto (provocate crash when pointer leak)
         ragePhoto.clear();
