@@ -35,4 +35,5 @@ RagePhoto::Error error = ragePhoto.error();
 
 ```bash
 ragephoto-extract PGTA5123456789 photo.jpg
+ragephoto-extract PRDR3123456789 photo.jpg
 ```

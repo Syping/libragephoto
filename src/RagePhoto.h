@@ -72,6 +72,7 @@ public:
     ~RagePhoto();
     void clear();
     bool load(const char *data, size_t length);
+    bool load(const std::string &data);
     Error error();
     const char *photoData();
     const uint32_t photoSize();

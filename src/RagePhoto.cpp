@@ -349,6 +349,11 @@ bool RagePhoto::load(const char *data, size_t length)
     return false;
 }
 
+bool RagePhoto::load(const std::string &data)
+{
+    return load(data.data(), data.size());
+}
+
 RagePhoto::Error RagePhoto::error()
 {
     return p_error;
