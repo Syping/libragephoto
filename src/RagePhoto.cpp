@@ -81,7 +81,7 @@ bool RagePhoto::load(const char *data, size_t length)
 #else
     uint32_t format = charToUInt32LE(uInt32Buffer);
 #endif
-    if (format == static_cast<uint32_t>(PhotoFormat::GTA5)) {
+    if (format == static_cast<uint32_t>(PhotoFormat::GTA5) || format == static_cast<uint32_t>(PhotoFormat::RDR2)) {
         char photoHeader[256];
         size = readBuffer(data, photoHeader, &pos, 256, length);
         if (size != 256) {
@@ -122,6 +122,9 @@ bool RagePhoto::load(const char *data, size_t length)
 #else
         p_headerSum = charToUInt32LE(uInt32Buffer);
 #endif
+
+        if (format == static_cast<uint32_t>(PhotoFormat::RDR2))
+            pos = pos + 8;
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
@@ -213,7 +216,10 @@ bool RagePhoto::load(const char *data, size_t length)
         }
         p_photoLoaded = true;
 
-        pos = p_jsonOffset + 264;
+        if (format == static_cast<uint32_t>(PhotoFormat::RDR2))
+            pos = p_jsonOffset + 272;
+        else
+            pos = p_jsonOffset + 264;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompleteJsonMarker; // 17
@@ -249,7 +255,10 @@ bool RagePhoto::load(const char *data, size_t length)
         p_jsonString = std::string(t_jsonData);
         free(t_jsonData);
 
-        pos = p_titlOffset + 264;
+        if (format == static_cast<uint32_t>(PhotoFormat::RDR2))
+            pos = p_titlOffset + 272;
+        else
+            pos = p_titlOffset + 264;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompleteTitleMarker; // 22
@@ -285,7 +294,10 @@ bool RagePhoto::load(const char *data, size_t length)
         p_titleString = std::string(t_titlData);
         free(t_titlData);
 
-        pos = p_descOffset + 264;
+        if (format == static_cast<uint32_t>(PhotoFormat::RDR2))
+            pos = p_descOffset + 272;
+        else
+            pos = p_descOffset + 264;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompleteDescMarker; // 27
@@ -321,7 +333,10 @@ bool RagePhoto::load(const char *data, size_t length)
         p_descriptionString = std::string(t_descData);
         free(t_descData);
 
-        pos = p_endOfFile + 260;
+        if (format == static_cast<uint32_t>(PhotoFormat::RDR2))
+            pos = p_endOfFile + 268;
+        else
+            pos = p_endOfFile + 260;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
             p_error = Error::IncompleteJendMarker; // 32

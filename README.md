@@ -1,5 +1,5 @@
 ## libragephoto
-Open Source RAGE Photo Parser for GTA V
+Open Source RAGE Photo Parser for GTA V and RDR 2
 
 - Read RAGE Photos error free and correct
 - Support for metadata stored in RAGE Photos
