@@ -125,7 +125,7 @@ bool RagePhoto::load(const char *data, size_t length)
         p_headerSum = charToUInt32LE(uInt32Buffer);
 #endif
 
-        if (format == static_cast<uint32_t>(PhotoFormat::RDR2))
+        if (p_photoFormat == PhotoFormat::RDR2)
             pos = pos + 8;
         uint32_t headerSize = pos;
 
