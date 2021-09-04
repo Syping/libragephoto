@@ -93,7 +93,7 @@ if (WITH_QT_EXAMPLE)
     add_subdirectory(examples/ragephoto-qtviewer)
 endif()
 
-if (CMAKE_PROJECT_NAME EQUAL "ragephoto")
+if (${CMAKE_PROJECT_NAME} STREQUAL "ragephoto")
     option(WITH_EXTRACT "Build libragephoto with ragephoto-extract" ON)
 else()
     option(WITH_EXTRACT "Build libragephoto with ragephoto-extract" OFF)
