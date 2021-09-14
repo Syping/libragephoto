@@ -83,6 +83,11 @@ install(TARGETS ragephoto DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${RAGEPHOTO_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/ragephoto.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
+option(WITH_DOCUMENTATION "Build libragephoto with documentation" OFF)
+if (WITH_DOCUMENTATION)
+    add_subdirectory(doc)
+endif()
+
 option(WITH_GTK_EXAMPLE "Build libragephoto with GTK Photo Viewer" OFF)
 if (WITH_GTK_EXAMPLE)
     add_subdirectory(examples/ragephoto-gtkviewer)

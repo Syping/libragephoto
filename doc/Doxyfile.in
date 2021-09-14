@@ -1,0 +1,10 @@
+PROJECT_NAME           = "libragephoto"
+PROJECT_NUMBER         = "Version: @PROJECT_VERSION@"
+INPUT                  = "@CMAKE_CURRENT_SOURCE_DIR@/index.doc" \
+                         "src"
+OUTPUT_DIRECTORY       = "@CMAKE_CURRENT_BINARY_DIR@"
+EXTRACT_PRIVATE        = NO
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = protected=private

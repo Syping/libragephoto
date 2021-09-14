@@ -402,6 +402,96 @@ const std::string RagePhoto::title()
     return p_titleString;
 }
 
+void RagePhoto::setDescription(const std::string &description, uint32_t bufferSize)
+{
+    p_descriptionString = description;
+    if (bufferSize != 0) {
+        p_descBuffer = bufferSize;
+        moveOffsets();
+    }
+}
+
+void RagePhoto::setJson(const std::string &json, uint32_t bufferSize)
+{
+    p_jsonString = json;
+    if (bufferSize != 0) {
+        p_jsonBuffer = bufferSize;
+        moveOffsets();
+    }
+}
+
+void RagePhoto::setHeader(const std::string &header)
+{
+    p_photoString = header;
+}
+
+bool RagePhoto::setPhotoData(const char *data, uint32_t size, uint32_t bufferSize)
+{
+    if (p_photoLoaded) {
+        if (p_photoSize > size) {
+            char *t_photoData = static_cast<char*>(realloc(p_photoData, size));
+            if (!t_photoData) {
+                p_error = Error::PhotoMallocError; // 15
+                return false;
+            }
+            p_photoData = t_photoData;
+            memcpy(p_photoData, data, size);
+        }
+        else if (p_photoSize < size) {
+            free(p_photoData);
+            p_photoData = static_cast<char*>(malloc(size));
+            if (!p_photoData) {
+                p_error = Error::PhotoMallocError; // 15
+                p_photoLoaded = false;
+                return false;
+            }
+            memcpy(p_photoData, data, size);
+        }
+        else {
+            memcpy(p_photoData, data, size);
+        }
+    }
+    else {
+        p_photoData = static_cast<char*>(malloc(size));
+        if (!p_photoData) {
+            p_error = Error::PhotoMallocError; // 15
+            return false;
+        }
+        memcpy(p_photoData, data, size);
+        p_photoLoaded = true;
+    }
+
+    if (bufferSize != 0) {
+        p_photoBuffer = bufferSize;
+        moveOffsets();
+    }
+
+    p_error = Error::NoError; // 255
+    return true;
+}
+
+bool RagePhoto::setPhotoData(const std::string &data, uint32_t bufferSize)
+{
+    return setPhotoData(data.data(), data.size(), bufferSize);
+}
+
+void RagePhoto::setTitle(const std::string &title, uint32_t bufferSize)
+{
+    p_titleString = title;
+    if (bufferSize != 0) {
+        p_titlBuffer = bufferSize;
+        moveOffsets();
+    }
+}
+
+void RagePhoto::moveOffsets()
+{
+    p_jsonOffset = p_photoBuffer + 28;
+    p_titlOffset = p_jsonOffset + p_jsonBuffer + 8;
+    p_descOffset = p_titlOffset + p_titlBuffer + 8;
+    p_endOfFile = p_descOffset + p_descBuffer + 12;
+}
+
 size_t RagePhoto::readBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen)
 {
     size_t readLen = 0;

@@ -27,6 +27,7 @@
 class LIBRAGEPHOTO_EXPORT RagePhoto
 {
 public:
+    /** Parsing and set errors */
     enum class Error : uint8_t {
         DescMallocError = 30,
         DescReadError = 31,
@@ -64,26 +65,41 @@ public:
         UnicodeInitError = 4,
         Uninitialised = 0,
     };
+    /** Photo Formats */
     enum class PhotoFormat : uint32_t {
-        GTA5 = 0x01000000U,
-        RDR2 = 0x04000000U,
-        Undefined = 0,
+        GTA5 = 0x01000000U, /**< GTA V Photo Format */
+        RDR2 = 0x04000000U, /**< RDR 2 Photo Format */
+        Undefined = 0, /**< Undefined Format */
     };
     RagePhoto();
     ~RagePhoto();
-    void clear();
-    bool load(const char *data, size_t length);
-    bool load(const std::string &data);
-    Error error();
-    PhotoFormat format();
-    const char *photoData();
-    const uint32_t photoSize();
-    const std::string description();
-    const std::string json();
-    const std::string header();
-    const std::string title();
+    void clear(); /**< Resets the RagePhoto instance to default values. */
+    bool load(const char *data, size_t length); /**< Loads a Photo stored inside a const char*. */
+    bool load(const std::string &data); /**< Loads a Photo stored inside a std::string. */
+    Error error(); /**< Returns the last error occurred. */
+    PhotoFormat format(); /**< Returns the Photo Format (GTA V or RDR 2). */
+    const char *photoData(); /**< Returns the Photo JPEG data. */
+    const uint32_t photoSize(); /**< Returns the Photo JPEG data size. */
+    const std::string description(); /**< Returns the Photo description. */
+    const std::string json(); /**< Returns the Photo JSON data. */
+    const std::string header(); /**< Returns the Photo header. */
+    const std::string title(); /**< Returns the Photo title. */
+    void setDescription(const std::string &description, uint32_t bufferSize = 0); /**< Sets the Photo description. */
+    void setJson(const std::string &json, uint32_t bufferSize = 0); /**< Sets the Photo JSON data. */
+    void setHeader(const std::string &header); /**< Sets the Photo header. (expert only) */
+    /** Sets the Photo JPEG data.
+    * @param data JPEG data
+    * @param size JPEG data size
+    */
+    bool setPhotoData(const char *data, uint32_t size, uint32_t bufferSize = 0);
+    /** Sets the Photo JPEG data.
+    * @param data JPEG data
+    */
+    bool setPhotoData(const std::string &data, uint32_t bufferSize = 0);
+    void setTitle(const std::string &title, uint32_t bufferSize = 0); /**< Sets the Photo title. */
 
 protected:
+    inline void moveOffsets();
     inline size_t readBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen);
     inline uint32_t charToUInt32BE(char *x);
     inline uint32_t charToUInt32LE(char *x);
