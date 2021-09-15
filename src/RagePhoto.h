@@ -29,41 +29,41 @@ class LIBRAGEPHOTO_EXPORT RagePhoto
 public:
     /** Parsing and set errors */
     enum class Error : uint8_t {
-        DescMallocError = 30,
-        DescReadError = 31,
-        IncompatibleFormat = 2,
-        IncompleteChecksum = 6,
-        IncompleteDescBuffer = 29,
-        IncompleteDescMarker = 27,
-        IncompleteDescOffset = 10,
-        IncompleteEOF = 7,
-        IncompleteHeader = 3,
-        IncompleteJendMarker = 32,
-        IncompleteJpegMarker = 11,
-        IncompleteJsonBuffer = 19,
-        IncompleteJsonMarker = 17,
-        IncompleteJsonOffset = 8,
-        IncompletePhotoBuffer = 13,
-        IncompletePhotoSize = 14,
-        IncompleteTitleBuffer = 24,
-        IncompleteTitleMarker = 22,
-        IncompleteTitleOffset = 9,
-        IncorrectDescMarker = 28,
-        IncorrectJendMarker = 33,
-        IncorrectJpegMarker = 12,
-        IncorrectJsonMarker = 18,
-        IncorrectTitleMarker = 23,
-        JsonMallocError = 20,
-        JsonReadError = 21,
-        NoError = 255,
-        NoFormatIdentifier = 1,
-        PhotoMallocError = 15,
-        PhotoReadError = 16,
-        TitleMallocError = 25,
-        TitleReadError = 26,
-        UnicodeHeaderError = 5,
-        UnicodeInitError = 4,
-        Uninitialised = 0,
+        DescMallocError = 30, /**< Description Buffer can't be allocated */
+        DescReadError = 31, /**< Description can't be read successfully */
+        IncompatibleFormat = 2, /**< Format is incompatible */
+        IncompleteChecksum = 6, /**< Header checksum is incomplete */
+        IncompleteDescBuffer = 29, /**< Description Buffer Size is incomplete */
+        IncompleteDescMarker = 27, /**< Description Marker is incomplete */
+        IncompleteDescOffset = 10, /**< Description Offset is incomplete */
+        IncompleteEOF = 7, /**< End Of File Offset is incomplete */
+        IncompleteHeader = 3, /**< Header is incomplete */
+        IncompleteJendMarker = 32, /**< JEND Marker is incomplete */
+        IncompleteJpegMarker = 11, /**< JPEG Marker is incomplete */
+        IncompleteJsonBuffer = 19, /**< JSON Buffer Size is incomplete */
+        IncompleteJsonMarker = 17, /**< JSON Marker incomplete */
+        IncompleteJsonOffset = 8, /**< JSON Offset incomplete */
+        IncompletePhotoBuffer = 13, /**< Photo Buffer Size is incomplete */
+        IncompletePhotoSize = 14, /**< Photo Size is incomplete */
+        IncompleteTitleBuffer = 24, /**< Title Buffer Size is incomplete */
+        IncompleteTitleMarker = 22, /**< Title Marker is incomplete */
+        IncompleteTitleOffset = 9, /**< Title Offset is incomplete */
+        IncorrectDescMarker = 28, /**< Description Marker is incorrect */
+        IncorrectJendMarker = 33, /**< JEND Marker is incorrect */
+        IncorrectJpegMarker = 12, /**< JPEG Marker is incorrect */
+        IncorrectJsonMarker = 18, /**< JSON Marker is incorrect */
+        IncorrectTitleMarker = 23, /**< Title Marker is incorrect */
+        JsonMallocError = 20, /**< JSON Buffer can't be allocated */
+        JsonReadError = 21, /**< JSON can't be read successfully */
+        NoError = 255, /**< Finished without errors */
+        NoFormatIdentifier = 1, /**< No format detected, empty file */
+        PhotoMallocError = 15, /**< Photo Buffer can't be allocated */
+        PhotoReadError = 16, /**< Photo can't be read */
+        TitleMallocError = 25, /**< Title Buffer can't be allocated */
+        TitleReadError = 26, /**< Title can't be read */
+        UnicodeHeaderError = 5, /**< Header can't be decoded */
+        UnicodeInitError = 4, /**< Failed to initialise Unicode decoder */
+        Uninitialised = 0, /**< Uninitialised */
     };
     /** Photo Formats */
     enum class PhotoFormat : uint32_t {
@@ -86,7 +86,7 @@ public:
     const std::string title(); /**< Returns the Photo title. */
     void setDescription(const std::string &description, uint32_t bufferSize = 0); /**< Sets the Photo description. */
     void setJson(const std::string &json, uint32_t bufferSize = 0); /**< Sets the Photo JSON data. */
-    void setHeader(const std::string &header); /**< Sets the Photo header. (expert only) */
+    void setHeader(const std::string &header, uint32_t headerSum); /**< Sets the Photo header. (expert only) */
     /** Sets the Photo JPEG data.
     * @param data JPEG data
     * @param size JPEG data size

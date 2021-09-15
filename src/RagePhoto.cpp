@@ -420,9 +420,10 @@ void RagePhoto::setJson(const std::string &json, uint32_t bufferSize)
     }
 }
 
-void RagePhoto::setHeader(const std::string &header)
+void RagePhoto::setHeader(const std::string &header, uint32_t headerSum)
 {
     p_photoString = header;
+    p_headerSum = headerSum;
 }
 
 bool RagePhoto::setPhotoData(const char *data, uint32_t size, uint32_t bufferSize)
