@@ -23,7 +23,7 @@
 
 int main(int argc, char *argv[])
 {
-    const char photoHeader[256] = {
+    char photoHeader[256] = {
         0x50, 0x00, 0x48, 0x00, 0x4f, 0x00, 0x54, 0x00,
         0x4f, 0x00, 0x20, 0x00, 0x2d, 0x00, 0x20, 0x00,
         0x30, 0x00, 0x32, 0x00, 0x2f, 0x00, 0x30, 0x00,
@@ -57,10 +57,7 @@ int main(int argc, char *argv[])
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    char16_t photoHeader16[128];
-    memcpy(photoHeader16, photoHeader, 256);
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
-    std::string photoString = convert.to_bytes(photoHeader16);
-    std::cout << photoString << std::endl;
+    std::string photoString = convert.to_bytes(reinterpret_cast<char16_t*>(photoHeader));
     return strcmp(photoString.c_str(), "PHOTO - 02/01/17 08:42:44");
 }

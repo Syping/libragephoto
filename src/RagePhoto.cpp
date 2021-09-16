@@ -36,6 +36,7 @@ RagePhoto::RagePhoto()
 {
     p_photoLoaded = false;
     p_photoData = nullptr;
+    setBufferDefault();
 }
 
 RagePhoto::~RagePhoto()
@@ -56,6 +57,7 @@ void RagePhoto::clear()
     p_titleString.clear();
     p_error = Error::Uninitialised;
     p_photoFormat = PhotoFormat::Undefined;
+    setBufferDefault();
 }
 
 bool RagePhoto::load(const char *data, size_t length)
@@ -344,6 +346,25 @@ bool RagePhoto::load(const char *data, size_t length)
         std::cout << "Benchmark: " << benchmark_ns.count() << "ns" << std::endl;
 #endif
 
+#ifdef RAGEPHOTO_DEBUG
+        std::cout << "header: " << p_photoString << std::endl;
+        std::cout << "headerSum: " << p_headerSum << std::endl;
+        std::cout << "photoBuffer: " << p_photoBuffer << std::endl;
+        std::cout << "descBuffer: " << p_descBuffer << std::endl;
+        std::cout << "descOffset: " << p_descOffset << std::endl;
+        std::cout << "jsonBuffer: " << p_jsonBuffer << std::endl;
+        std::cout << "jsonOffset: " << p_jsonOffset << std::endl;
+        std::cout << "titlBuffer: " << p_titlBuffer << std::endl;
+        std::cout << "titlOffset: " << p_titlOffset << std::endl;
+        std::cout << "eofOffset: " << p_endOfFile << std::endl;
+        std::cout << "moveOffsets()" << std::endl;
+        moveOffsets();
+        std::cout << "descOffset: " << p_descOffset << std::endl;
+        std::cout << "jsonOffset: " << p_jsonOffset << std::endl;
+        std::cout << "titlOffset: " << p_titlOffset << std::endl;
+        std::cout << "eofOffset: " << p_endOfFile << std::endl;
+#endif
+
         p_error = Error::NoError; // 255
         return true;
     }
@@ -374,7 +395,7 @@ const char* RagePhoto::photoData()
         return nullptr;
 }
 
-const uint32_t RagePhoto::photoSize()
+uint32_t RagePhoto::photoSize()
 {
     if (p_photoLoaded)
         return p_photoSize;
@@ -402,6 +423,14 @@ const std::string RagePhoto::title()
     return p_titleString;
 }
 
+void RagePhoto::setBufferDefault()
+{
+    p_descBuffer = DEFAULT_DESCBUFFER;
+    p_jsonBuffer = DEFAULT_JSONBUFFER;
+    p_titlBuffer = DEFAULT_TITLBUFFER;
+    moveOffsets();
+}
+
 void RagePhoto::setDescription(const std::string &description, uint32_t bufferSize)
 {
     p_descriptionString = description;
@@ -409,6 +438,11 @@ void RagePhoto::setDescription(const std::string &description, uint32_t bufferSi
         p_descBuffer = bufferSize;
         moveOffsets();
     }
+}
+
+void RagePhoto::setFormat(PhotoFormat photoFormat)
+{
+    p_photoFormat = photoFormat;
 }
 
 void RagePhoto::setJson(const std::string &json, uint32_t bufferSize)

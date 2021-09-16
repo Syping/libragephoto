@@ -17,7 +17,7 @@ sudo make install
 ```
 
 ##### Optional CMake flags
-`-DWITH_EXTRACT=OFF` `-DWITH_GTK_EXAMPLE=ON` `-DWITH_QT_EXAMPLE=ON` `-DBUILD_SHARED=OFF`
+`-DWITH_DOCUMENTATION=ON` `-DWITH_EXTRACT=OFF` `-DWITH_GTK_EXAMPLE=ON` `-DWITH_QT_EXAMPLE=ON` `-DBUILD_SHARED=OFF`
 
 #### How to Use libragephoto
 
@@ -31,6 +31,7 @@ std::string title = ragePhoto.title();
 RagePhoto::Error error = ragePhoto.error();
 RagePhoto::PhotoFormat format = ragePhoto.format();
 ```
+[RagePhoto API](https://libragephoto.syping.de/doc/classRagePhoto.html)
 
 #### How to Use ragephoto-extract
 

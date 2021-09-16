@@ -24,6 +24,12 @@
 #include <cstdint>
 #include <cstdio>
 
+#define DEFAULT_GTAV_PHOTOBUFFER 524288UL /**< GTA V default Photo Buffer Size */
+#define DEFAULT_RDR2_PHOTOBUFFER 1048576UL /**< RDR 2 default Photo Buffer Size */
+#define DEFAULT_DESCBUFFER 256UL /**< Default Description Buffer Size */
+#define DEFAULT_JSONBUFFER 3072UL /**< Default JSON Buffer Size */
+#define DEFAULT_TITLBUFFER 256UL /**< Default Title Buffer Size */
+
 class LIBRAGEPHOTO_EXPORT RagePhoto
 {
 public:
@@ -79,21 +85,25 @@ public:
     Error error(); /**< Returns the last error occurred. */
     PhotoFormat format(); /**< Returns the Photo Format (GTA V or RDR 2). */
     const char *photoData(); /**< Returns the Photo JPEG data. */
-    const uint32_t photoSize(); /**< Returns the Photo JPEG data size. */
+    uint32_t photoSize(); /**< Returns the Photo JPEG data size. */
     const std::string description(); /**< Returns the Photo description. */
     const std::string json(); /**< Returns the Photo JSON data. */
     const std::string header(); /**< Returns the Photo header. */
     const std::string title(); /**< Returns the Photo title. */
+    void setBufferDefault(); /**< Sets all cross-format Buffer to default size. */
     void setDescription(const std::string &description, uint32_t bufferSize = 0); /**< Sets the Photo description. */
+    void setFormat(PhotoFormat photoFormat); /**< Sets the Photo Format (GTA V or RDR 2). */
     void setJson(const std::string &json, uint32_t bufferSize = 0); /**< Sets the Photo JSON data. */
     void setHeader(const std::string &header, uint32_t headerSum); /**< Sets the Photo header. (expert only) */
     /** Sets the Photo JPEG data.
-    * @param data JPEG data
-    * @param size JPEG data size
+    * \param data JPEG data
+    * \param size JPEG data size
+    * \param bufferSize JPEG buffer size
     */
     bool setPhotoData(const char *data, uint32_t size, uint32_t bufferSize = 0);
     /** Sets the Photo JPEG data.
-    * @param data JPEG data
+    * \param data JPEG data
+    * \param bufferSize JPEG buffer size
     */
     bool setPhotoData(const std::string &data, uint32_t bufferSize = 0);
     void setTitle(const std::string &title, uint32_t bufferSize = 0); /**< Sets the Photo title. */
