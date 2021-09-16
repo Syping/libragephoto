@@ -24,11 +24,13 @@
 #include <cstdint>
 #include <cstdio>
 
-#define DEFAULT_GTAV_PHOTOBUFFER 524288UL /**< GTA V default Photo Buffer Size */
+#define DEFAULT_GTA5_PHOTOBUFFER 524288UL /**< GTA V default Photo Buffer Size */
 #define DEFAULT_RDR2_PHOTOBUFFER 1048576UL /**< RDR 2 default Photo Buffer Size */
 #define DEFAULT_DESCBUFFER 256UL /**< Default Description Buffer Size */
 #define DEFAULT_JSONBUFFER 3072UL /**< Default JSON Buffer Size */
 #define DEFAULT_TITLBUFFER 256UL /**< Default Title Buffer Size */
+#define GTA5_HEADERSIZE 264UL /**< GTA V Header Size */
+#define RDR2_HEADERSIZE 272UL /**< RDR 2 Header Size */
 
 class LIBRAGEPHOTO_EXPORT RagePhoto
 {
@@ -80,16 +82,26 @@ public:
     RagePhoto();
     ~RagePhoto();
     void clear(); /**< Resets the RagePhoto instance to default values. */
-    bool load(const char *data, size_t length); /**< Loads a Photo stored inside a const char*. */
-    bool load(const std::string &data); /**< Loads a Photo stored inside a std::string. */
+    /** Loads a Photo from a const char*.
+    * \param data Photo data
+    * \param size Photo data size
+    */
+    bool load(const char *data, size_t size);
+    /** Loads a Photo from a std::string.
+    * \param data Photo data
+    */
+    bool load(const std::string &data);
     Error error(); /**< Returns the last error occurred. */
     PhotoFormat format(); /**< Returns the Photo Format (GTA V or RDR 2). */
+    const std::string photo(); /**< Returns the Photo JPEG data. */
     const char *photoData(); /**< Returns the Photo JPEG data. */
     uint32_t photoSize(); /**< Returns the Photo JPEG data size. */
     const std::string description(); /**< Returns the Photo description. */
     const std::string json(); /**< Returns the Photo JSON data. */
     const std::string header(); /**< Returns the Photo header. */
     const std::string title(); /**< Returns the Photo title. */
+    uint32_t saveSize(PhotoFormat photoFormat); /**< Returns the save file size. */
+    uint32_t saveSize(); /**< Returns the save file size. */
     void setBufferDefault(); /**< Sets all cross-format Buffer to default size. */
     void setDescription(const std::string &description, uint32_t bufferSize = 0); /**< Sets the Photo description. */
     void setFormat(PhotoFormat photoFormat); /**< Sets the Photo Format (GTA V or RDR 2). */
@@ -100,20 +112,18 @@ public:
     * \param size JPEG data size
     * \param bufferSize JPEG buffer size
     */
-    bool setPhotoData(const char *data, uint32_t size, uint32_t bufferSize = 0);
+    bool setPhoto(const char *data, uint32_t size, uint32_t bufferSize = 0);
     /** Sets the Photo JPEG data.
     * \param data JPEG data
     * \param bufferSize JPEG buffer size
     */
-    bool setPhotoData(const std::string &data, uint32_t bufferSize = 0);
+    bool setPhoto(const std::string &data, uint32_t bufferSize = 0);
     void setTitle(const std::string &title, uint32_t bufferSize = 0); /**< Sets the Photo title. */
 
 protected:
     inline void moveOffsets();
     inline size_t readBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen);
-    inline uint32_t charToUInt32BE(char *x);
     inline uint32_t charToUInt32LE(char *x);
-    inline void uInt32ToCharBE(uint32_t x, char *y);
     inline void uInt32ToCharLE(uint32_t x, char *y);
     bool p_photoLoaded;
     char* p_photoData;

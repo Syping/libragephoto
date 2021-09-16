@@ -363,6 +363,8 @@ bool RagePhoto::load(const char *data, size_t length)
         std::cout << "jsonOffset: " << p_jsonOffset << std::endl;
         std::cout << "titlOffset: " << p_titlOffset << std::endl;
         std::cout << "eofOffset: " << p_endOfFile << std::endl;
+        std::cout << "calc size: " << saveSize() << std::endl;
+        std::cout << "real size: " << length << std::endl;
 #endif
 
         p_error = Error::NoError; // 255
@@ -385,6 +387,14 @@ RagePhoto::Error RagePhoto::error()
 RagePhoto::PhotoFormat RagePhoto::format()
 {
     return p_photoFormat;
+}
+
+const std::string RagePhoto::photo()
+{
+    if (p_photoLoaded)
+        return std::string(p_photoData, p_photoSize);
+    else
+        return std::string();
 }
 
 const char* RagePhoto::photoData()
@@ -421,6 +431,21 @@ const std::string RagePhoto::header()
 const std::string RagePhoto::title()
 {
     return p_titleString;
+}
+
+uint32_t RagePhoto::saveSize(PhotoFormat photoFormat)
+{
+    if (photoFormat == PhotoFormat::GTA5)
+        return (p_photoBuffer + p_jsonBuffer + p_titlBuffer + p_descBuffer + GTA5_HEADERSIZE + 56UL);
+    else if (photoFormat == PhotoFormat::RDR2)
+        return (p_photoBuffer + p_jsonBuffer + p_titlBuffer + p_descBuffer + RDR2_HEADERSIZE + 56UL);
+    else
+        return 0UL;
+}
+
+uint32_t RagePhoto::saveSize()
+{
+    return saveSize(p_photoFormat);
 }
 
 void RagePhoto::setBufferDefault()
@@ -460,7 +485,7 @@ void RagePhoto::setHeader(const std::string &header, uint32_t headerSum)
     p_headerSum = headerSum;
 }
 
-bool RagePhoto::setPhotoData(const char *data, uint32_t size, uint32_t bufferSize)
+bool RagePhoto::setPhoto(const char *data, uint32_t size, uint32_t bufferSize)
 {
     if (p_photoLoaded) {
         if (p_photoSize > size) {
@@ -505,9 +530,9 @@ bool RagePhoto::setPhotoData(const char *data, uint32_t size, uint32_t bufferSiz
     return true;
 }
 
-bool RagePhoto::setPhotoData(const std::string &data, uint32_t bufferSize)
+bool RagePhoto::setPhoto(const std::string &data, uint32_t bufferSize)
 {
-    return setPhotoData(data.data(), data.size(), bufferSize);
+    return setPhoto(data.data(), data.size(), bufferSize);
 }
 
 void RagePhoto::setTitle(const std::string &title, uint32_t bufferSize)
@@ -540,28 +565,12 @@ size_t RagePhoto::readBuffer(const char *input, char *output, size_t *pos, size_
     return readLen;
 }
 
-uint32_t RagePhoto::charToUInt32BE(char *x)
-{
-    return (static_cast<unsigned char>(x[0]) << 24 |
-            static_cast<unsigned char>(x[1]) << 16 |
-            static_cast<unsigned char>(x[2]) << 8 |
-            static_cast<unsigned char>(x[3]));
-}
-
 uint32_t RagePhoto::charToUInt32LE(char *x)
 {
     return (static_cast<unsigned char>(x[3]) << 24 |
             static_cast<unsigned char>(x[2]) << 16 |
             static_cast<unsigned char>(x[1]) << 8 |
             static_cast<unsigned char>(x[0]));
-}
-
-void RagePhoto::uInt32ToCharBE(uint32_t x, char *y)
-{
-    y[0] = x >> 24;
-    y[1] = x >> 16;
-    y[2] = x >> 8;
-    y[3] = x;
 }
 
 void RagePhoto::uInt32ToCharLE(uint32_t x, char *y)
