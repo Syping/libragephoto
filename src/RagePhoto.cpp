@@ -94,7 +94,7 @@ bool RagePhoto::load(const char *data, size_t length)
         }
 
 #ifdef CODECVT_COMPATIBLE
-        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
+        std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff, std::little_endian>,char16_t> convert;
         p_photoString = convert.to_bytes(reinterpret_cast<char16_t*>(photoHeader));
 #elif defined ICONV_COMPATIBLE
         iconv_t iconv_in = iconv_open("UTF-8", "UTF-16LE");
@@ -114,6 +114,10 @@ bool RagePhoto::load(const char *data, size_t length)
             return false;
         }
         p_photoString = std::string(photoString);
+#else
+        std::cout << "UTF-16LE decoding support missing" << std::endl;
+        p_error = Error::UnicodeInitError; // 4
+        return false;
 #endif
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
@@ -410,7 +414,7 @@ uint32_t RagePhoto::photoSize()
     if (p_photoLoaded)
         return p_photoSize;
     else
-        return 0;
+        return 0UL;
 }
 
 const std::string RagePhoto::description()
@@ -433,17 +437,226 @@ const std::string RagePhoto::title()
     return p_titleString;
 }
 
-uint32_t RagePhoto::saveSize(PhotoFormat photoFormat)
+bool RagePhoto::save(char *data, PhotoFormat photoFormat)
+{
+    if (photoFormat == PhotoFormat::GTA5 || photoFormat == PhotoFormat::RDR2) {
+#ifdef CODECVT_COMPATIBLE
+        std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff, std::little_endian>,char16_t> convert;
+        std::u16string photoString = convert.from_bytes(p_photoString);
+        uint32_t photoString_size = photoString.size() * 2 + 1;
+        if (photoString_size > 256) {
+            p_error = Error::HeaderBufferTight; // 34
+            return false;
+        }
+        char photoHeader[256];
+        memcpy(photoHeader, photoString.data(), photoString_size);
+#else
+        std::cout << "UTF-16LE encoding support missing" << std::endl;
+        p_error = Error::UnicodeInitError; // 4
+        return false;
+#endif
+
+        if (p_photoSize > p_photoBuffer) {
+            p_error = Error::PhotoBufferTight; // 35
+            return false;
+        }
+
+        uint32_t jsonString_size = p_jsonString.size() + 1;
+        if (jsonString_size > p_jsonBuffer) {
+            p_error = Error::JsonBufferTight; // 36
+            return false;
+        }
+
+        uint32_t titlString_size = p_titleString.size() + 1;
+        if (titlString_size > p_titlBuffer) {
+            p_error = Error::TitleBufferTight; // 37
+            return false;
+        }
+
+        uint32_t descString_size = p_descriptionString.size() + 1;
+        if (descString_size > p_descBuffer) {
+            p_error = Error::DescBufferTight; // 38
+            return false;
+        }
+
+        size_t length = saveSize(photoFormat);
+        size_t pos = 0;
+        char uInt32Buffer[4];
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(uInt32Buffer, &photoFormat, 4);
+#else
+        uInt32ToCharLE(static_cast<uint32_t>(photoFormat), uInt32Buffer);
+#endif
+        writeBuffer(uInt32Buffer, data, &pos, length, 4);
+
+        writeBuffer(photoHeader, data, &pos, length, photoString_size);
+        for (size_t i = photoString_size; i < 256; i++) {
+            writeBuffer("\0", data, &pos, length, 1);
+        }
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(uInt32Buffer, &p_headerSum, 4);
+#else
+        uInt32ToCharLE(p_headerSum, uInt32Buffer);
+#endif
+        writeBuffer(uInt32Buffer, data, &pos, length, 4);
+
+        if (photoFormat == PhotoFormat::RDR2) {
+            for (size_t i = 0; i < 8; i++) {
+                writeBuffer("\0", data, &pos, length, 1);
+            }
+        }
+        uint32_t headerSize = pos;
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(uInt32Buffer, &p_endOfFile, 4);
+#else
+        uInt32ToCharLE(p_endOfFile, uInt32Buffer);
+#endif
+        writeBuffer(uInt32Buffer, data, &pos, length, 4);
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(uInt32Buffer, &p_jsonOffset, 4);
+#else
+        uInt32ToCharLE(p_jsonOffset, uInt32Buffer);
+#endif
+        writeBuffer(uInt32Buffer, data, &pos, length, 4);
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(uInt32Buffer, &p_titlOffset, 4);
+#else
+        uInt32ToCharLE(p_titlOffset, uInt32Buffer);
+#endif
+        writeBuffer(uInt32Buffer, data, &pos, length, 4);
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(uInt32Buffer, &p_descOffset, 4);
+#else
+        uInt32ToCharLE(p_descOffset, uInt32Buffer);
+#endif
+        writeBuffer(uInt32Buffer, data, &pos, length, 4);
+
+        writeBuffer("JPEG", data, &pos, length, 4);
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(uInt32Buffer, &p_photoBuffer, 4);
+#else
+        uInt32ToCharLE(p_photoBuffer, uInt32Buffer);
+#endif
+        writeBuffer(uInt32Buffer, data, &pos, length, 4);
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(uInt32Buffer, &p_photoSize, 4);
+#else
+        uInt32ToCharLE(p_photoSize, uInt32Buffer);
+#endif
+        writeBuffer(uInt32Buffer, data, &pos, length, 4);
+
+        writeBuffer(p_photoData, data, &pos, length, p_photoSize);
+        for (size_t i = p_photoSize; i < p_photoBuffer; i++) {
+            writeBuffer("\0", data, &pos, length, 1);
+        }
+
+        pos = p_jsonOffset + headerSize;
+        writeBuffer("JSON", data, &pos, length, 4);
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(uInt32Buffer, &p_jsonBuffer, 4);
+#else
+        uInt32ToCharLE(p_jsonBuffer, uInt32Buffer);
+#endif
+        writeBuffer(uInt32Buffer, data, &pos, length, 4);
+
+        writeBuffer(p_jsonString.data(), data, &pos, length, jsonString_size);
+        for (size_t i = jsonString_size; i < p_jsonBuffer; i++) {
+            writeBuffer("\0", data, &pos, length, 1);
+        }
+
+        pos = p_titlOffset + headerSize;
+        writeBuffer("TITL", data, &pos, length, 4);
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(uInt32Buffer, &p_titlBuffer, 4);
+#else
+        uInt32ToCharLE(p_titlBuffer, uInt32Buffer);
+#endif
+        writeBuffer(uInt32Buffer, data, &pos, length, 4);
+
+        writeBuffer(p_titleString.data(), data, &pos, length, titlString_size);
+        for (size_t i = titlString_size; i < p_titlBuffer; i++) {
+            writeBuffer("\0", data, &pos, length, 1);
+        }
+
+        pos = p_descOffset + headerSize;
+        writeBuffer("DESC", data, &pos, length, 4);
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+        memcpy(uInt32Buffer, &p_descBuffer, 4);
+#else
+        uInt32ToCharLE(p_descBuffer, uInt32Buffer);
+#endif
+        writeBuffer(uInt32Buffer, data, &pos, length, 4);
+
+        writeBuffer(p_descriptionString.data(), data, &pos, length, descString_size);
+        for (size_t i = descString_size; i < p_descBuffer; i++) {
+            writeBuffer("\0", data, &pos, length, 1);
+        }
+
+        pos = p_endOfFile + headerSize - 4;
+        writeBuffer("JEND", data, &pos, length, 4);
+
+        p_error = Error::NoError; // 255
+        return true;
+    }
+
+    p_error = Error::IncompatibleFormat; // 2
+    return false;
+}
+
+bool RagePhoto::save(char *data)
+{
+    return save(data, p_photoFormat);
+}
+
+const std::string RagePhoto::save(PhotoFormat photoFormat, bool *ok)
+{
+    size_t size = saveSize(photoFormat);
+    if (size == 0) {
+        if (ok)
+            *ok = false;
+        return std::string();
+    }
+    char *data = static_cast<char*>(malloc(size));
+    if (!data) {
+        if (ok)
+            *ok = false;
+        return std::string();
+    }
+    const bool saved = save(data, photoFormat);
+    if (ok)
+        *ok = saved;
+    const std::string sdata = std::string(data, size);
+    free(data);
+    return sdata;
+}
+
+const std::string RagePhoto::save(bool *ok)
+{
+    return save(p_photoFormat, ok);
+}
+
+size_t RagePhoto::saveSize(PhotoFormat photoFormat)
 {
     if (photoFormat == PhotoFormat::GTA5)
         return (p_photoBuffer + p_jsonBuffer + p_titlBuffer + p_descBuffer + GTA5_HEADERSIZE + 56UL);
     else if (photoFormat == PhotoFormat::RDR2)
         return (p_photoBuffer + p_jsonBuffer + p_titlBuffer + p_descBuffer + RDR2_HEADERSIZE + 56UL);
     else
-        return 0UL;
+        return 0;
 }
 
-uint32_t RagePhoto::saveSize()
+size_t RagePhoto::saveSize()
 {
     return saveSize(p_photoFormat);
 }
@@ -556,13 +769,26 @@ size_t RagePhoto::readBuffer(const char *input, char *output, size_t *pos, size_
 {
     size_t readLen = 0;
     if (*pos >= inputLen)
-        return readLen;
+        return 0;
     readLen = inputLen - *pos;
     if (readLen > len)
         readLen = len;
     memcpy(output, &input[*pos], readLen);
     *pos = *pos + readLen;
     return readLen;
+}
+
+size_t RagePhoto::writeBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen)
+{
+    const size_t maxLen = len - *pos;
+    size_t writeLen = inputLen;
+    if (*pos >= len)
+        return 0;
+    if (inputLen > maxLen)
+        writeLen = maxLen;
+    memcpy(&output[*pos], input, writeLen);
+    *pos = *pos + writeLen;
+    return writeLen;
 }
 
 uint32_t RagePhoto::charToUInt32LE(char *x)

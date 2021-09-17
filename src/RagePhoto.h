@@ -37,8 +37,10 @@ class LIBRAGEPHOTO_EXPORT RagePhoto
 public:
     /** Parsing and set errors */
     enum class Error : uint8_t {
+        DescBufferTight = 38, /**< Description Buffer is too tight */
         DescMallocError = 30, /**< Description Buffer can't be allocated */
         DescReadError = 31, /**< Description can't be read successfully */
+        HeaderBufferTight = 34, /**< Header Buffer is too tight */
         IncompatibleFormat = 2, /**< Format is incompatible */
         IncompleteChecksum = 6, /**< Header checksum is incomplete */
         IncompleteDescBuffer = 29, /**< Description Buffer Size is incomplete */
@@ -61,12 +63,15 @@ public:
         IncorrectJpegMarker = 12, /**< JPEG Marker is incorrect */
         IncorrectJsonMarker = 18, /**< JSON Marker is incorrect */
         IncorrectTitleMarker = 23, /**< Title Marker is incorrect */
+        JsonBufferTight = 36, /**< JSON Buffer is too tight */
         JsonMallocError = 20, /**< JSON Buffer can't be allocated */
         JsonReadError = 21, /**< JSON can't be read successfully */
         NoError = 255, /**< Finished without errors */
         NoFormatIdentifier = 1, /**< No format detected, empty file */
+        PhotoBufferTight = 35, /**< Photo Buffer is too tight */
         PhotoMallocError = 15, /**< Photo Buffer can't be allocated */
         PhotoReadError = 16, /**< Photo can't be read */
+        TitleBufferTight = 37, /**< Title Buffer is too tight */
         TitleMallocError = 25, /**< Title Buffer can't be allocated */
         TitleReadError = 26, /**< Title can't be read */
         UnicodeHeaderError = 5, /**< Header can't be decoded */
@@ -100,8 +105,26 @@ public:
     const std::string json(); /**< Returns the Photo JSON data. */
     const std::string header(); /**< Returns the Photo header. */
     const std::string title(); /**< Returns the Photo title. */
-    uint32_t saveSize(PhotoFormat photoFormat); /**< Returns the save file size. */
-    uint32_t saveSize(); /**< Returns the save file size. */
+    /** Saves a Photo to a char*.
+    * \param data Photo data
+    * \param photoFormat Photo Format (GTA V or RDR 2)
+    */
+    bool save(char *data, PhotoFormat photoFormat);
+    /** Saves a Photo to a char*.
+    * \param data Photo data
+    */
+    bool save(char *data);
+    /** Saves a Photo to a std::string.
+    * \param photoFormat Photo Format (GTA V or RDR 2)
+    * \param ok \p true when saved successfully
+    */
+    const std::string save(PhotoFormat photoFormat, bool *ok = nullptr);
+    /** Saves a Photo to a std::string.
+    * \param ok \p true when saved successfully
+    */
+    const std::string save(bool *ok = nullptr);
+    size_t saveSize(PhotoFormat photoFormat); /**< Returns the save file size. */
+    size_t saveSize(); /**< Returns the save file size. */
     void setBufferDefault(); /**< Sets all cross-format Buffer to default size. */
     void setDescription(const std::string &description, uint32_t bufferSize = 0); /**< Sets the Photo description. */
     void setFormat(PhotoFormat photoFormat); /**< Sets the Photo Format (GTA V or RDR 2). */
@@ -123,6 +146,7 @@ public:
 protected:
     inline void moveOffsets();
     inline size_t readBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen);
+    inline size_t writeBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen);
     inline uint32_t charToUInt32LE(char *x);
     inline void uInt32ToCharLE(uint32_t x, char *y);
     bool p_photoLoaded;
