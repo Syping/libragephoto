@@ -21,7 +21,9 @@
 #include <gdkmm/general.h>
 #include <gtkmm/messagedialog.h>
 #include <RagePhoto.h>
+#include <fstream>
 #include <iostream>
+#include <iterator>
 
 PhotoViewer::PhotoViewer(Gtk::Window *win) : p_win(win)
 {
@@ -33,38 +35,20 @@ void PhotoViewer::open_file(const char *filename)
         p_image.clear();
 
     RagePhoto ragePhoto;
+
     // Read file
-    FILE *file = fopen(filename, "rb");
-    if (!file) {
-        Gtk::MessageDialog msg(*p_win, "Failed to read file: " + Glib::ustring(filename), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
+    std::ifstream ifs(filename, std::ios::in | std::ios::binary);
+    if (!ifs.is_open()) {
+        Gtk::MessageDialog msg(*p_win, "Failed to open file: " + Glib::ustring(filename), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
         msg.set_title("Open Photo");
         msg.run();
         return;
     }
-    const int fseek_end_value = fseek(file, 0, SEEK_END);
-    if (fseek_end_value == -1) {
-        fclose(file);
-        return;
-    }
-    const size_t file_size = ftell(file);
-    if (file_size == -1) {
-        fclose(file);
-        return;
-    }
-    const int fseek_set_value = fseek(file, 0, SEEK_SET);
-    if (fseek_set_value == -1) {
-        fclose(file);
-        return;
-    }
-    char *data = static_cast<char*>(malloc(file_size));
-    const size_t file_rsize = fread(data, 1, file_size, file);
-    if (file_size != file_rsize) {
-        fclose(file);
-        return;
-    }
-    fclose(file);
-    const bool loaded = ragePhoto.load(data, file_size);
-    free(data);
+    std::string data(std::istreambuf_iterator<char>{ifs}, {});
+    ifs.close();
+
+    // Load Photo
+    const bool loaded = ragePhoto.load(data);
     if (!loaded) {
         const RagePhoto::Error error = ragePhoto.error();
         if (error <= RagePhoto::Error::PhotoReadError) {
@@ -75,21 +59,13 @@ void PhotoViewer::open_file(const char *filename)
         }
     }
 
-    guchar *photoData = static_cast<guchar*>(malloc(ragePhoto.photoSize()));
-    if (!photoData)
-        return;
-
-    memcpy(photoData, ragePhoto.photoData(), ragePhoto.photoSize());
-
     GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
-    gdk_pixbuf_loader_write(loader, photoData, static_cast<gsize>(ragePhoto.photoSize()), NULL);
+    gdk_pixbuf_loader_write(loader, reinterpret_cast<const guchar*>(ragePhoto.photoData()), ragePhoto.photoSize(), NULL);
     GdkPixbuf *c_pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
     gdk_pixbuf_loader_close(loader, NULL);
     p_image = Glib::wrap(c_pixbuf);
 
     p_win->set_title("RagePhoto GTK Photo Viewer - " + ragePhoto.title());
-
-    free(photoData);
 
     if (p_image)
         set_size_request(p_image->get_width(), p_image->get_height());
