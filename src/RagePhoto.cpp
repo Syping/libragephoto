@@ -133,7 +133,7 @@ bool RagePhoto::load(const char *data, size_t length)
 
         if (p_photoFormat == PhotoFormat::RDR2)
             pos = pos + 8;
-        uint32_t headerSize = pos;
+        const size_t headerSize = pos;
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
@@ -443,7 +443,7 @@ bool RagePhoto::save(char *data, PhotoFormat photoFormat)
 #ifdef CODECVT_COMPATIBLE
         std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff, std::little_endian>,char16_t> convert;
         std::u16string photoString = convert.from_bytes(p_photoString);
-        uint32_t photoString_size = photoString.size() * 2 + 1;
+        const size_t photoString_size = photoString.size() * 2 + 1;
         if (photoString_size > 256) {
             p_error = Error::HeaderBufferTight; // 34
             return false;
@@ -461,25 +461,25 @@ bool RagePhoto::save(char *data, PhotoFormat photoFormat)
             return false;
         }
 
-        uint32_t jsonString_size = p_jsonString.size() + 1;
+        const size_t jsonString_size = p_jsonString.size() + 1;
         if (jsonString_size > p_jsonBuffer) {
             p_error = Error::JsonBufferTight; // 36
             return false;
         }
 
-        uint32_t titlString_size = p_titleString.size() + 1;
+        const size_t titlString_size = p_titleString.size() + 1;
         if (titlString_size > p_titlBuffer) {
             p_error = Error::TitleBufferTight; // 37
             return false;
         }
 
-        uint32_t descString_size = p_descriptionString.size() + 1;
+        const size_t descString_size = p_descriptionString.size() + 1;
         if (descString_size > p_descBuffer) {
             p_error = Error::DescBufferTight; // 38
             return false;
         }
 
-        size_t length = saveSize(photoFormat);
+        const size_t length = saveSize(photoFormat);
         size_t pos = 0;
         char uInt32Buffer[4];
 
@@ -507,7 +507,7 @@ bool RagePhoto::save(char *data, PhotoFormat photoFormat)
                 writeBuffer("\0", data, &pos, length, 1);
             }
         }
-        uint32_t headerSize = pos;
+        const size_t headerSize = pos;
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
         memcpy(uInt32Buffer, &p_endOfFile, 4);
@@ -621,7 +621,7 @@ bool RagePhoto::save(char *data)
 
 const std::string RagePhoto::save(PhotoFormat photoFormat, bool *ok)
 {
-    size_t size = saveSize(photoFormat);
+    const size_t size = saveSize(photoFormat);
     if (size == 0) {
         if (ok)
             *ok = false;
@@ -745,7 +745,7 @@ bool RagePhoto::setPhoto(const char *data, uint32_t size, uint32_t bufferSize)
 
 bool RagePhoto::setPhoto(const std::string &data, uint32_t bufferSize)
 {
-    return setPhoto(data.data(), data.size(), bufferSize);
+    return setPhoto(data.data(), static_cast<uint32_t>(data.size()), bufferSize);
 }
 
 void RagePhoto::setTitle(const std::string &title, uint32_t bufferSize)
