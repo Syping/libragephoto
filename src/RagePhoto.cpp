@@ -451,6 +451,8 @@ bool RagePhoto::save(char *data, PhotoFormat photoFormat)
         char photoHeader[256];
         memcpy(photoHeader, photoString.data(), photoString_size);
 #else
+        const size_t photoString_size = 0;
+        char photoHeader[256];
         std::cout << "UTF-16LE encoding support missing" << std::endl;
         p_error = Error::UnicodeInitError; // 4
         return false;
