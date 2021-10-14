@@ -27,7 +27,7 @@ class PhotoViewer : public Gtk::DrawingArea
 {
 public:
     PhotoViewer(Gtk::Window *win);
-    void open_file(const char *filename);
+    void open_file(const std::string &filename);
 
 protected:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;

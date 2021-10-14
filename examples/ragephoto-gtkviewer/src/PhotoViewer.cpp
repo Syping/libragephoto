@@ -29,7 +29,7 @@ PhotoViewer::PhotoViewer(Gtk::Window *win) : p_win(win)
 {
 }
 
-void PhotoViewer::open_file(const char *filename)
+void PhotoViewer::open_file(const std::string &filename)
 {
     if (p_image)
         p_image.clear();
@@ -39,7 +39,7 @@ void PhotoViewer::open_file(const char *filename)
     // Read file
     std::ifstream ifs(filename, std::ios::in | std::ios::binary);
     if (!ifs.is_open()) {
-        Gtk::MessageDialog msg(*p_win, "Failed to open file: " + Glib::ustring(filename), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
+        Gtk::MessageDialog msg(*p_win, "Failed to open file: " + filename, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
         msg.set_title("Open Photo");
         msg.run();
         return;
@@ -52,7 +52,7 @@ void PhotoViewer::open_file(const char *filename)
     if (!loaded) {
         const RagePhoto::Error error = ragePhoto.error();
         if (error <= RagePhoto::Error::PhotoReadError) {
-            Gtk::MessageDialog msg(*p_win, "Failed to read photo: " + Glib::ustring(filename), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
+            Gtk::MessageDialog msg(*p_win, "Failed to read photo: " + filename, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
             msg.set_title("Open Photo");
             msg.run();
             return;

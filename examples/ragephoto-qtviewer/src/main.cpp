@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 
     QMainWindow mainWindow;
     mainWindow.setWindowTitle("RagePhoto Qt Photo Viewer");
-    mainWindow.setFixedSize(400, 100);
+    mainWindow.setFixedSize(400, 0);
 
     QWidget centralWidget(&mainWindow);
     mainWindow.setCentralWidget(&centralWidget);
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     verticalLayout.setContentsMargins(0, 0, 0, 0);
     verticalLayout.setSpacing(6);
 
-    QLabel photoLabel(&mainWindow);
+    QLabel photoLabel(&centralWidget);
     verticalLayout.addWidget(&photoLabel);
 
     QHBoxLayout horizontalLayout;
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     horizontalLayout.setSpacing(6);
     verticalLayout.addLayout(&horizontalLayout);
 
-    QPushButton openButton("Open", &mainWindow);
+    QPushButton openButton("Open", &centralWidget);
     if (QIcon::hasThemeIcon("document-open"))
         openButton.setIcon(QIcon::fromTheme("document-open"));
     QObject::connect(&openButton, &QPushButton::clicked, &mainWindow, [&](){
@@ -98,12 +98,14 @@ int main(int argc, char *argv[])
             });
         }
     });
+    openButton.setAutoDefault(true);
     horizontalLayout.addWidget(&openButton);
 
-    QPushButton closeButton("Close", &mainWindow);
+    QPushButton closeButton("Close", &centralWidget);
     if (QIcon::hasThemeIcon("dialog-close"))
         closeButton.setIcon(QIcon::fromTheme("dialog-close"));
     QObject::connect(&closeButton, &QPushButton::clicked, &mainWindow, &QMainWindow::close);
+    closeButton.setAutoDefault(true);
     horizontalLayout.addWidget(&closeButton);
 
     const QStringList args = app.arguments();

@@ -96,14 +96,14 @@ int main(int argc, char *argv[])
     app->signal_open().connect([&](const Gio::Application::type_vec_files &files, const Glib::ustring &hint) {
         if (files.size() == 1) {
             for (const auto &file : files) {
-                photo_viewer.open_file(file->get_path().c_str());
+                photo_viewer.open_file(file->get_path());
             }
             app->add_window(win);
-            win.show();
+            win.present();
         }
         else {
             app->add_window(win);
-            win.show();
+            win.present();
             Gtk::MessageDialog msg(win, "Can't open multiple photos at once!", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
             msg.set_title("RagePhoto GTK Photo Viewer");
             msg.run();
@@ -114,6 +114,7 @@ int main(int argc, char *argv[])
     vertical_box.show();
 
     win.add(vertical_box);
+    win.present();
 
     return app->run(win);
 }
