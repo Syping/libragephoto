@@ -737,6 +737,7 @@ bool RagePhoto::setPhoto(const char *data, uint32_t size, uint32_t bufferSize)
             }
             p_photoData = t_photoData;
             memcpy(p_photoData, data, size);
+            p_photoSize = size;
         }
         else if (p_photoSize < size) {
             free(p_photoData);
@@ -747,6 +748,7 @@ bool RagePhoto::setPhoto(const char *data, uint32_t size, uint32_t bufferSize)
                 return false;
             }
             memcpy(p_photoData, data, size);
+            p_photoSize = size;
         }
         else {
             memcpy(p_photoData, data, size);
@@ -760,6 +762,7 @@ bool RagePhoto::setPhoto(const char *data, uint32_t size, uint32_t bufferSize)
         }
         memcpy(p_photoData, data, size);
         p_photoLoaded = true;
+        p_photoSize = size;
     }
 
     if (bufferSize != 0) {
