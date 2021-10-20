@@ -84,6 +84,7 @@ bool RagePhoto::load(const char *data, size_t length)
     uint32_t format = charToUInt32LE(uInt32Buffer);
 #endif
     if (format == static_cast<uint32_t>(PhotoFormat::GTA5) || format == static_cast<uint32_t>(PhotoFormat::RDR2)) {
+#if defined CODECVT_COMPATIBLE || defined ICONV_COMPATIBLE
         p_photoFormat = static_cast<PhotoFormat>(format);
 
         char photoHeader[256];
@@ -107,17 +108,13 @@ bool RagePhoto::load(const char *data, size_t length)
         size_t dst_s = sizeof(photoString);
         char *src = photoHeader;
         char *dst = photoString;
-        size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
+        const size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
         iconv_close(iconv_in);
         if (ret == static_cast<size_t>(-1)) {
             p_error = Error::UnicodeHeaderError; // 5
             return false;
         }
         p_photoString = std::string(photoString);
-#else
-        std::cout << "UTF-16LE decoding support missing" << std::endl;
-        p_error = Error::UnicodeInitError; // 4
-        return false;
 #endif
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
@@ -373,6 +370,11 @@ bool RagePhoto::load(const char *data, size_t length)
 
         p_error = Error::NoError; // 255
         return true;
+#else
+        std::cout << "UTF-16LE decoding support missing" << std::endl;
+        p_error = Error::UnicodeInitError; // 4
+        return false;
+#endif
     }
     p_error = Error::IncompatibleFormat; // 2
     return false;
@@ -440,22 +442,41 @@ const std::string RagePhoto::title()
 bool RagePhoto::save(char *data, PhotoFormat photoFormat)
 {
     if (photoFormat == PhotoFormat::GTA5 || photoFormat == PhotoFormat::RDR2) {
+#if defined CODECVT_COMPATIBLE || defined ICONV_COMPATIBLE
 #ifdef CODECVT_COMPATIBLE
         std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff, std::little_endian>,char16_t> convert;
         std::u16string photoString = convert.from_bytes(p_photoString);
-        const size_t photoString_size = photoString.size() * 2 + 1;
-        if (photoString_size > 256) {
+        const size_t photoHeader_size = photoString.size() * 2;
+        if (photoHeader_size > 256) {
             p_error = Error::HeaderBufferTight; // 34
             return false;
         }
         char photoHeader[256];
-        memcpy(photoHeader, photoString.data(), photoString_size);
-#else
-        const size_t photoString_size = 0;
+        memcpy(photoHeader, photoString.data(), photoHeader_size);
+#elif defined ICONV_COMPATIBLE
+        iconv_t iconv_in = iconv_open("UTF-16LE", "UTF-8");
+        if (iconv_in == (iconv_t)-1) {
+            p_error = Error::UnicodeInitError; // 4
+            return false;
+        }
+        char photoString[256];
+        memcpy(photoString, p_photoString.data(), p_photoString.size());
         char photoHeader[256];
-        std::cout << "UTF-16LE encoding support missing" << std::endl;
-        p_error = Error::UnicodeInitError; // 4
-        return false;
+        size_t src_s = p_photoString.size();
+        size_t dst_s = sizeof(photoHeader);
+        char *src = photoString;
+        char *dst = photoHeader;
+        const size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
+        if (ret == static_cast<size_t>(-1)) {
+            p_error = Error::UnicodeHeaderError; // 5
+            return false;
+        }
+        iconv_close(iconv_in);
+        const size_t photoHeader_size = p_photoString.size() * 2;
+        if (photoHeader_size > 256) {
+            p_error = Error::HeaderBufferTight; // 34
+            return false;
+        }
 #endif
 
         if (p_photoSize > p_photoBuffer) {
@@ -492,8 +513,8 @@ bool RagePhoto::save(char *data, PhotoFormat photoFormat)
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
-        writeBuffer(photoHeader, data, &pos, length, photoString_size);
-        for (size_t i = photoString_size; i < 256; i++) {
+        writeBuffer(photoHeader, data, &pos, length, photoHeader_size);
+        for (size_t i = photoHeader_size; i < 256; i++) {
             writeBuffer("\0", data, &pos, length, 1);
         }
 
@@ -610,6 +631,11 @@ bool RagePhoto::save(char *data, PhotoFormat photoFormat)
 
         p_error = Error::NoError; // 255
         return true;
+#else
+        std::cout << "UTF-16LE encoding support missing" << std::endl;
+        p_error = Error::UnicodeInitError; // 4
+        return false;
+#endif
     }
 
     p_error = Error::IncompatibleFormat; // 2

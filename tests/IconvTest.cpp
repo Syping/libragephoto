@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     size_t dst_s = sizeof(photoString);
     char *src = photoHeader;
     char *dst = photoString;
-    size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
+    const size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
     iconv_close(iconv_in);
     if (ret == static_cast<size_t>(-1)) {
         return -1;
