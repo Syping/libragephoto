@@ -24,17 +24,19 @@
 #include <cstdint>
 #include <cstdio>
 
-#define DEFAULT_GTA5_PHOTOBUFFER 524288UL /**< GTA V default Photo Buffer Size */
-#define DEFAULT_RDR2_PHOTOBUFFER 1048576UL /**< RDR 2 default Photo Buffer Size */
-#define DEFAULT_DESCBUFFER 256UL /**< Default Description Buffer Size */
-#define DEFAULT_JSONBUFFER 3072UL /**< Default JSON Buffer Size */
-#define DEFAULT_TITLBUFFER 256UL /**< Default Title Buffer Size */
-#define GTA5_HEADERSIZE 264UL /**< GTA V Header Size */
-#define RDR2_HEADERSIZE 272UL /**< RDR 2 Header Size */
-
 class LIBRAGEPHOTO_EXPORT RagePhoto
 {
 public:
+    /** Default sizes */
+    enum DefaultSize : uint32_t {
+        DEFAULT_GTA5_PHOTOBUFFER = 524288UL, /**< GTA V default Photo Buffer Size */
+        DEFAULT_RDR2_PHOTOBUFFER = 1048576UL, /**< RDR 2 default Photo Buffer Size */
+        DEFAULT_DESCBUFFER = 256UL, /**< Default Description Buffer Size */
+        DEFAULT_JSONBUFFER = 3072UL, /**< Default JSON Buffer Size */
+        DEFAULT_TITLBUFFER = 256UL, /**< Default Title Buffer Size */
+        GTA5_HEADERSIZE = 264UL, /**< GTA V Header Size */
+        RDR2_HEADERSIZE = 272UL, /**< RDR 2 Header Size */
+    };
     /** Parsing and set errors */
     enum class Error : uint8_t {
         DescBufferTight = 38, /**< Description Buffer is too tight */
