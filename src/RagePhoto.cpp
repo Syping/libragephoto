@@ -467,11 +467,11 @@ bool RagePhoto::save(char *data, PhotoFormat photoFormat)
         char *src = photoString;
         char *dst = photoHeader;
         const size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
+        iconv_close(iconv_in);
         if (ret == static_cast<size_t>(-1)) {
             p_error = Error::UnicodeHeaderError; // 5
             return false;
         }
-        iconv_close(iconv_in);
         const size_t photoHeader_size = p_photoString.size() * 2;
         if (photoHeader_size > 256) {
             p_error = Error::HeaderBufferTight; // 34
