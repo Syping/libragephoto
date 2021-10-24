@@ -147,8 +147,8 @@ public:
 
 protected:
     inline void moveOffsets();
-    inline size_t readBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen);
-    inline size_t writeBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen);
+    inline size_t readBuffer(const char *input, void *output, size_t *pos, size_t len, size_t inputLen);
+    inline size_t writeBuffer(const void *input, char *output, size_t *pos, size_t len, size_t inputLen);
     inline uint32_t charToUInt32LE(char *x);
     inline void uInt32ToCharLE(uint32_t x, char *y);
     bool p_photoLoaded;

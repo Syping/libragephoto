@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff, std::little_endian>,char16_t> convert;
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
     std::string photoString = convert.to_bytes(reinterpret_cast<char16_t*>(photoHeader));
     return strcmp(photoString.c_str(), "PHOTO - 02/01/17 08:42:44");
 }

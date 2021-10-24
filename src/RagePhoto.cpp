@@ -95,7 +95,7 @@ bool RagePhoto::load(const char *data, size_t length)
         }
 
 #ifdef CODECVT_COMPATIBLE
-        std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff, std::little_endian>,char16_t> convert;
+        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
         p_photoString = convert.to_bytes(reinterpret_cast<char16_t*>(photoHeader));
 #elif defined ICONV_COMPATIBLE
         iconv_t iconv_in = iconv_open("UTF-8", "UTF-16LE");
@@ -444,7 +444,7 @@ bool RagePhoto::save(char *data, PhotoFormat photoFormat)
     if (photoFormat == PhotoFormat::GTA5 || photoFormat == PhotoFormat::RDR2) {
 #if defined CODECVT_COMPATIBLE || defined ICONV_COMPATIBLE
 #ifdef CODECVT_COMPATIBLE
-        std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff, std::little_endian>,char16_t> convert;
+        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
         std::u16string photoString = convert.from_bytes(p_photoString);
         const size_t photoHeader_size = photoString.size() * 2;
         if (photoHeader_size > 256) {
@@ -796,7 +796,7 @@ void RagePhoto::moveOffsets()
     p_endOfFile = p_descOffset + p_descBuffer + 12;
 }
 
-size_t RagePhoto::readBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen)
+size_t RagePhoto::readBuffer(const char *input, void *output, size_t *pos, size_t len, size_t inputLen)
 {
     size_t readLen = 0;
     if (*pos >= inputLen)
@@ -804,12 +804,12 @@ size_t RagePhoto::readBuffer(const char *input, char *output, size_t *pos, size_
     readLen = inputLen - *pos;
     if (readLen > len)
         readLen = len;
-    memcpy(output, &input[*pos], readLen);
+    memcpy(output, reinterpret_cast<const void*>(&input[*pos]), readLen);
     *pos = *pos + readLen;
     return readLen;
 }
 
-size_t RagePhoto::writeBuffer(const char *input, char *output, size_t *pos, size_t len, size_t inputLen)
+size_t RagePhoto::writeBuffer(const void *input, char *output, size_t *pos, size_t len, size_t inputLen)
 {
     const size_t maxLen = len - *pos;
     size_t writeLen = inputLen;
@@ -817,7 +817,7 @@ size_t RagePhoto::writeBuffer(const char *input, char *output, size_t *pos, size
         return 0;
     if (inputLen > maxLen)
         writeLen = maxLen;
-    memcpy(&output[*pos], input, writeLen);
+    memcpy(reinterpret_cast<void*>(&output[*pos]), input, writeLen);
     *pos = *pos + writeLen;
     return writeLen;
 }
