@@ -1,7 +1,7 @@
 ## libragephoto
 Open Source RAGE Photo Parser for GTA V and RDR 2
 
-- Read RAGE Photos error free and correct
+- Read/Write RAGE Photos error free and correct
 - Support for metadata stored in RAGE Photos
 - Export RAGE Photos to jpeg with ragephoto-extract
 - High Efficient and Simple C++ API
@@ -24,12 +24,13 @@ sudo make install
 ```cpp
 RagePhoto ragePhoto;
 bool loaded = ragePhoto.load(data, size);
+std::string photo = ragePhoto.photo();
 const char* photoData = ragePhoto.photoData();
 uint32_t photoSize = ragePhoto.photoSize();
 std::string json = ragePhoto.json();
 std::string title = ragePhoto.title();
 RagePhoto::Error error = ragePhoto.error();
-RagePhoto::PhotoFormat format = ragePhoto.format();
+uint32_t format = ragePhoto.format(); // RagePhoto::GTA5 or RagePhoto::RDR2
 ```
 [RagePhoto API](https://libragephoto.syping.de/doc/classRagePhoto.html)
 

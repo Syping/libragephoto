@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
         ofs << ragePhoto.photo();
         ofs.close();
 
-        if (ragePhoto.format() == RagePhoto::PhotoFormat::GTA5)
+        if (ragePhoto.format() == RagePhoto::GTA5)
             std::cout << "GTA V Photo successfully exported" << std::endl;
         else
             std::cout << "RDR 2 Photo successfully exported" << std::endl;

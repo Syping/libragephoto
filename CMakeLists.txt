@@ -47,6 +47,7 @@ else()
 endif()
 
 set(RAGEPHOTO_HEADERS
+    src/libragephoto_data.h
     src/libragephoto_global.h
     src/RagePhoto.h
 )
