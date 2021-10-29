@@ -355,8 +355,8 @@ bool RagePhoto::load(const char *data, size_t length)
         std::cout << "titlBuffer: " << m_data.titlBuffer << std::endl;
         std::cout << "titlOffset: " << m_data.titlOffset << std::endl;
         std::cout << "eofOffset: " << m_data.endOfFile << std::endl;
-        std::cout << "moveOffsets()" << std::endl;
-        moveOffsets();
+        std::cout << "setBufferOffsets()" << std::endl;
+        setBufferOffsets();
         std::cout << "descOffset: " << m_data.descOffset << std::endl;
         std::cout << "jsonOffset: " << m_data.jsonOffset << std::endl;
         std::cout << "titlOffset: " << m_data.titlOffset << std::endl;
@@ -676,27 +676,55 @@ const std::string RagePhoto::save(bool *ok)
     return save(m_data.photoFormat, ok);
 }
 
-size_t RagePhoto::saveSize(uint32_t photoFormat)
+inline size_t RagePhoto::saveSize(RagePhotoData *ragePhotoData, uint32_t photoFormat)
 {
     if (photoFormat == PhotoFormat::GTA5)
-        return (m_data.photoBuffer + m_data.jsonBuffer + m_data.titlBuffer + m_data.descBuffer + GTA5_HEADERSIZE + 56UL);
+        return (ragePhotoData->photoBuffer + ragePhotoData->jsonBuffer + ragePhotoData->titlBuffer + ragePhotoData->descBuffer + GTA5_HEADERSIZE + 56UL);
     else if (photoFormat == PhotoFormat::RDR2)
-        return (m_data.photoBuffer + m_data.jsonBuffer + m_data.titlBuffer + m_data.descBuffer + RDR2_HEADERSIZE + 56UL);
+        return (ragePhotoData->photoBuffer + ragePhotoData->jsonBuffer + ragePhotoData->titlBuffer + ragePhotoData->descBuffer + RDR2_HEADERSIZE + 56UL);
     else
         return 0;
 }
 
-size_t RagePhoto::saveSize()
+inline size_t RagePhoto::saveSize(RagePhotoData *ragePhotoData)
+{
+    return saveSize(ragePhotoData, ragePhotoData->photoFormat);
+}
+
+inline size_t RagePhoto::saveSize(uint32_t photoFormat)
+{
+    return saveSize(&m_data, photoFormat);
+}
+
+inline size_t RagePhoto::saveSize()
 {
     return saveSize(m_data.photoFormat);
 }
 
-void RagePhoto::setBufferDefault()
+inline void RagePhoto::setBufferDefault()
 {
-    m_data.descBuffer = DEFAULT_DESCBUFFER;
-    m_data.jsonBuffer = DEFAULT_JSONBUFFER;
-    m_data.titlBuffer = DEFAULT_TITLBUFFER;
-    moveOffsets();
+    setBufferDefault(&m_data);
+}
+
+inline void RagePhoto::setBufferDefault(RagePhotoData *ragePhotoData)
+{
+    ragePhotoData->descBuffer = DEFAULT_DESCBUFFER;
+    ragePhotoData->jsonBuffer = DEFAULT_JSONBUFFER;
+    ragePhotoData->titlBuffer = DEFAULT_TITLBUFFER;
+    setBufferOffsets(ragePhotoData);
+}
+
+inline void RagePhoto::setBufferOffsets()
+{
+    setBufferOffsets(&m_data);
+}
+
+inline void RagePhoto::setBufferOffsets(RagePhotoData *ragePhotoData)
+{
+    ragePhotoData->jsonOffset = ragePhotoData->photoBuffer + 28;
+    ragePhotoData->titlOffset = ragePhotoData->jsonOffset + ragePhotoData->jsonBuffer + 8;
+    ragePhotoData->descOffset = ragePhotoData->titlOffset + ragePhotoData->titlBuffer + 8;
+    ragePhotoData->endOfFile = ragePhotoData->descOffset + ragePhotoData->descBuffer + 12;
 }
 
 void RagePhoto::setDescription(const std::string &description, uint32_t bufferSize)
@@ -704,7 +732,7 @@ void RagePhoto::setDescription(const std::string &description, uint32_t bufferSi
     m_data.description = description;
     if (bufferSize != 0) {
         m_data.descBuffer = bufferSize;
-        moveOffsets();
+        setBufferOffsets();
     }
 }
 
@@ -723,7 +751,7 @@ void RagePhoto::setJson(const std::string &json, uint32_t bufferSize)
     m_data.json = json;
     if (bufferSize != 0) {
         m_data.jsonBuffer = bufferSize;
-        moveOffsets();
+        setBufferOffsets();
     }
 }
 
@@ -774,7 +802,7 @@ bool RagePhoto::setPhoto(const char *data, uint32_t size, uint32_t bufferSize)
 
     if (bufferSize != 0) {
         m_data.photoBuffer = bufferSize;
-        moveOffsets();
+        setBufferOffsets();
     }
 
     m_data.error = static_cast<uint8_t>(Error::NoError); // 255
@@ -791,19 +819,11 @@ void RagePhoto::setTitle(const std::string &title, uint32_t bufferSize)
     m_data.title = title;
     if (bufferSize != 0) {
         m_data.titlBuffer = bufferSize;
-        moveOffsets();
+        setBufferOffsets();
     }
 }
 
-void RagePhoto::moveOffsets()
-{
-    m_data.jsonOffset = m_data.photoBuffer + 28;
-    m_data.titlOffset = m_data.jsonOffset + m_data.jsonBuffer + 8;
-    m_data.descOffset = m_data.titlOffset + m_data.titlBuffer + 8;
-    m_data.endOfFile = m_data.descOffset + m_data.descBuffer + 12;
-}
-
-size_t RagePhoto::readBuffer(const char *input, void *output, size_t *pos, size_t len, size_t inputLen)
+inline size_t RagePhoto::readBuffer(const char *input, void *output, size_t *pos, size_t len, size_t inputLen)
 {
     size_t readLen = 0;
     if (*pos >= inputLen)
@@ -816,7 +836,7 @@ size_t RagePhoto::readBuffer(const char *input, void *output, size_t *pos, size_
     return readLen;
 }
 
-size_t RagePhoto::writeBuffer(const void *input, char *output, size_t *pos, size_t len, size_t inputLen)
+inline size_t RagePhoto::writeBuffer(const void *input, char *output, size_t *pos, size_t len, size_t inputLen)
 {
     const size_t maxLen = len - *pos;
     size_t writeLen = inputLen;
@@ -829,7 +849,7 @@ size_t RagePhoto::writeBuffer(const void *input, char *output, size_t *pos, size
     return writeLen;
 }
 
-uint32_t RagePhoto::charToUInt32LE(char *x)
+inline uint32_t RagePhoto::charToUInt32LE(char *x)
 {
     return (static_cast<unsigned char>(x[3]) << 24 |
             static_cast<unsigned char>(x[2]) << 16 |
@@ -837,7 +857,7 @@ uint32_t RagePhoto::charToUInt32LE(char *x)
             static_cast<unsigned char>(x[0]));
 }
 
-void RagePhoto::uInt32ToCharLE(uint32_t x, char *y)
+inline void RagePhoto::uInt32ToCharLE(uint32_t x, char *y)
 {
     y[0] = x;
     y[1] = x >> 8;

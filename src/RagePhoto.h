@@ -129,9 +129,14 @@ public:
     * \param ok \p true when saved successfully
     */
     const std::string save(bool *ok = nullptr);
+    static size_t saveSize(RagePhotoData *ragePhotoData, uint32_t photoFormat); /**< Returns the save file size. */
+    static size_t saveSize(RagePhotoData *ragePhotoData); /**< Returns the save file size. */
     size_t saveSize(uint32_t photoFormat); /**< Returns the save file size. */
     size_t saveSize(); /**< Returns the save file size. */
     void setBufferDefault(); /**< Sets all cross-format Buffer to default size. */
+    static void setBufferDefault(RagePhotoData *ragePhotoData); /**< Sets all cross-format Buffer to default size. */
+    void setBufferOffsets(); /**< Moves all Buffer offsets to correct position. */
+    static void setBufferOffsets(RagePhotoData *ragePhotoData); /**< Moves all Buffer offsets to correct position. */
     void setDescription(const std::string &description, uint32_t bufferSize = 0); /**< Sets the Photo description. */
     void setFormat(uint32_t photoFormat); /**< Sets the Photo Format (GTA V or RDR 2). */
     void setFormatLoadFunction(uint32_t photoFormat, RagePhotoLoadFunc func); /**< Sets a custom Photo Format load function. */
@@ -151,11 +156,10 @@ public:
     void setTitle(const std::string &title, uint32_t bufferSize = 0); /**< Sets the Photo title. */
 
 protected:
-    inline void moveOffsets();
-    inline size_t readBuffer(const char *input, void *output, size_t *pos, size_t len, size_t inputLen);
-    inline size_t writeBuffer(const void *input, char *output, size_t *pos, size_t len, size_t inputLen);
-    inline uint32_t charToUInt32LE(char *x);
-    inline void uInt32ToCharLE(uint32_t x, char *y);
+    static size_t readBuffer(const char *input, void *output, size_t *pos, size_t len, size_t inputLen);
+    static size_t writeBuffer(const void *input, char *output, size_t *pos, size_t len, size_t inputLen);
+    static uint32_t charToUInt32LE(char *x);
+    static void uInt32ToCharLE(uint32_t x, char *y);
     std::unordered_map<uint8_t, RagePhotoLoadFunc> m_loadFuncs;
     RagePhotoData m_data;
 };
