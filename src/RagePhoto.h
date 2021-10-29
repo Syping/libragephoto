@@ -206,9 +206,9 @@ LIBRAGEPHOTO_EXPORT uint32_t ragephoto_getphotosize(ragephoto_t instance);
 */
 LIBRAGEPHOTO_EXPORT void ragephoto_close(ragephoto_t instance);
 
-#endif
 #ifdef __cplusplus
 }
+#endif
 #endif
 
 #endif // RAGEPHOTO_H
