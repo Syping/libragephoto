@@ -176,6 +176,7 @@ extern "C" {
 #else
 #include "libragephoto_global.h"
 #include <stdint.h>
+#include <stdio.h>
 #endif
 typedef void* ragephoto_t;
 
@@ -189,7 +190,7 @@ LIBRAGEPHOTO_EXPORT ragephoto_t ragephoto_open();
 * \param data Photo data
 * \param size Photo data size
 */
-LIBRAGEPHOTO_EXPORT bool ragephoto_load(ragephoto_t instance, const char *data, size_t size);
+LIBRAGEPHOTO_EXPORT int ragephoto_load(ragephoto_t instance, const char *data, size_t size);
 
 /** Returns the Photo JPEG data.
 * \param instance \p ragephoto_t instance

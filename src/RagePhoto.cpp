@@ -865,14 +865,13 @@ inline void RagePhoto::uInt32ToCharLE(uint32_t x, char *y)
     y[3] = x >> 24;
 }
 
-// C API
 #ifdef LIBRAGEPHOTO_C_API
 ragephoto_t ragephoto_open()
 {
     return new RagePhoto;
 }
 
-bool ragephoto_load(ragephoto_t instance, const char *data, size_t size)
+int ragephoto_load(ragephoto_t instance, const char *data, size_t size)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->load(data, size);
