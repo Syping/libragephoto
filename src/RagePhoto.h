@@ -170,14 +170,13 @@ protected:
 };
 #endif
 
+#ifdef LIBRAGEPHOTO_C_API
 #ifdef __cplusplus
 extern "C" {
 #else
 #include "libragephoto_global.h"
 #include <stdint.h>
 #endif
-#ifdef LIBRAGEPHOTO_C_API
-
 typedef void* ragephoto_t;
 
 /** Opens a \p ragephoto_t instance.
