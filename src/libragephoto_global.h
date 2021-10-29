@@ -27,7 +27,7 @@
 #define LIBRAGEPHOTO_EXPORT __declspec(dllimport)
 #endif
 #else
-#define LIBRAGEPHOTO_EXPORT __attribute__((visibility("default")))
+#define LIBRAGEPHOTO_EXPORT
 #endif
 #else
 #define LIBRAGEPHOTO_EXPORT __attribute__((visibility("default")))

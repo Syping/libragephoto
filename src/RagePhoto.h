@@ -16,9 +16,12 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
+/** \file RagePhoto.h */
+
 #ifndef RAGEPHOTO_H
 #define RAGEPHOTO_H
 
+#ifdef __cplusplus
 #include "libragephoto_data.h"
 #include "libragephoto_global.h"
 #include <unordered_map>
@@ -27,7 +30,9 @@
 #include <cstdint>
 #include <cstdio>
 
+#ifndef LIBRAGEPHOTO_DOXYGEN
 typedef std::function<bool(const char*, size_t, RagePhotoData*)> RagePhotoLoadFunc;
+#endif
 
 class LIBRAGEPHOTO_EXPORT RagePhoto
 {
@@ -163,5 +168,48 @@ protected:
     std::unordered_map<uint8_t, RagePhotoLoadFunc> m_loadFuncs;
     RagePhotoData m_data;
 };
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#else
+#include "libragephoto_global.h"
+#include <stdint.h>
+#endif
+#ifdef LIBRAGEPHOTO_C_API
+
+typedef void* ragephoto_t;
+
+/** Opens a \p ragephoto_t instance.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT ragephoto_t ragephoto_open();
+
+/** Loads a Photo from a const char*.
+* \param instance \p ragephoto_t instance
+* \param data Photo data
+* \param size Photo data size
+*/
+LIBRAGEPHOTO_EXPORT bool ragephoto_load(ragephoto_t instance, const char *data, size_t size);
+
+/** Returns the Photo JPEG data.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotodata(ragephoto_t instance);
+
+/** Returns the Photo JPEG data size.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT uint32_t ragephoto_getphotosize(ragephoto_t instance);
+
+/** Closes a \p ragephoto_t instance.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT void ragephoto_close(ragephoto_t instance);
+
+#endif
+#ifdef __cplusplus
+}
+#endif
 
 #endif // RAGEPHOTO_H

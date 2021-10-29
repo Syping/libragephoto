@@ -57,14 +57,15 @@ set(RAGEPHOTO_SOURCES
 
 option(BUILD_SHARED "Build libragephoto as shared library" ON)
 if (BUILD_SHARED)
+    option(WITH_C_API "Build libragephoto with C API support" ON)
     add_library(ragephoto SHARED ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES})
     set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
-    set(LIBRAGEPHOTO_LIBTYPE -DLIBRAGEPHOTO_SHARED)
+    set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_SHARED)
 else()
+    option(WITH_C_API "Build libragephoto with C API support" OFF)
     add_library(ragephoto STATIC ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES})
-    set(LIBRAGEPHOTO_LIBTYPE -DLIBRAGEPHOTO_STATIC)
+    set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_STATIC)
 endif()
-configure_file(src/ragephoto.pc.in pkgconfig/ragephoto.pc @ONLY)
 
 option(WITH_BENCHMARK "Build with libragephoto benchmark" OFF)
 if (WITH_BENCHMARK)
@@ -73,11 +74,22 @@ if (WITH_BENCHMARK)
     )
 endif()
 
+if (WITH_C_API)
+    set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_API)
+else()
+    set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_NOAPI)
+endif()
+list(APPEND LIBRAGEPHOTO_DEFINES
+    ${LIBRAGEPHOTO_API}
+)
+
+configure_file(src/ragephoto.pc.in pkgconfig/ragephoto.pc @ONLY)
 target_compile_definitions(ragephoto PRIVATE
     LIBRAGEPHOTO_LIBRARY
     ${LIBRAGEPHOTO_DEFINES}
 )
 target_compile_definitions(ragephoto PUBLIC
+    ${LIBRAGEPHOTO_API}
     ${LIBRAGEPHOTO_LIBTYPE}
 )
 install(TARGETS ragephoto DESTINATION ${CMAKE_INSTALL_LIBDIR})
