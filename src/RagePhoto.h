@@ -207,7 +207,7 @@ LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotodata(ragephoto_t instance);
 */
 LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotodesc(ragephoto_t instance);
 
-/** Returns the Photo JPEG data size.
+/** Returns the Photo Format (GTA V or RDR 2).
 * \param instance \p ragephoto_t instance
 */
 LIBRAGEPHOTO_EXPORT uint32_t ragephoto_getphotoformat(ragephoto_t instance);
@@ -217,7 +217,7 @@ LIBRAGEPHOTO_EXPORT uint32_t ragephoto_getphotoformat(ragephoto_t instance);
 */
 LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotojson(ragephoto_t instance);
 
-/** Returns the Photo Format (GTA V or RDR 2).
+/** Returns the Photo JPEG data size.
 * \param instance \p ragephoto_t instance
 */
 LIBRAGEPHOTO_EXPORT uint32_t ragephoto_getphotosize(ragephoto_t instance);
