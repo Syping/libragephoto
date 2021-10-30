@@ -27,13 +27,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTKMM REQUIRED gtkmm-3.0)
 
-set(GTKVIEWER_HEADERS
-    src/PhotoViewer.h
-)
-
 set(GTKVIEWER_SOURCES
     src/main.cpp
-    src/PhotoViewer.cpp
 )
 
 if (TARGET ragephoto)
@@ -43,7 +38,7 @@ else()
     pkg_check_modules(RAGEPHOTO REQUIRED ragephoto)
 endif()
 
-add_executable(ragephoto-gtkviewer WIN32 ${GTKVIEWER_HEADERS} ${GTKVIEWER_SOURCES})
+add_executable(ragephoto-gtkviewer WIN32 ${GTKVIEWER_SOURCES})
 target_compile_options(ragephoto-gtkviewer PRIVATE ${GTKMM_CFLAGS} ${RAGEPHOTO_CFLAGS})
 target_link_libraries(ragephoto-gtkviewer PRIVATE ${GTKMM_LIBRARIES} ${RAGEPHOTO_LIBRARIES})
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.13.0")

@@ -16,16 +16,52 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include "PhotoViewer.h"
+#include <RagePhoto.h>
 #include <gtkmm/application.h>
 #include <gtkmm/box.h>
 #include <gtkmm/button.h>
+#include <gtkmm/image.h>
 #include <gtkmm/filechooserdialog.h>
 #include <gtkmm/filefilter.h>
 #include <gtkmm/label.h>
 #include <gtkmm/messagedialog.h>
 #include <gtkmm/window.h>
+#include <fstream>
 #include <iostream>
+#include <iterator>
+
+bool readPhotoFile(const std::string &filename, Gtk::Window *win, Gtk::Image *image)
+{
+    std::ifstream ifs(filename, std::ios::in | std::ios::binary);
+    if (ifs.is_open()) {
+        std::string data(std::istreambuf_iterator<char>{ifs}, {});
+        ifs.close();
+        RagePhoto ragePhoto;
+        const bool loaded = ragePhoto.load(data);
+        if (!loaded) {
+            const RagePhoto::Error error = ragePhoto.error();
+            if (error <= RagePhoto::Error::PhotoReadError) {
+                Gtk::MessageDialog msg(*win, "Failed to read photo: " + filename, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
+                msg.set_title("Open Photo");
+                msg.run();
+                return false;
+            }
+        }
+        GdkPixbufLoader *pixbuf_loader = gdk_pixbuf_loader_new();
+        gdk_pixbuf_loader_write(pixbuf_loader, reinterpret_cast<const guchar*>(ragePhoto.photoData()), ragePhoto.photoSize(), NULL);
+        GdkPixbuf *pixbuf = gdk_pixbuf_loader_get_pixbuf(pixbuf_loader);
+        gdk_pixbuf_loader_close(pixbuf_loader, NULL);
+        image->set(Glib::wrap(pixbuf));
+        win->set_title("RagePhoto GTK Photo Viewer - " + ragePhoto.title());
+        return true;
+    }
+    else {
+        Gtk::MessageDialog msg(*win, "Failed to open file: " + filename, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
+        msg.set_title("Open Photo");
+        msg.run();
+    }
+    return false;
+}
 
 int main(int argc, char *argv[])
 {
@@ -40,9 +76,9 @@ int main(int argc, char *argv[])
     vertical_box.set_margin_bottom(6);
     vertical_box.set_spacing(6);
 
-    PhotoViewer photo_viewer(&win);
-    vertical_box.add(photo_viewer);
-    photo_viewer.show();
+    Gtk::Image image;
+    vertical_box.add(image);
+    image.show();
 
     Gtk::Box horizontal_box(Gtk::ORIENTATION_HORIZONTAL);
     horizontal_box.set_margin_left(6);
@@ -62,17 +98,17 @@ int main(int argc, char *argv[])
         dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
         dialog.add_button("_Open", Gtk::RESPONSE_OK);
 
-        Glib::RefPtr<Gtk::FileFilter> filter_photo = Gtk::FileFilter::create();
-        filter_photo->set_name("GTA V Photo");
-        filter_photo->add_pattern("PGTA5*");
-        dialog.add_filter(filter_photo);
+        Glib::RefPtr<Gtk::FileFilter> ragephoto_filter = Gtk::FileFilter::create();
+        ragephoto_filter->set_name("RagePhoto compatible");
+        ragephoto_filter->add_pattern("PGTA5*");
+        ragephoto_filter->add_pattern("PRDR3*");
+        dialog.add_filter(ragephoto_filter);
 
         int result = dialog.run();
 
         switch(result) {
         case Gtk::RESPONSE_OK: {
-            std::string filename = dialog.get_filename();
-            photo_viewer.open_file(filename.c_str());
+            readPhotoFile(dialog.get_filename(), &win, &image);
             break;
         }
         default:
@@ -96,7 +132,7 @@ int main(int argc, char *argv[])
     app->signal_open().connect([&](const Gio::Application::type_vec_files &files, const Glib::ustring &hint) {
         if (files.size() == 1) {
             for (const auto &file : files) {
-                photo_viewer.open_file(file->get_path());
+                readPhotoFile(file->get_path(), &win, &image);
             }
             app->add_window(win);
             win.present();

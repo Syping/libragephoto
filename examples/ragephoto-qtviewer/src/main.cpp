@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     if (QIcon::hasThemeIcon("document-open"))
         openButton.setIcon(QIcon::fromTheme("document-open"));
     QObject::connect(&openButton, &QPushButton::clicked, &mainWindow, [&](){
-        const QString filename = QFileDialog::getOpenFileName(&mainWindow, "Open Photo...", QString(), "GTA V Photo (PGTA5*)");
+        const QString filename = QFileDialog::getOpenFileName(&mainWindow, "Open Photo...", QString(), "RagePhoto compatible (PGTA5* PRDR3*)");
         if (filename.isEmpty())
             return;
         if (readPhotoFile(filename, &mainWindow, &photoLabel)) {
