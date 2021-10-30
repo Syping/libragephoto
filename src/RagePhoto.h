@@ -107,15 +107,15 @@ public:
     * \param data Photo data
     */
     bool load(const std::string &data);
-    Error error(); /**< Returns the last error occurred. */
-    uint32_t format(); /**< Returns the Photo Format (GTA V or RDR 2). */
-    const std::string photo(); /**< Returns the Photo JPEG data. */
-    const char *photoData(); /**< Returns the Photo JPEG data. */
-    uint32_t photoSize(); /**< Returns the Photo JPEG data size. */
-    const std::string description(); /**< Returns the Photo description. */
-    const std::string json(); /**< Returns the Photo JSON data. */
-    const std::string header(); /**< Returns the Photo header. */
-    const std::string title(); /**< Returns the Photo title. */
+    Error error() const; /**< Returns the last error occurred. */
+    uint32_t format() const; /**< Returns the Photo Format (GTA V or RDR 2). */
+    const std::string photo() const; /**< Returns the Photo JPEG data. */
+    const char *photoData() const; /**< Returns the Photo JPEG data. */
+    uint32_t photoSize() const; /**< Returns the Photo JPEG data size. */
+    const std::string& description() const; /**< Returns the Photo description. */
+    const std::string& json() const; /**< Returns the Photo JSON data. */
+    const std::string& header() const; /**< Returns the Photo header. */
+    const std::string& title() const; /**< Returns the Photo title. */
     /** Saves a Photo to a char*.
     * \param data Photo data
     * \param photoFormat Photo Format (GTA V or RDR 2)
@@ -192,15 +192,40 @@ LIBRAGEPHOTO_EXPORT ragephoto_t ragephoto_open();
 */
 LIBRAGEPHOTO_EXPORT int ragephoto_load(ragephoto_t instance, const char *data, size_t size);
 
+/** Returns the last error occurred.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT uint8_t ragephoto_error(ragephoto_t instance);
+
 /** Returns the Photo JPEG data.
 * \param instance \p ragephoto_t instance
 */
 LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotodata(ragephoto_t instance);
 
+/** Returns the Photo description.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotodesc(ragephoto_t instance);
+
 /** Returns the Photo JPEG data size.
 * \param instance \p ragephoto_t instance
 */
+LIBRAGEPHOTO_EXPORT uint32_t ragephoto_getphotoformat(ragephoto_t instance);
+
+/** Returns the Photo JSON data.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotojson(ragephoto_t instance);
+
+/** Returns the Photo Format (GTA V or RDR 2).
+* \param instance \p ragephoto_t instance
+*/
 LIBRAGEPHOTO_EXPORT uint32_t ragephoto_getphotosize(ragephoto_t instance);
+
+/** Returns the Photo title.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT const char* ragephoto_getphototitle(ragephoto_t instance);
 
 /** Closes a \p ragephoto_t instance.
 * \param instance \p ragephoto_t instance

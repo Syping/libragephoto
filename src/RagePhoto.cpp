@@ -387,17 +387,17 @@ bool RagePhoto::load(const std::string &data)
     return load(data.data(), data.size());
 }
 
-RagePhoto::Error RagePhoto::error()
+RagePhoto::Error RagePhoto::error() const
 {
     return static_cast<Error>(m_data.error);
 }
 
-uint32_t RagePhoto::format()
+uint32_t RagePhoto::format() const
 {
     return m_data.photoFormat;
 }
 
-const std::string RagePhoto::photo()
+const std::string RagePhoto::photo() const
 {
     if (m_data.photoLoaded)
         return std::string(m_data.photoData, m_data.photoSize);
@@ -405,7 +405,7 @@ const std::string RagePhoto::photo()
         return std::string();
 }
 
-const char* RagePhoto::photoData()
+const char* RagePhoto::photoData() const
 {
     if (m_data.photoLoaded)
         return m_data.photoData;
@@ -413,7 +413,7 @@ const char* RagePhoto::photoData()
         return nullptr;
 }
 
-uint32_t RagePhoto::photoSize()
+uint32_t RagePhoto::photoSize() const
 {
     if (m_data.photoLoaded)
         return m_data.photoSize;
@@ -421,22 +421,22 @@ uint32_t RagePhoto::photoSize()
         return 0UL;
 }
 
-const std::string RagePhoto::description()
+const std::string& RagePhoto::description() const
 {
     return m_data.description;
 }
 
-const std::string RagePhoto::json()
+const std::string& RagePhoto::json() const
 {
     return m_data.json;
 }
 
-const std::string RagePhoto::header()
+const std::string& RagePhoto::header() const
 {
     return m_data.header;
 }
 
-const std::string RagePhoto::title()
+const std::string& RagePhoto::title() const
 {
     return m_data.title;
 }
@@ -868,7 +868,7 @@ inline void RagePhoto::uInt32ToCharLE(uint32_t x, char *y)
 #ifdef LIBRAGEPHOTO_C_API
 ragephoto_t ragephoto_open()
 {
-    return new RagePhoto;
+    return static_cast<ragephoto_t>(new RagePhoto);
 }
 
 int ragephoto_load(ragephoto_t instance, const char *data, size_t size)
@@ -877,16 +877,46 @@ int ragephoto_load(ragephoto_t instance, const char *data, size_t size)
     return ragePhoto->load(data, size);
 }
 
+uint8_t ragephoto_error(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return static_cast<uint8_t>(ragePhoto->error());
+}
+
 const char* ragephoto_getphotodata(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->photoData();
 }
 
+const char* ragephoto_getphotodesc(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->description().data();
+}
+
+uint32_t ragephoto_getphotoformat(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->format();
+}
+
+const char* ragephoto_getphotojson(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->json().data();
+}
+
 uint32_t ragephoto_getphotosize(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->photoSize();
+}
+
+const char* ragephoto_getphototitle(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->title().data();
 }
 
 void ragephoto_close(ragephoto_t instance)
