@@ -30,9 +30,7 @@
 #include <cstdint>
 #include <cstdio>
 
-#ifndef LIBRAGEPHOTO_DOXYGEN
 typedef std::function<bool(const char*, size_t, RagePhotoData*)> RagePhotoLoadFunc;
-#endif
 
 class LIBRAGEPHOTO_EXPORT RagePhoto
 {
@@ -134,10 +132,10 @@ public:
     * \param ok \p true when saved successfully
     */
     const std::string save(bool *ok = nullptr);
-    static size_t saveSize(RagePhotoData *ragePhotoData, uint32_t photoFormat); /**< Returns the save file size. */
-    static size_t saveSize(RagePhotoData *ragePhotoData); /**< Returns the save file size. */
-    size_t saveSize(uint32_t photoFormat); /**< Returns the save file size. */
-    size_t saveSize(); /**< Returns the save file size. */
+    static size_t saveSize(RagePhotoData *ragePhotoData, uint32_t photoFormat); /**< Returns the Photo save file size. */
+    static size_t saveSize(RagePhotoData *ragePhotoData); /**< Returns the Photo save file size. */
+    size_t saveSize(uint32_t photoFormat); /**< Returns the Photo save file size. */
+    size_t saveSize(); /**< Returns the Photo save file size. */
     void setBufferDefault(); /**< Sets all cross-format Buffer to default size. */
     static void setBufferDefault(RagePhotoData *ragePhotoData); /**< Sets all cross-format Buffer to default size. */
     void setBufferOffsets(); /**< Moves all Buffer offsets to correct position. */
@@ -146,7 +144,7 @@ public:
     void setFormat(uint32_t photoFormat); /**< Sets the Photo Format (GTA V or RDR 2). */
     void setFormatLoadFunction(uint32_t photoFormat, RagePhotoLoadFunc func); /**< Sets a custom Photo Format load function. */
     void setJson(const std::string &json, uint32_t bufferSize = 0); /**< Sets the Photo JSON data. */
-    void setHeader(const std::string &header, uint32_t headerSum); /**< Sets the Photo header. (expert only) */
+    void setHeader(const std::string &header, uint32_t headerSum); /**< Sets the Photo header. (EXPERT ONLY) */
     /** Sets the Photo JPEG data.
     * \param data JPEG data
     * \param size JPEG data size
@@ -168,6 +166,8 @@ protected:
     std::unordered_map<uint8_t, RagePhotoLoadFunc> m_loadFuncs;
     RagePhotoData m_data;
 };
+#else
+#define LIBRAGEPHOTO_C_API
 #endif
 
 #ifdef LIBRAGEPHOTO_C_API
@@ -178,11 +178,10 @@ extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 #endif
+/** RagePhoto C++ class typedef for C API. */
 typedef void* ragephoto_t;
 
-/** Opens a \p ragephoto_t instance.
-* \param instance \p ragephoto_t instance
-*/
+/** Opens a \p ragephoto_t instance. */
 LIBRAGEPHOTO_EXPORT ragephoto_t ragephoto_open();
 
 /** Loads a Photo from a const char*.
@@ -197,10 +196,17 @@ LIBRAGEPHOTO_EXPORT int ragephoto_load(ragephoto_t instance, const char *data, s
 */
 LIBRAGEPHOTO_EXPORT uint8_t ragephoto_error(ragephoto_t instance);
 
-/** Returns the Photo JPEG data.
-* \param instance \p ragephoto_t instance
-*/
-LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotodata(ragephoto_t instance);
+/** Returns the GTA V default Photo Buffer Size. */
+LIBRAGEPHOTO_EXPORT uint32_t ragephoto_defpbuf_gta5();
+
+/** Returns the RDR 2 default Photo Buffer Size. */
+LIBRAGEPHOTO_EXPORT uint32_t ragephoto_defpbuf_rdr2();
+
+/** Returns the GTA V Photo Format. */
+LIBRAGEPHOTO_EXPORT uint32_t ragephoto_format_gta5();
+
+/** Returns the RDR 2 Photo Format. */
+LIBRAGEPHOTO_EXPORT uint32_t ragephoto_format_rdr2();
 
 /** Returns the Photo description.
 * \param instance \p ragephoto_t instance
@@ -212,10 +218,20 @@ LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotodesc(ragephoto_t instance);
 */
 LIBRAGEPHOTO_EXPORT uint32_t ragephoto_getphotoformat(ragephoto_t instance);
 
+/** Returns the Photo JPEG data.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotojpeg(ragephoto_t instance);
+
 /** Returns the Photo JSON data.
 * \param instance \p ragephoto_t instance
 */
 LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotojson(ragephoto_t instance);
+
+/** Returns the Photo header.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotoheader(ragephoto_t instance);
 
 /** Returns the Photo JPEG data size.
 * \param instance \p ragephoto_t instance
@@ -226,6 +242,65 @@ LIBRAGEPHOTO_EXPORT uint32_t ragephoto_getphotosize(ragephoto_t instance);
 * \param instance \p ragephoto_t instance
 */
 LIBRAGEPHOTO_EXPORT const char* ragephoto_getphototitle(ragephoto_t instance);
+
+/** Returns the Photo save file size.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT size_t ragephoto_getsavesize(ragephoto_t instance);
+
+/** Saves a Photo to a char*.
+* \param instance \p ragephoto_t instance
+* \param data Photo data
+*/
+LIBRAGEPHOTO_EXPORT int ragephoto_save(ragephoto_t instance, char *data);
+
+/** Sets all cross-format Buffer to default size.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT void ragephoto_setbufferdefault(ragephoto_t instance);
+
+/** Moves all Buffer offsets to correct position.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_EXPORT void ragephoto_setbufferoffsets(ragephoto_t instance);
+
+/** Sets the Photo description.
+* \param instance \p ragephoto_t instance
+* \param description Description
+* \param bufferSize Description buffer size \p USE \p 0
+*/
+LIBRAGEPHOTO_EXPORT void ragephoto_setphotodesc(ragephoto_t instance, const char *description, uint32_t bufferSize);
+
+/** Sets the Photo Format (GTA V or RDR 2).
+* \param instance \p ragephoto_t instance
+* \param photoFormat Photo Format (GTA V or RDR 2)
+*/
+LIBRAGEPHOTO_EXPORT void ragephoto_setphotoformat(ragephoto_t instance, uint32_t photoFormat);
+
+/** Sets the Photo JPEG data.
+* \param instance \p ragephoto_t instance
+* \param data JPEG data
+* \param size JPEG data size
+* \param bufferSize JPEG buffer size
+*/
+LIBRAGEPHOTO_EXPORT int ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize);
+
+/** Sets the Photo JSON data.
+* \param instance \p ragephoto_t instance
+* \param json JSON data
+* \param bufferSize JSON data buffer size \p USE \p 0
+*/
+LIBRAGEPHOTO_EXPORT void ragephoto_setphotojson(ragephoto_t instance, const char *json, uint32_t bufferSize);
+
+/** Sets the Photo header. (EXPERT ONLY) */
+LIBRAGEPHOTO_EXPORT void ragephoto_setphotoheader(ragephoto_t instance, const char *header, uint32_t headerSum);
+
+/** Sets the Photo title.
+* \param instance \p ragephoto_t instance
+* \param title Title
+* \param bufferSize Title buffer size \p USE \p 0
+*/
+LIBRAGEPHOTO_EXPORT void ragephoto_setphototitle(ragephoto_t instance, const char *title, uint32_t bufferSize);
 
 /** Closes a \p ragephoto_t instance.
 * \param instance \p ragephoto_t instance

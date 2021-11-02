@@ -883,16 +883,30 @@ uint8_t ragephoto_error(ragephoto_t instance)
     return static_cast<uint8_t>(ragePhoto->error());
 }
 
-const char* ragephoto_getphotodata(ragephoto_t instance)
+uint32_t ragephoto_defpbuf_gta5()
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
-    return ragePhoto->photoData();
+    return RagePhoto::DEFAULT_GTA5_PHOTOBUFFER;
+}
+
+uint32_t ragephoto_defpbuf_rdr2()
+{
+    return RagePhoto::DEFAULT_RDR2_PHOTOBUFFER;
+}
+
+uint32_t ragephoto_format_gta5()
+{
+    return RagePhoto::GTA5;
+}
+
+uint32_t ragephoto_format_rdr2()
+{
+    return RagePhoto::RDR2;
 }
 
 const char* ragephoto_getphotodesc(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
-    return ragePhoto->description().data();
+    return ragePhoto->description().c_str();
 }
 
 uint32_t ragephoto_getphotoformat(ragephoto_t instance)
@@ -901,10 +915,22 @@ uint32_t ragephoto_getphotoformat(ragephoto_t instance)
     return ragePhoto->format();
 }
 
+const char* ragephoto_getphotojpeg(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->photoData();
+}
+
 const char* ragephoto_getphotojson(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
-    return ragePhoto->json().data();
+    return ragePhoto->json().c_str();
+}
+
+const char* ragephoto_getphotoheader(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->header().c_str();
 }
 
 uint32_t ragephoto_getphotosize(ragephoto_t instance)
@@ -916,7 +942,67 @@ uint32_t ragephoto_getphotosize(ragephoto_t instance)
 const char* ragephoto_getphototitle(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
-    return ragePhoto->title().data();
+    return ragePhoto->title().c_str();
+}
+
+size_t ragephoto_getsavesize(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->saveSize();
+}
+
+int ragephoto_save(ragephoto_t instance, char *data)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->save(data);
+}
+
+void ragephoto_setbufferdefault(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    ragePhoto->setBufferDefault();
+}
+
+void ragephoto_setbufferoffsets(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    ragePhoto->setBufferOffsets();
+}
+
+void ragephoto_setphotodesc(ragephoto_t instance, const char *description, uint32_t bufferSize)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    ragePhoto->setDescription(description, bufferSize);
+}
+
+void ragephoto_setphotoformat(ragephoto_t instance, uint32_t photoFormat)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    ragePhoto->setFormat(photoFormat);
+}
+
+int ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->setPhoto(data, size, bufferSize);
+}
+
+void ragephoto_setphotojson(ragephoto_t instance, const char *json, uint32_t bufferSize)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    ragePhoto->setJson(json, bufferSize);
+}
+
+void ragephoto_setphotoheader(ragephoto_t instance, const char *header, uint32_t headerSum)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    ragePhoto->setHeader(header, headerSum);
+}
+
+void ragephoto_setphototitle(ragephoto_t instance, const char *title, uint32_t bufferSize)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    ragePhoto->setTitle(title, bufferSize);
 }
 
 void ragephoto_close(ragephoto_t instance)

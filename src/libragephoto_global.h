@@ -30,7 +30,7 @@
 #define LIBRAGEPHOTO_EXPORT
 #endif
 #else
-#define LIBRAGEPHOTO_EXPORT __attribute__((visibility("default")))
+#define LIBRAGEPHOTO_EXPORT
 #endif
 
 #endif // LIBRAGEPHOTO_GLOBAL_H
