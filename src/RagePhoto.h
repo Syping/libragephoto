@@ -86,7 +86,7 @@ public:
         TitleReadError = 26, /**< Title can't be read */
         UnicodeHeaderError = 5, /**< Header can't be decoded */
         UnicodeInitError = 4, /**< Failed to initialise Unicode decoder */
-        Uninitialised = 0, /**< Uninitialised */
+        Uninitialised = 0, /**< Uninitialised, file access failed */
     };
     /** Photo Formats */
     enum PhotoFormat : uint32_t {
@@ -105,6 +105,10 @@ public:
     * \param data Photo data
     */
     bool load(const std::string &data);
+    /** Loads a Photo from a file.
+    * \param filename File to load
+    */
+    bool loadFile(const std::string &filename);
     Error error() const; /**< Returns the last error occurred. */
     uint32_t format() const; /**< Returns the Photo Format (GTA V or RDR 2). */
     const std::string photo() const; /**< Returns the Photo JPEG data. */
@@ -132,6 +136,8 @@ public:
     * \param ok \p true when saved successfully
     */
     const std::string save(bool *ok = nullptr);
+    bool saveFile(const std::string &filename, uint32_t photoFormat); /**< Saves a Photo to a file. */
+    bool saveFile(const std::string &filename); /**< Saves a Photo to a file. */
     static size_t saveSize(RagePhotoData *ragePhotoData, uint32_t photoFormat); /**< Returns the Photo save file size. */
     static size_t saveSize(RagePhotoData *ragePhotoData); /**< Returns the Photo save file size. */
     size_t saveSize(uint32_t photoFormat); /**< Returns the Photo save file size. */

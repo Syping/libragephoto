@@ -17,7 +17,9 @@
 *****************************************************************************/
 
 #include "RagePhoto.h"
+#include <fstream>
 #include <iostream>
+#include <iterator>
 #include <cstdlib>
 #include <cstring>
 
@@ -387,6 +389,20 @@ bool RagePhoto::load(const std::string &data)
     return load(data.data(), data.size());
 }
 
+bool RagePhoto::loadFile(const std::string &filename)
+{
+    std::ifstream ifs(filename, std::ios::in | std::ios::binary);
+    if (ifs.is_open()) {
+        std::string sdata(std::istreambuf_iterator<char>{ifs}, {});
+        ifs.close();
+        return load(sdata);
+    }
+    else {
+        m_data.error = static_cast<uint8_t>(Error::Uninitialised); // 0
+        return false;
+    }
+}
+
 RagePhoto::Error RagePhoto::error() const
 {
     return static_cast<Error>(m_data.error);
@@ -674,6 +690,29 @@ const std::string RagePhoto::save(uint32_t photoFormat, bool *ok)
 const std::string RagePhoto::save(bool *ok)
 {
     return save(m_data.photoFormat, ok);
+}
+
+bool RagePhoto::saveFile(const std::string &filename, uint32_t photoFormat)
+{
+    bool ok;
+    const std::string sdata = save(photoFormat, &ok);
+    if (ok) {
+        std::ofstream ofs(filename, std::ios::out | std::ios::binary | std::ios::trunc);
+        if (!ofs.is_open()) {
+            m_data.error = static_cast<uint8_t>(Error::Uninitialised); // 0
+            return false;
+        }
+        ofs << sdata;
+        ofs.close();
+        return true;
+    }
+    else
+        return false;
+}
+
+bool RagePhoto::saveFile(const std::string &filename)
+{
+    return saveFile(filename, m_data.photoFormat);
 }
 
 inline size_t RagePhoto::saveSize(RagePhotoData *ragePhotoData, uint32_t photoFormat)
