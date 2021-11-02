@@ -28,47 +28,36 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    // Make it crash when RagePhoto have a bug which make the deinitialisation to fail
-    {
-        // Initialise RagePhoto
-        RagePhoto ragePhoto;
+    // Initialise RagePhoto
+    RagePhoto ragePhoto;
 
-        // Read file
-        std::ifstream ifs(argv[1], std::ios::in | std::ios::binary);
-        if (!ifs.is_open()) {
+    // Load Photo
+    const bool loaded = ragePhoto.loadFile(argv[1]);
+
+    if (!loaded) {
+        if (ragePhoto.error() == RagePhoto::Error::Uninitialised) {
             std::cout << "Failed to open file: " << argv[1] << std::endl;
             return 1;
         }
-        std::string data(std::istreambuf_iterator<char>{ifs}, {});
-        ifs.close();
-
-        // Load Photo
-        const bool loaded = ragePhoto.load(data);
-
-        if (!loaded) {
-            if (ragePhoto.error() <= RagePhoto::Error::PhotoReadError) {
-                std::cout << "Failed to load photo" << std::endl;
-                return 1;
-            }
-        }
-
-        // Write jpeg
-        std::ofstream ofs(argv[2], std::ios::out | std::ios::binary | std::ios::trunc);
-        if (!ofs.is_open()) {
-            std::cout << "Failed to write file: " << argv[2] << std::endl;
+        else if (ragePhoto.error() <= RagePhoto::Error::PhotoReadError) {
+            std::cout << "Failed to load photo" << std::endl;
             return 1;
         }
-        ofs << ragePhoto.photo();
-        ofs.close();
-
-        if (ragePhoto.format() == RagePhoto::GTA5)
-            std::cout << "GTA V Photo successfully exported" << std::endl;
-        else
-            std::cout << "RDR 2 Photo successfully exported" << std::endl;
-
-        // Clear RagePhoto (provocate crash when pointer leak)
-        ragePhoto.clear();
     }
+
+    // Write jpeg
+    std::ofstream ofs(argv[2], std::ios::out | std::ios::binary | std::ios::trunc);
+    if (!ofs.is_open()) {
+        std::cout << "Failed to write file: " << argv[2] << std::endl;
+        return 1;
+    }
+    ofs << ragePhoto.photo();
+    ofs.close();
+
+    if (ragePhoto.format() == RagePhoto::GTA5)
+        std::cout << "GTA V Photo successfully exported" << std::endl;
+    else
+        std::cout << "RDR 2 Photo successfully exported" << std::endl;
 
     return 0;
 }
