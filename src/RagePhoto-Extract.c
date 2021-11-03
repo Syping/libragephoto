@@ -17,46 +17,52 @@
 *****************************************************************************/
 
 #include "RagePhoto.h"
-#include <fstream>
-#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char *argv[])
 {
     if (argc != 3) {
-        std::cout << "Usage: " << argv[0] << " [photo] [jpegout]" << std::endl;
+        printf("Usage: %s [photo] [jpegout]\n", argv[0]);
         return 0;
     }
 
-    // Initialise RagePhoto
-    RagePhoto ragePhoto;
+    ragephoto_t ragephoto_in = ragephoto_open();
 
     // Load Photo
-    const bool loaded = ragePhoto.loadFile(argv[1]);
+    const int loaded = ragephoto_loadfile(ragephoto_in, argv[1]);
 
-    if (!loaded) {
-        if (ragePhoto.error() == RagePhoto::Error::Uninitialised) {
-            std::cout << "Failed to open file: " << argv[1] << std::endl;
+    if (loaded != 1) {
+        if (ragephoto_error(ragephoto_in) == 0) {
+            printf("Failed to open file: %s\n", argv[1]);
             return 1;
         }
-        else if (ragePhoto.error() <= RagePhoto::Error::PhotoReadError) {
-            std::cout << "Failed to load photo" << std::endl;
+        else if (ragephoto_getphotosize(ragephoto_in) <= 0) {
+            printf("Failed to load photo\n");
             return 1;
         }
     }
 
     // Write jpeg
-    std::ofstream ofs(argv[2], std::ios::out | std::ios::binary | std::ios::trunc);
-    if (!ofs.is_open()) {
-        std::cout << "Failed to write file: " << argv[2] << std::endl;
+    FILE *file = fopen(argv[2], "wb");
+    if (!file) {
+        printf("Failed to write file: %s\n", argv[2]);
         return 1;
     }
-    ofs << ragePhoto.photo();
-    ofs.close();
+    const size_t size = fwrite(ragephoto_getphotojpeg(ragephoto_in), sizeof(char), ragephoto_getphotosize(ragephoto_in), file);
+    fclose(file);
 
-    if (ragePhoto.format() == RagePhoto::GTA5)
-        std::cout << "GTA V Photo successfully exported" << std::endl;
+    if (size != ragephoto_getphotosize(ragephoto_in)) {
+        printf("Failed to write file: %s\n", argv[2]);
+        return 1;
+    }
+
+    if (ragephoto_getphotoformat(ragephoto_in) == ragephoto_format_gta5())
+        printf("GTA V Photo successfully exported\n");
     else
-        std::cout << "RDR 2 Photo successfully exported" << std::endl;
+        printf("RDR 2 Photo successfully exported\n");
+
+    ragephoto_close(ragephoto_in);
 
     return 0;
 }
