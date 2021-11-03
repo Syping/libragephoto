@@ -457,6 +457,11 @@ const std::string& RagePhoto::title() const
     return m_data.title;
 }
 
+const char* RagePhoto::version()
+{
+    return RAGEPHOTO_VERSION;
+}
+
 bool RagePhoto::save(char *data, uint32_t photoFormat)
 {
     if (photoFormat == PhotoFormat::GTA5 || photoFormat == PhotoFormat::RDR2) {
@@ -916,6 +921,12 @@ int ragephoto_load(ragephoto_t instance, const char *data, size_t size)
     return ragePhoto->load(data, size);
 }
 
+int ragephoto_loadfile(ragephoto_t instance, const char *filename)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->loadFile(filename);
+}
+
 uint8_t ragephoto_error(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
@@ -996,6 +1007,12 @@ int ragephoto_save(ragephoto_t instance, char *data)
     return ragePhoto->save(data);
 }
 
+int ragephoto_savefile(ragephoto_t instance, const char *filename)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->saveFile(filename);
+}
+
 void ragephoto_setbufferdefault(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
@@ -1048,5 +1065,10 @@ void ragephoto_close(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     delete ragePhoto;
+}
+
+const char* ragephoto_version()
+{
+    return RAGEPHOTO_VERSION;
 }
 #endif

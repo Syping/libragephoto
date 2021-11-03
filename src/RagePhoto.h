@@ -116,6 +116,7 @@ public:
     const std::string& json() const; /**< Returns the Photo JSON data. */
     const std::string& header() const; /**< Returns the Photo header. */
     const std::string& title() const; /**< Returns the Photo title. */
+    static const char* version(); /**< Returns the library version. */
     /** Saves a Photo to a char*.
     * \param data Photo data
     * \param photoFormat Photo Format (GTA V or RDR 2)
@@ -196,6 +197,12 @@ LIBRAGEPHOTO_EXPORT ragephoto_t ragephoto_open();
 */
 LIBRAGEPHOTO_EXPORT int ragephoto_load(ragephoto_t instance, const char *data, size_t size);
 
+/** Loads a Photo from a file.
+* \param instance \p ragephoto_t instance
+* \param filename File to load
+*/
+LIBRAGEPHOTO_EXPORT int ragephoto_loadfile(ragephoto_t instance, const char *filename);
+
 /** Returns the last error occurred.
 * \param instance \p ragephoto_t instance
 */
@@ -259,6 +266,12 @@ LIBRAGEPHOTO_EXPORT size_t ragephoto_getsavesize(ragephoto_t instance);
 */
 LIBRAGEPHOTO_EXPORT int ragephoto_save(ragephoto_t instance, char *data);
 
+/** Saves a Photo to a file.
+* \param instance \p ragephoto_t instance
+* \param filename File to save
+*/
+LIBRAGEPHOTO_EXPORT int ragephoto_savefile(ragephoto_t instance, const char *filename);
+
 /** Sets all cross-format Buffer to default size.
 * \param instance \p ragephoto_t instance
 */
@@ -311,6 +324,9 @@ LIBRAGEPHOTO_EXPORT void ragephoto_setphototitle(ragephoto_t instance, const cha
 * \param instance \p ragephoto_t instance
 */
 LIBRAGEPHOTO_EXPORT void ragephoto_close(ragephoto_t instance);
+
+/** Returns the library version. */
+LIBRAGEPHOTO_EXPORT const char* ragephoto_version();
 
 #ifdef __cplusplus
 }

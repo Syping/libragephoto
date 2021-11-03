@@ -17,7 +17,7 @@
 ****************************************************************************]]
 
 cmake_minimum_required(VERSION 3.7)
-project(ragephoto VERSION 0.1 LANGUAGES CXX)
+project(ragephoto VERSION 0.1.0 LANGUAGES CXX)
 include(GNUInstallDirs)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -25,7 +25,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 message("-- Testing codecvt")
-try_run(CODECVT_RUN CODECVT_COMPILE ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/tests/CodecvtTest.cpp)
+try_run(CODECVT_RUN CODECVT_COMPILE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/tests/CodecvtTest.cpp)
 if (CODECVT_COMPILE AND CODECVT_RUN EQUAL 0)
     list(APPEND LIBRAGEPHOTO_DEFINES
         CODECVT_COMPATIBLE
@@ -36,7 +36,7 @@ else()
 endif()
 
 message("-- Testing iconv")
-try_run(ICONV_RUN ICONV_COMPILE ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/tests/IconvTest.cpp)
+try_run(ICONV_RUN ICONV_COMPILE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/tests/IconvTest.cpp)
 if (ICONV_COMPILE AND ICONV_RUN EQUAL 0)
     list(APPEND LIBRAGEPHOTO_DEFINES
         ICONV_COMPATIBLE
@@ -81,7 +81,7 @@ endif()
 
 configure_file(src/libragephoto_global.h.in include/libragephoto_global.h @ONLY)
 list(APPEND RAGEPHOTO_HEADERS
-    ${CMAKE_CURRENT_BINARY_DIR}/include/libragephoto_global.h
+    ${PROJECT_BINARY_DIR}/include/libragephoto_global.h
 )
 configure_file(src/ragephoto.pc.in pkgconfig/ragephoto.pc @ONLY)
 target_compile_definitions(ragephoto PRIVATE
@@ -89,11 +89,11 @@ target_compile_definitions(ragephoto PRIVATE
     ${LIBRAGEPHOTO_DEFINES}
 )
 target_include_directories(ragephoto PUBLIC
-    ${CMAKE_CURRENT_BINARY_DIR}/include
+    ${PROJECT_BINARY_DIR}/include
 )
 install(TARGETS ragephoto DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${RAGEPHOTO_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/RagePhoto)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/ragephoto.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+install(FILES ${PROJECT_BINARY_DIR}/pkgconfig/ragephoto.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 option(WITH_DOCUMENTATION "Build libragephoto with documentation" OFF)
 if (WITH_DOCUMENTATION)
