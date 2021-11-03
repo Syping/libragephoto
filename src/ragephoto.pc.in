@@ -6,4 +6,4 @@ Name: libragephoto
 Description: Open Source RAGE Photo Parser for GTA V
 Version: @PROJECT_VERSION@
 Libs: -L${libdir} -lragephoto
-Cflags: -I${includedir} -D@LIBRAGEPHOTO_API@ -D@LIBRAGEPHOTO_LIBTYPE@
+Cflags: -I${includedir}/RagePhoto

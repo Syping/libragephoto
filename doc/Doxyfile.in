@@ -9,5 +9,4 @@ MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 PREDEFINED             = "protected=private" \
                          "__cplusplus" \
-                         "LIBRAGEPHOTO_DOXYGEN" \
                          "@LIBRAGEPHOTO_API@"

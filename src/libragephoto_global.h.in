@@ -16,33 +16,28 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#ifndef LIBRAGEPHOTO_DATA_H
-#define LIBRAGEPHOTO_DATA_H
+#ifndef LIBRAGEPHOTO_GLOBAL_H
+#define LIBRAGEPHOTO_GLOBAL_H
 
-#include "libragephoto_global.h"
-#include <iostream>
-#include <cstdint>
+/* CMAKE CONFIG BEGIN */
+#define @LIBRAGEPHOTO_API@
+#define @LIBRAGEPHOTO_LIBTYPE@
+/* CMAKE CONFIG END */
 
-struct LIBRAGEPHOTO_EXPORT RagePhotoData
-{
-    bool photoLoaded;
-    char* photoData;
-    std::string description;
-    std::string json;
-    std::string header;
-    std::string title;
-    uint8_t error;
-    uint32_t descBuffer;
-    uint32_t descOffset;
-    uint32_t endOfFile;
-    uint32_t headerSum;
-    uint32_t jsonBuffer;
-    uint32_t jsonOffset;
-    uint32_t photoBuffer;
-    uint32_t photoFormat;
-    uint32_t photoSize;
-    uint32_t titlBuffer;
-    uint32_t titlOffset;
-};
+/* RAGEPHOTO LIBRARY EXPORT BEGIN */
+#ifdef _WIN32
+#ifndef LIBRAGEPHOTO_STATIC
+#ifdef LIBRAGEPHOTO_LIBRARY
+#define LIBRAGEPHOTO_EXPORT __declspec(dllexport)
+#else
+#define LIBRAGEPHOTO_EXPORT __declspec(dllimport)
+#endif // LIBRAGEPHOTO_LIBRARY
+#else
+#define LIBRAGEPHOTO_EXPORT
+#endif // LIBRAGEPHOTO_STATIC
+#else
+#define LIBRAGEPHOTO_EXPORT
+#endif // _WIN32
+/* RAGEPHOTO LIBRARY EXPORT END */
 
-#endif // LIBRAGEPHOTO_DATA_H
+#endif // LIBRAGEPHOTO_GLOBAL_H

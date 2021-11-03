@@ -47,9 +47,8 @@ else()
 endif()
 
 set(RAGEPHOTO_HEADERS
-    src/libragephoto_data.h
-    src/libragephoto_global.h
     src/RagePhoto.h
+    src/RagePhotoData.h
 )
 set(RAGEPHOTO_SOURCES
     src/RagePhoto.cpp
@@ -79,21 +78,21 @@ if (WITH_C_API)
 else()
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_NOAPI)
 endif()
-list(APPEND LIBRAGEPHOTO_DEFINES
-    ${LIBRAGEPHOTO_API}
-)
 
+configure_file(src/libragephoto_global.h.in include/libragephoto_global.h @ONLY)
+list(APPEND RAGEPHOTO_HEADERS
+    ${CMAKE_CURRENT_BINARY_DIR}/include/libragephoto_global.h
+)
 configure_file(src/ragephoto.pc.in pkgconfig/ragephoto.pc @ONLY)
 target_compile_definitions(ragephoto PRIVATE
     LIBRAGEPHOTO_LIBRARY
     ${LIBRAGEPHOTO_DEFINES}
 )
-target_compile_definitions(ragephoto PUBLIC
-    ${LIBRAGEPHOTO_API}
-    ${LIBRAGEPHOTO_LIBTYPE}
+target_include_directories(ragephoto PUBLIC
+    ${CMAKE_CURRENT_BINARY_DIR}/include
 )
 install(TARGETS ragephoto DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(FILES ${RAGEPHOTO_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES ${RAGEPHOTO_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/RagePhoto)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/ragephoto.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 option(WITH_DOCUMENTATION "Build libragephoto with documentation" OFF)

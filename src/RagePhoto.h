@@ -16,14 +16,12 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-/** \file RagePhoto.h */
-
 #ifndef RAGEPHOTO_H
 #define RAGEPHOTO_H
 
 #ifdef __cplusplus
-#include "libragephoto_data.h"
 #include "libragephoto_global.h"
+#include "RagePhotoData.h"
 #include <unordered_map>
 #include <functional>
 #include <iostream>
@@ -184,6 +182,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 #endif
+/** \file RagePhoto.h */
 /** RagePhoto C++ class typedef for C API. */
 typedef void* ragephoto_t;
 

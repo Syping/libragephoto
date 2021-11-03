@@ -2,7 +2,7 @@
 
 <h4>Open Source RAGE Photo Parser for GTA V and RDR 2</h4>
 
-- Read RAGE Photos error free and correct
+- Read/Write RAGE Photos error free and correct
 - Support for metadata stored in RAGE Photos
 - Export RAGE Photos to jpeg with ragephoto-extract
 - High Efficient and Simple C++ API

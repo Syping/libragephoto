@@ -16,21 +16,35 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#ifndef LIBRAGEPHOTO_GLOBAL_H
-#define LIBRAGEPHOTO_GLOBAL_H
+#ifndef RAGEPHOTODATA_H
+#define RAGEPHOTODATA_H
 
-#ifdef _WIN32
-#ifndef LIBRAGEPHOTO_STATIC
-#ifdef LIBRAGEPHOTO_LIBRARY
-#define LIBRAGEPHOTO_EXPORT __declspec(dllexport)
-#else
-#define LIBRAGEPHOTO_EXPORT __declspec(dllimport)
-#endif
-#else
-#define LIBRAGEPHOTO_EXPORT
-#endif
-#else
-#define LIBRAGEPHOTO_EXPORT
-#endif
+#ifdef __cplusplus
+#include "libragephoto_global.h"
+#include <iostream>
+#include <cstdint>
 
-#endif // LIBRAGEPHOTO_GLOBAL_H
+struct LIBRAGEPHOTO_EXPORT RagePhotoData
+{
+    bool photoLoaded;
+    char* photoData;
+    std::string description;
+    std::string json;
+    std::string header;
+    std::string title;
+    uint8_t error;
+    uint32_t descBuffer;
+    uint32_t descOffset;
+    uint32_t endOfFile;
+    uint32_t headerSum;
+    uint32_t jsonBuffer;
+    uint32_t jsonOffset;
+    uint32_t photoBuffer;
+    uint32_t photoFormat;
+    uint32_t photoSize;
+    uint32_t titlBuffer;
+    uint32_t titlOffset;
+};
+#endif // __cplusplus
+
+#endif // RAGEPHOTODATA_H
