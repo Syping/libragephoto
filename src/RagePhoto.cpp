@@ -1001,16 +1001,34 @@ size_t ragephoto_getsavesize(ragephoto_t instance)
     return ragePhoto->saveSize();
 }
 
+size_t ragephoto_getsavesizef(ragephoto_t instance, uint32_t photoFormat)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->saveSize(photoFormat);
+}
+
 int ragephoto_save(ragephoto_t instance, char *data)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->save(data);
 }
 
+int ragephoto_savef(ragephoto_t instance, char *data, uint32_t photoFormat)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->save(data, photoFormat);
+}
+
 int ragephoto_savefile(ragephoto_t instance, const char *filename)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->saveFile(filename);
+}
+
+int ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t photoFormat)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->saveFile(filename, photoFormat);
 }
 
 void ragephoto_setbufferdefault(ragephoto_t instance)

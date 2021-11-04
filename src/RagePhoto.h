@@ -30,6 +30,9 @@
 
 typedef std::function<bool(const char*, size_t, RagePhotoData*)> RagePhotoLoadFunc;
 
+/**
+* \brief GTA V and RDR 2 Photo Parser.
+*/
 class LIBRAGEPHOTO_EXPORT RagePhoto
 {
 public:
@@ -260,17 +263,37 @@ LIBRAGEPHOTO_EXPORT const char* ragephoto_getphototitle(ragephoto_t instance);
 */
 LIBRAGEPHOTO_EXPORT size_t ragephoto_getsavesize(ragephoto_t instance);
 
+/** Returns the Photo save file size.
+* \param instance \p ragephoto_t instance
+* \param photoFormat Photo Format (GTA V or RDR 2)
+*/
+LIBRAGEPHOTO_EXPORT size_t ragephoto_getsavesizef(ragephoto_t instance, uint32_t photoFormat);
+
 /** Saves a Photo to a char*.
 * \param instance \p ragephoto_t instance
 * \param data Photo data
 */
 LIBRAGEPHOTO_EXPORT int ragephoto_save(ragephoto_t instance, char *data);
 
+/** Saves a Photo to a char*.
+* \param instance \p ragephoto_t instance
+* \param data Photo data
+* \param photoFormat Photo Format (GTA V or RDR 2)
+*/
+LIBRAGEPHOTO_EXPORT int ragephoto_savef(ragephoto_t instance, char *data, uint32_t photoFormat);
+
 /** Saves a Photo to a file.
 * \param instance \p ragephoto_t instance
 * \param filename File to save
 */
 LIBRAGEPHOTO_EXPORT int ragephoto_savefile(ragephoto_t instance, const char *filename);
+
+/** Saves a Photo to a file.
+* \param instance \p ragephoto_t instance
+* \param filename File to save
+* \param photoFormat Photo Format (GTA V or RDR 2)
+*/
+LIBRAGEPHOTO_EXPORT int ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t photoFormat);
 
 /** Sets all cross-format Buffer to default size.
 * \param instance \p ragephoto_t instance

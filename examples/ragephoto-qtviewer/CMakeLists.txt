@@ -37,7 +37,6 @@ set(QTVIEWER_SOURCES
 )
 
 if (TARGET ragephoto)
-    set(RAGEPHOTO_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/src)
     set(RAGEPHOTO_LIBRARIES ragephoto)
 else()
     find_package(PkgConfig REQUIRED)

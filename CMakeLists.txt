@@ -75,6 +75,9 @@ endif()
 
 if (WITH_C_API)
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_API)
+    list(APPEND RAGEPHOTO_HEADERS
+        src/RagePhotoA.h
+    )
 else()
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_NOAPI)
 endif()
@@ -90,6 +93,7 @@ target_compile_definitions(ragephoto PRIVATE
 )
 target_include_directories(ragephoto PUBLIC
     ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src
 )
 install(TARGETS ragephoto DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${RAGEPHOTO_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/RagePhoto)

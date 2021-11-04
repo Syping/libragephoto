@@ -32,7 +32,6 @@ set(GTKVIEWER_SOURCES
 )
 
 if (TARGET ragephoto)
-    set(RAGEPHOTO_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/src)
     set(RAGEPHOTO_LIBRARIES ragephoto)
 else()
     pkg_check_modules(RAGEPHOTO REQUIRED ragephoto)
