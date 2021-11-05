@@ -915,6 +915,12 @@ ragephoto_t ragephoto_open()
     return static_cast<ragephoto_t>(new RagePhoto);
 }
 
+void ragephoto_clear(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    ragePhoto->clear();
+}
+
 int ragephoto_load(ragephoto_t instance, const char *data, size_t size)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);

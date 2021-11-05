@@ -37,6 +37,9 @@ public:
     ~RagePhotoA() {
         ragephoto_close(instance);
     }
+    void clear() {
+        ragephoto_clear(instance);
+    }
     bool load(const char *data, size_t size) {
         return ragephoto_load(instance, data, size);
     }
