@@ -193,7 +193,7 @@ typedef void* ragephoto_t;
 /** Opens a \p ragephoto_t instance. */
 LIBRAGEPHOTO_EXPORT ragephoto_t ragephoto_open();
 
-/** Resets the RagePhoto instance to default values.
+/** Resets the \p ragephoto_t instance to default values.
 * \param instance \p ragephoto_t instance
 */
 LIBRAGEPHOTO_EXPORT void ragephoto_clear(ragephoto_t instance);
