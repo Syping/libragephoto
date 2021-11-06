@@ -16,9 +16,8 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include <cstdio>
 #include <cstring>
-#include <iconv.h>
+#include <stringapiset.h>
 
 int main(int argc, char *argv[])
 {
@@ -57,16 +56,8 @@ int main(int argc, char *argv[])
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
     char photoHeader_string[256];
-    iconv_t iconv_in = iconv_open("UTF-8", "UTF-16LE");
-    if (iconv_in == (iconv_t)-1)
-        return -1;
-    size_t src_s = sizeof(photoHeader);
-    size_t dst_s = sizeof(photoHeader_string);
-    char *src = photoHeader;
-    char *dst = photoHeader_string;
-    const size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
-    iconv_close(iconv_in);
-    if (ret == static_cast<size_t>(-1)) {
+    const int converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<wchar_t*>(photoHeader), -1, photoHeader_string, 256, NULL, NULL);
+    if (converted == 0) {
         return -1;
     }
     return strcmp(photoHeader_string, "PHOTO - 02/01/17 08:42:44");

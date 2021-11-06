@@ -34,6 +34,7 @@ bool readPhotoFile(const QString &filename, QMainWindow *mainWindow, QLabel *pho
     QFile file(filename);
     if (file.open(QIODevice::ReadOnly)) {
         const QByteArray fileData = file.readAll();
+        file.close();
         RagePhoto ragePhoto;
         const bool loaded = ragePhoto.load(fileData.data(), static_cast<size_t>(fileData.size()));
         if (!loaded) {

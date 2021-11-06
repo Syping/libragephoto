@@ -47,6 +47,17 @@ else()
     message("-- Testing iconv - no")
 endif()
 
+message("-- Testing wincvt")
+try_run(WINCVT_RUN WINCVT_COMPILE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/tests/WincvtTest.cpp)
+if (WINCVT_COMPILE AND WINCVT_RUN EQUAL 0)
+    list(APPEND LIBRAGEPHOTO_DEFINES
+        WINCVT_COMPATIBLE
+    )
+    message("-- Testing wincvt - yes")
+else()
+    message("-- Testing wincvt - no")
+endif()
+
 # RagePhoto Source files
 set(RAGEPHOTO_HEADERS
     src/RagePhoto.h

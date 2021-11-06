@@ -27,7 +27,9 @@
 #include <chrono>
 #endif
 
-#ifdef CODECVT_COMPATIBLE
+#if defined WINCVT_COMPATIBLE
+#include <stringapiset.h>
+#elif defined CODECVT_COMPATIBLE
 #include <codecvt>
 #include <locale>
 #elif defined ICONV_COMPATIBLE
@@ -85,7 +87,7 @@ bool RagePhoto::load(const char *data, size_t length)
     m_data.photoFormat = charToUInt32LE(uInt32Buffer);
 #endif
     if (m_data.photoFormat == PhotoFormat::GTA5 || m_data.photoFormat == PhotoFormat::RDR2) {
-#if defined CODECVT_COMPATIBLE || defined ICONV_COMPATIBLE
+#if defined WINCVT_COMPATIBLE || defined CODECVT_COMPATIBLE || defined ICONV_COMPATIBLE
         char photoHeader[256];
         size = readBuffer(data, photoHeader, &pos, 256, length);
         if (size != 256) {
@@ -93,9 +95,21 @@ bool RagePhoto::load(const char *data, size_t length)
             return false;
         }
 
-#ifdef CODECVT_COMPATIBLE
+#if defined WINCVT_COMPATIBLE
+        char photoHeader_string[256];
+        const int converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<wchar_t*>(photoHeader), -1, photoHeader_string, 256, NULL, NULL);
+        if (converted == 0) {
+            m_data.error = static_cast<uint8_t>(Error::UnicodeHeaderError); // 5
+            return false;
+        }
+        m_data.header = std::string(photoHeader_string);
+#elif defined CODECVT_COMPATIBLE
         std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
         m_data.header = convert.to_bytes(reinterpret_cast<char16_t*>(photoHeader));
+        if (convert.converted() == 0) {
+            m_data.error = static_cast<uint8_t>(Error::UnicodeHeaderError); // 5
+            return false;
+        }
 #elif defined ICONV_COMPATIBLE
         iconv_t iconv_in = iconv_open("UTF-8", "UTF-16LE");
         if (iconv_in == (iconv_t)-1) {
@@ -465,17 +479,28 @@ const char* RagePhoto::version()
 bool RagePhoto::save(char *data, uint32_t photoFormat)
 {
     if (photoFormat == PhotoFormat::GTA5 || photoFormat == PhotoFormat::RDR2) {
-#if defined CODECVT_COMPATIBLE || defined ICONV_COMPATIBLE
-#ifdef CODECVT_COMPATIBLE
+#if defined WINCVT_COMPATIBLE || defined CODECVT_COMPATIBLE || defined ICONV_COMPATIBLE
+#if defined WINCVT_COMPATIBLE
+        char photoHeader[256]{};
+        const int converted = MultiByteToWideChar(CP_UTF8, 0, m_data.header.data(), m_data.header.size(), reinterpret_cast<wchar_t*>(photoHeader), 256 / sizeof(wchar_t));
+        if (converted == 0) {
+            m_data.error = static_cast<uint8_t>(Error::UnicodeHeaderError); // 5
+            return false;
+        }
+        const size_t photoHeader_size = 256;
+#elif defined CODECVT_COMPATIBLE
         std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
         std::u16string photoHeader_string = convert.from_bytes(m_data.header);
+        if (convert.converted() == 0) {
+            m_data.error = static_cast<uint8_t>(Error::UnicodeHeaderError); // 5
+            return false;
+        }
         const size_t photoHeader_size = photoHeader_string.size() * 2;
         if (photoHeader_size > 256) {
             m_data.error = static_cast<uint8_t>(Error::HeaderBufferTight); // 34
             return false;
         }
-        char photoHeader[256];
-        memcpy(photoHeader, photoHeader_string.data(), photoHeader_size);
+        const char *photoHeader = reinterpret_cast<const char*>(photoHeader_string.data());
 #elif defined ICONV_COMPATIBLE
         iconv_t iconv_in = iconv_open("UTF-16LE", "UTF-8");
         if (iconv_in == (iconv_t)-1) {
@@ -484,7 +509,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
         }
         char photoHeader_string[256];
         memcpy(photoHeader_string, m_data.header.data(), m_data.header.size());
-        char photoHeader[256];
+        char photoHeader[256]{};
         size_t src_s = m_data.header.size();
         size_t dst_s = sizeof(photoHeader);
         char *src = photoHeader_string;
@@ -495,11 +520,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
             m_data.error = static_cast<uint8_t>(Error::UnicodeHeaderError); // 5
             return false;
         }
-        const size_t photoHeader_size = m_data.header.size() * 2;
-        if (photoHeader_size > 256) {
-            m_data.error = static_cast<uint8_t>(Error::HeaderBufferTight); // 34
-            return false;
-        }
+        const size_t photoHeader_size = 256;
 #endif
 
         if (m_data.photoSize > m_data.photoBuffer) {
@@ -614,7 +635,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
-        writeBuffer(m_data.json.data(), data, &pos, length, jsonString_size);
+        writeBuffer(m_data.json.c_str(), data, &pos, length, jsonString_size);
         for (size_t i = jsonString_size; i < m_data.jsonBuffer; i++) {
             writeBuffer("\0", data, &pos, length, 1);
         }
@@ -629,7 +650,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
-        writeBuffer(m_data.title.data(), data, &pos, length, titlString_size);
+        writeBuffer(m_data.title.c_str(), data, &pos, length, titlString_size);
         for (size_t i = titlString_size; i < m_data.titlBuffer; i++) {
             writeBuffer("\0", data, &pos, length, 1);
         }
@@ -644,7 +665,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
-        writeBuffer(m_data.description.data(), data, &pos, length, descString_size);
+        writeBuffer(m_data.description.c_str(), data, &pos, length, descString_size);
         for (size_t i = descString_size; i < m_data.descBuffer; i++) {
             writeBuffer("\0", data, &pos, length, 1);
         }
@@ -708,8 +729,9 @@ bool RagePhoto::saveFile(const std::string &filename, uint32_t photoFormat)
             return false;
         }
         ofs << sdata;
+        ok = ofs.good();
         ofs.close();
-        return true;
+        return ok;
     }
     else
         return false;
