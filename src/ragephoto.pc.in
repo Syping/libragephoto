@@ -1,9 +1,10 @@
 prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
 libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
-includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@/RagePhoto
 
 Name: libragephoto
 Description: Open Source RAGE Photo Parser for GTA V
 Version: @PROJECT_VERSION@
 Libs: -L${libdir} -lragephoto
-Cflags: -I${includedir}/RagePhoto
+Cflags: -I${includedir}
