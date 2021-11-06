@@ -24,6 +24,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# RagePhoto functionality tests
 message("-- Testing codecvt")
 try_run(CODECVT_RUN CODECVT_COMPILE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/tests/CodecvtTest.cpp)
 if (CODECVT_COMPILE AND CODECVT_RUN EQUAL 0)
@@ -46,6 +47,7 @@ else()
     message("-- Testing iconv - no")
 endif()
 
+# RagePhoto Source files
 set(RAGEPHOTO_HEADERS
     src/RagePhoto.h
     src/RagePhotoData.h
@@ -54,18 +56,18 @@ set(RAGEPHOTO_SOURCES
     src/RagePhoto.cpp
 )
 
+# RagePhoto Library Type
 option(BUILD_SHARED "Build libragephoto as shared library" ON)
 if (BUILD_SHARED)
     option(WITH_C_API "Build libragephoto with C API support" ON)
-    add_library(ragephoto SHARED ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES})
     set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
     set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_SHARED)
 else()
     option(WITH_C_API "Build libragephoto with C API support" OFF)
-    add_library(ragephoto STATIC ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES})
     set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_STATIC)
 endif()
 
+# RagePhoto Benchmark
 option(WITH_BENCHMARK "Build with libragephoto benchmark" OFF)
 if (WITH_BENCHMARK)
     list(APPEND LIBRAGEPHOTO_DEFINES
@@ -73,6 +75,7 @@ if (WITH_BENCHMARK)
     )
 endif()
 
+# RagePhoto C API
 if (WITH_C_API)
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_API)
     list(APPEND RAGEPHOTO_HEADERS
@@ -82,11 +85,17 @@ else()
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_NOAPI)
 endif()
 
+# RagePhoto Configures + Target + Install
+configure_file(src/ragephoto.pc.in pkgconfig/ragephoto.pc @ONLY)
 configure_file(src/libragephoto_global.h.in include/libragephoto_global.h @ONLY)
 list(APPEND RAGEPHOTO_HEADERS
     ${PROJECT_BINARY_DIR}/include/libragephoto_global.h
 )
-configure_file(src/ragephoto.pc.in pkgconfig/ragephoto.pc @ONLY)
+if (BUILD_SHARED)
+    add_library(ragephoto SHARED ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES})
+else()
+    add_library(ragephoto STATIC ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES})
+endif()
 target_compile_definitions(ragephoto PRIVATE
     LIBRAGEPHOTO_LIBRARY
     ${LIBRAGEPHOTO_DEFINES}
@@ -99,11 +108,13 @@ install(TARGETS ragephoto DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${RAGEPHOTO_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/RagePhoto)
 install(FILES ${PROJECT_BINARY_DIR}/pkgconfig/ragephoto.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
+# RagePhoto Documentation
 option(WITH_DOCUMENTATION "Build libragephoto with documentation" OFF)
 if (WITH_DOCUMENTATION)
     add_subdirectory(doc)
 endif()
 
+# RagePhoto Examples
 option(WITH_GTK_EXAMPLE "Build libragephoto with GTK Photo Viewer" OFF)
 if (WITH_GTK_EXAMPLE)
     add_subdirectory(examples/ragephoto-gtkviewer)
@@ -114,6 +125,7 @@ if (WITH_QT_EXAMPLE)
     add_subdirectory(examples/ragephoto-qtviewer)
 endif()
 
+# RagePhoto Extract Tool
 if (${CMAKE_PROJECT_NAME} STREQUAL "ragephoto")
     option(WITH_EXTRACT "Build libragephoto with ragephoto-extract" ON)
 else()
