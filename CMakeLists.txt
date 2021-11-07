@@ -28,9 +28,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 message("-- Testing codecvt")
 try_run(CODECVT_RUN CODECVT_COMPILE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/tests/CodecvtTest.cpp)
 if (CODECVT_COMPILE AND CODECVT_RUN EQUAL 0)
-    list(APPEND LIBRAGEPHOTO_DEFINES
-        CODECVT_COMPATIBLE
-    )
+    set(CODECVT_COMPAT TRUE)
     message("-- Testing codecvt - yes")
 else()
     message("-- Testing codecvt - no")
@@ -39,23 +37,36 @@ endif()
 message("-- Testing iconv")
 try_run(ICONV_RUN ICONV_COMPILE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/tests/IconvTest.cpp)
 if (ICONV_COMPILE AND ICONV_RUN EQUAL 0)
-    list(APPEND LIBRAGEPHOTO_DEFINES
-        ICONV_COMPATIBLE
-    )
+    set(ICONV_COMPAT TRUE)
     message("-- Testing iconv - yes")
 else()
     message("-- Testing iconv - no")
 endif()
 
-message("-- Testing wincvt")
-try_run(WINCVT_RUN WINCVT_COMPILE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/tests/WincvtTest.cpp)
-if (WINCVT_COMPILE AND WINCVT_RUN EQUAL 0)
+if (WIN32)
+    message("-- Testing wincvt")
+    try_run(WINCVT_RUN WINCVT_COMPILE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/tests/WincvtTest.cpp)
+    if (WINCVT_COMPILE AND WINCVT_RUN EQUAL 0)
+        set(WINCVT_COMPAT TRUE)
+        message("-- Testing wincvt - yes")
+    else()
+        message("-- Testing wincvt - no")
+    endif()
+endif()
+
+# Unicode implementation for RagePhoto
+if (WINCVT_COMPAT)
     list(APPEND LIBRAGEPHOTO_DEFINES
-        WINCVT_COMPATIBLE
+        UNICODE_WINCVT
     )
-    message("-- Testing wincvt - yes")
-else()
-    message("-- Testing wincvt - no")
+elseif (CODECVT_COMPAT)
+    list(APPEND LIBRAGEPHOTO_DEFINES
+        UNICODE_CODECVT
+    )
+elseif (ICONV_COMPAT)
+    list(APPEND LIBRAGEPHOTO_DEFINES
+        UNICODE_ICONV
+    )
 endif()
 
 # RagePhoto Source files
@@ -96,7 +107,7 @@ else()
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_NOAPI)
 endif()
 
-# RagePhoto Configures + Target + Install
+# RagePhoto Configures + Target + Installs
 configure_file(src/ragephoto.pc.in pkgconfig/ragephoto.pc @ONLY)
 configure_file(src/libragephoto_global.h.in include/libragephoto_global.h @ONLY)
 list(APPEND RAGEPHOTO_HEADERS
