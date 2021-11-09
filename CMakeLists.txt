@@ -24,50 +24,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# RagePhoto functionality tests
-message("-- Testing codecvt")
-try_run(CODECVT_RUN CODECVT_COMPILE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/tests/CodecvtTest.cpp)
-if (CODECVT_COMPILE AND CODECVT_RUN EQUAL 0)
-    set(CODECVT_COMPAT TRUE)
-    message("-- Testing codecvt - yes")
-else()
-    message("-- Testing codecvt - no")
-endif()
-
-message("-- Testing iconv")
-try_run(ICONV_RUN ICONV_COMPILE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/tests/IconvTest.cpp)
-if (ICONV_COMPILE AND ICONV_RUN EQUAL 0)
-    set(ICONV_COMPAT TRUE)
-    message("-- Testing iconv - yes")
-else()
-    message("-- Testing iconv - no")
-endif()
-
-if (WIN32)
-    message("-- Testing wincvt")
-    try_run(WINCVT_RUN WINCVT_COMPILE ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/tests/WincvtTest.cpp)
-    if (WINCVT_COMPILE AND WINCVT_RUN EQUAL 0)
-        set(WINCVT_COMPAT TRUE)
-        message("-- Testing wincvt - yes")
-    else()
-        message("-- Testing wincvt - no")
-    endif()
-endif()
-
-# Unicode implementation for RagePhoto
-if (WINCVT_COMPAT)
-    list(APPEND LIBRAGEPHOTO_DEFINES
-        UNICODE_WINCVT
-    )
-elseif (CODECVT_COMPAT)
-    list(APPEND LIBRAGEPHOTO_DEFINES
-        UNICODE_CODECVT
-    )
-elseif (ICONV_COMPAT)
-    list(APPEND LIBRAGEPHOTO_DEFINES
-        UNICODE_ICONV
-    )
-endif()
+# RagePhoto CMake includes
+include(cmake/unicode.cmake)
 
 # RagePhoto Source files
 set(RAGEPHOTO_HEADERS
