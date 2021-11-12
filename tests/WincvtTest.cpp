@@ -17,6 +17,7 @@
 *****************************************************************************/
 
 #include <cstring>
+#include <windows.h>
 #include <stringapiset.h>
 
 int main(int argc, char *argv[])

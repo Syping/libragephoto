@@ -33,6 +33,7 @@
 #elif defined UNICODE_ICONV
 #include <iconv.h>
 #elif defined UNICODE_WINCVT
+#include <windows.h>
 #include <stringapiset.h>
 #endif
 
