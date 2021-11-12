@@ -40,7 +40,7 @@ endif()
 
 add_executable(ragephoto-gtkviewer WIN32 ${GTKVIEWER_SOURCES})
 set_target_properties(ragephoto-gtkviewer PROPERTIES
-    INSTALL_RPATH ${GTKMM_LIBRARY_DIRS};${RAGEPHOTO_LIBRARY_DIRS}
+    INSTALL_RPATH "${GTKMM_LIBRARY_DIRS};${RAGEPHOTO_LIBRARY_DIRS}"
 )
 target_compile_options(ragephoto-gtkviewer PRIVATE ${GTKMM_CFLAGS} ${RAGEPHOTO_CFLAGS})
 target_link_libraries(ragephoto-gtkviewer PRIVATE ${GTKMM_LIBRARIES} ${RAGEPHOTO_LIBRARIES})

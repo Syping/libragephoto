@@ -46,7 +46,7 @@ endif()
 
 add_executable(ragephoto-qtviewer WIN32 ${QTVIEWER_SOURCES})
 set_target_properties(ragephoto-qtviewer PROPERTIES
-    INSTALL_RPATH ${RAGEPHOTO_LIBRARY_DIRS}
+    INSTALL_RPATH "${RAGEPHOTO_LIBRARY_DIRS}"
 )
 target_compile_options(ragephoto-qtviewer PRIVATE ${RAGEPHOTO_CFLAGS})
 target_link_libraries(ragephoto-qtviewer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${RAGEPHOTO_LIBRARIES})
