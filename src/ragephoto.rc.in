@@ -19,9 +19,9 @@ BEGIN
             VALUE   "CompanyName",      "Syping"
             VALUE   "FileDescription",  "Open Source RAGE Photo Parser for GTA V and RDR 2"
             VALUE   "FileVersion",      "@ragephoto_VERSION@"
-            VALUE   "InternalName",     "ragephoto"
+            VALUE   "InternalName",     "libragephoto"
             VALUE   "LegalCopyright",   "Copyright © @ragephoto_BUILD_YEAR@ Syping"
-            VALUE   "OriginalFilename", "ragephoto.dll"
+            VALUE   "OriginalFilename", "libragephoto.dll"
             VALUE   "ProductName",      "libragephoto"
             VALUE   "ProductVersion",   "@ragephoto_VERSION@"
         END
