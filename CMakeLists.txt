@@ -40,7 +40,6 @@ set(RAGEPHOTO_SOURCES
 option(BUILD_SHARED "Build libragephoto as shared library" ON)
 if (BUILD_SHARED)
     option(WITH_C_API "Build libragephoto with C API support" ON)
-    set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
     set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_SHARED)
 else()
     option(WITH_C_API "Build libragephoto with C API support" OFF)
@@ -65,6 +64,15 @@ else()
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_NOAPI)
 endif()
 
+# RagePhoto Win32 Shared Resources
+if (WIN32)
+    string(TIMESTAMP ragephoto_BUILD_YEAR "%Y" UTC)
+    configure_file(src/ragephoto.rc.in resources/ragephoto.rc @ONLY)
+    list(APPEND RAGEPHOTO_SHARED_RESOURCES
+        ${PROJECT_BINARY_DIR}/resources/ragephoto.rc
+    )
+endif()
+
 # RagePhoto Configures + Target + Installs
 configure_file(src/ragephoto.pc.in pkgconfig/ragephoto.pc @ONLY)
 configure_file(src/libragephoto_global.h.in include/libragephoto_global.h @ONLY)
@@ -72,9 +80,12 @@ list(APPEND RAGEPHOTO_HEADERS
     ${PROJECT_BINARY_DIR}/include/libragephoto_global.h
 )
 if (BUILD_SHARED)
-    add_library(ragephoto SHARED ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES})
+    add_library(ragephoto SHARED ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES} ${RAGEPHOTO_SHARED_RESOURCES})
+    set_target_properties(ragephoto PROPERTIES
+        PREFIX "lib"
+    )
 else()
-    add_library(ragephoto STATIC ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES})
+    add_library(ragephoto STATIC ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES} ${RAGEPHOTO_STATIC_RESOURCES})
 endif()
 target_compile_definitions(ragephoto PRIVATE
     LIBRAGEPHOTO_LIBRARY
@@ -119,6 +130,9 @@ if (WITH_EXTRACT)
         set(EXTRACT_SOURCES src/RagePhoto-Extract.cpp)
     endif()
     add_executable(ragephoto-extract ${RAGEPHOTO_HEADERS} ${EXTRACT_SOURCES})
+    set_target_properties(ragephoto-extract PROPERTIES
+        INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
+    )
     target_link_libraries(ragephoto-extract PRIVATE ragephoto)
     install(TARGETS ragephoto-extract DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()

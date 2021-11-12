@@ -33,11 +33,15 @@ set(GTKVIEWER_SOURCES
 
 if (TARGET ragephoto)
     set(RAGEPHOTO_LIBRARIES ragephoto)
+    set(RAGEPHOTO_LIBRARY_DIRS ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 else()
     pkg_check_modules(RAGEPHOTO REQUIRED ragephoto)
 endif()
 
 add_executable(ragephoto-gtkviewer WIN32 ${GTKVIEWER_SOURCES})
+set_target_properties(ragephoto-gtkviewer PROPERTIES
+    INSTALL_RPATH ${GTKMM_LIBRARY_DIRS};${RAGEPHOTO_LIBRARY_DIRS}
+)
 target_compile_options(ragephoto-gtkviewer PRIVATE ${GTKMM_CFLAGS} ${RAGEPHOTO_CFLAGS})
 target_link_libraries(ragephoto-gtkviewer PRIVATE ${GTKMM_LIBRARIES} ${RAGEPHOTO_LIBRARIES})
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.13.0")

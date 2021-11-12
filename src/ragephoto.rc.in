@@ -1,0 +1,29 @@
+#include <windows.h>
+VS_VERSION_INFO     VERSIONINFO
+FILEVERSION         @ragephoto_VERSION_MAJOR@, @ragephoto_VERSION_MINOR@, @ragephoto_VERSION_PATCH@, 0
+PRODUCTVERSION      @ragephoto_VERSION_MAJOR@, @ragephoto_VERSION_MINOR@, @ragephoto_VERSION_PATCH@, 0
+FILEFLAGSMASK       0x3fL
+FILEFLAGS           0
+FILEOS              VOS_NT_WINDOWS32
+FILETYPE            VFT_APP
+FILESUBTYPE         VFT2_UNKNOWN
+BEGIN
+    BLOCK   "VarFileInfo"
+    BEGIN
+        VALUE   "Translation",  0x0809,  1200
+    END
+    BLOCK   "StringFileInfo"
+    BEGIN
+        BLOCK   "040904b0"
+        BEGIN
+            VALUE   "CompanyName",      "Syping"
+            VALUE   "FileDescription",  "Open Source RAGE Photo Parser for GTA V and RDR 2"
+            VALUE   "FileVersion",      "@ragephoto_VERSION@"
+            VALUE   "InternalName",     "ragephoto"
+            VALUE   "LegalCopyright",   "Copyright © @ragephoto_BUILD_YEAR@ Syping"
+            VALUE   "OriginalFilename", "ragephoto.dll"
+            VALUE   "ProductName",      "libragephoto"
+            VALUE   "ProductVersion",   "@ragephoto_VERSION@"
+        END
+    END
+END

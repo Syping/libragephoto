@@ -38,12 +38,16 @@ set(QTVIEWER_SOURCES
 
 if (TARGET ragephoto)
     set(RAGEPHOTO_LIBRARIES ragephoto)
+    set(RAGEPHOTO_LIBRARY_DIRS ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 else()
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(RAGEPHOTO REQUIRED ragephoto)
 endif()
 
 add_executable(ragephoto-qtviewer WIN32 ${QTVIEWER_SOURCES})
+set_target_properties(ragephoto-qtviewer PROPERTIES
+    INSTALL_RPATH ${RAGEPHOTO_LIBRARY_DIRS}
+)
 target_compile_options(ragephoto-qtviewer PRIVATE ${RAGEPHOTO_CFLAGS})
 target_link_libraries(ragephoto-qtviewer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${RAGEPHOTO_LIBRARIES})
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.13.0")
