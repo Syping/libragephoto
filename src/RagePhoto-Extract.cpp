@@ -51,7 +51,13 @@ int main(int argc, char *argv[])
         return 1;
     }
     ofs << ragePhoto.photo();
+    const bool ok = ofs.good();
     ofs.close();
+
+    if (!ok) {
+        std::cout << "Failed to write file: " << argv[2] << std::endl;
+        return 1;
+    }
 
     if (ragePhoto.format() == RagePhoto::GTA5)
         std::cout << "GTA V Photo successfully exported" << std::endl;

@@ -175,9 +175,7 @@ protected:
     RagePhotoData m_data;
 };
 #else
-#ifdef LIBRAGEPHOTO_C_API
 #include "RagePhotoC.h"
-#endif // LIBRAGEPHOTO_C_API
 #endif // __cplusplus
 
 #endif // RAGEPHOTO_H

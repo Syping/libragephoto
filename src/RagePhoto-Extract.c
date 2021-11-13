@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    // Initialise RagePhoto
     ragephoto_t ragephoto_in = ragephoto_open();
 
     // Load Photo
@@ -44,7 +45,12 @@ int main(int argc, char *argv[])
     }
 
     // Write jpeg
+#ifdef _WIN32
+    FILE *file = NULL;
+    fopen_s(&file, argv[2], "wb");
+#else
     FILE *file = fopen(argv[2], "wb");
+#endif
     if (!file) {
         printf("Failed to write file: %s\n", argv[2]);
         return 1;
