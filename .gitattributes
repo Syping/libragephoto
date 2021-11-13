@@ -7,9 +7,14 @@ CMakeLists.txt text eol=lf
 *.cpp text eol=lf
 *.h text eol=lf
 *.h.in text eol=lf
+*.yml text eol=lf
 
 # Linux development file
 *.pc.in text eol=lf
 
 # Windows development files
-*.rc.in text eol=crlf
+*.rc.in text encoding=cp1252 eol=crlf
+
+# Documentation files
+Doxyfile.in text eol=lf
+*.doc text eol=lf

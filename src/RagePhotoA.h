@@ -20,7 +20,7 @@
 #define RAGEPHOTOA_H
 
 #ifdef __cplusplus
-#include "RagePhoto.h"
+#include "RagePhotoC.h"
 
 /**
 * \brief ABI Stable Wrapper for RagePhoto.
@@ -151,6 +151,6 @@ public:
 private:
     ragephoto_t instance;
 };
-#endif
+#endif // __cplusplus
 
 #endif // RAGEPHOTOA_H

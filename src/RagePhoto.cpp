@@ -17,6 +17,10 @@
 *****************************************************************************/
 
 #include "RagePhoto.h"
+#ifdef LIBRAGEPHOTO_C_API
+#include "RagePhotoC.h"
+#endif
+
 #include <fstream>
 #include <iostream>
 #include <iterator>

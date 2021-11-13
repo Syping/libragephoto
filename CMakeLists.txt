@@ -59,6 +59,7 @@ if (WITH_C_API)
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_API)
     list(APPEND RAGEPHOTO_HEADERS
         src/RagePhotoA.h
+        src/RagePhotoC.h
     )
 else()
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_NOAPI)
