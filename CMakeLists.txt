@@ -37,12 +37,20 @@ set(RAGEPHOTO_SOURCES
 )
 
 # RagePhoto Library Type
-option(BUILD_SHARED "Build libragephoto as shared library" ON)
+if (EMSCRIPTEN)
+    option(BUILD_SHARED "Build libragephoto as shared library" OFF)
+else()
+    option(BUILD_SHARED "Build libragephoto as shared library" ON)
+endif()
 if (BUILD_SHARED)
     option(WITH_C_API "Build libragephoto with C API support" ON)
     set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_SHARED)
 else()
-    option(WITH_C_API "Build libragephoto with C API support" OFF)
+    if (EMSCRIPTEN)
+        option(WITH_C_API "Build libragephoto with C API support" ON)
+    else()
+        option(WITH_C_API "Build libragephoto with C API support" OFF)
+    endif()
     set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_STATIC)
 endif()
 
@@ -93,12 +101,40 @@ target_compile_definitions(ragephoto PRIVATE
     ${LIBRAGEPHOTO_DEFINES}
 )
 target_include_directories(ragephoto PUBLIC
-    ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src
+    ${ragephoto_BINARY_DIR}/include
+    ${ragephoto_SOURCE_DIR}/src
 )
 install(TARGETS ragephoto DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${RAGEPHOTO_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/RagePhoto)
-install(FILES ${PROJECT_BINARY_DIR}/pkgconfig/ragephoto.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+install(FILES ${ragephoto_BINARY_DIR}/pkgconfig/ragephoto.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+# RagePhoto WebAssembly Target
+if (EMSCRIPTEN)
+    if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.13.0")
+        add_executable(ragephoto-wasm ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES})
+        set_target_properties(ragephoto-wasm PROPERTIES
+            PREFIX "lib"
+            OUTPUT_NAME "ragephoto"
+        )
+        target_compile_definitions(ragephoto-wasm PRIVATE
+            LIBRAGEPHOTO_LIBRARY
+            ${LIBRAGEPHOTO_DEFINES}
+        )
+        target_link_options(ragephoto-wasm PRIVATE
+            "SHELL:-O2"
+            "SHELL:--no-entry"
+            "SHELL:-s WASM=1"
+            "SHELL:-s EXPORTED_FUNCTIONS=_free"
+            "SHELL:-s EXPORTED_RUNTIME_METHODS=ccall,cwrap"
+        )
+        target_include_directories(ragephoto-wasm PUBLIC
+            ${ragephoto_BINARY_DIR}/include
+            ${ragephoto_SOURCE_DIR}/src
+        )
+    else()
+        message(WARNING "A useable WebAssembly build needs at least CMake 3.13.0 or newer")
+    endif()
+endif()
 
 # RagePhoto Documentation
 option(WITH_DOCUMENTATION "Build libragephoto with documentation" OFF)
@@ -124,15 +160,25 @@ else()
     option(WITH_EXTRACT "Build libragephoto with ragephoto-extract" OFF)
 endif()
 if (WITH_EXTRACT)
+    # RagePhoto-Extract Source files
     if (WITH_C_API)
         enable_language(C)
         set(EXTRACT_SOURCES src/RagePhoto-Extract.c)
     else()
         set(EXTRACT_SOURCES src/RagePhoto-Extract.cpp)
     endif()
-    add_executable(ragephoto-extract ${RAGEPHOTO_HEADERS} ${EXTRACT_SOURCES})
+    # RagePhoto-Extract Win32 Shared Resources
+    if (WIN32)
+        string(TIMESTAMP ragephoto_BUILD_YEAR "%Y" UTC)
+        configure_file(src/ragephoto-extract.rc.in resources/ragephoto-extract.rc @ONLY)
+        list(APPEND EXTRACT_RESOURCES
+            ${ragephoto_BINARY_DIR}/resources/ragephoto-extract.rc
+        )
+    endif()
+    # RagePhoto-Extract Target + Installs
+    add_executable(ragephoto-extract ${RAGEPHOTO_HEADERS} ${EXTRACT_SOURCES} ${EXTRACT_RESOURCES})
     set_target_properties(ragephoto-extract PROPERTIES
-        INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
+        INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
     )
     target_link_libraries(ragephoto-extract PRIVATE ragephoto)
     install(TARGETS ragephoto-extract DESTINATION ${CMAKE_INSTALL_BINDIR})

@@ -1,5 +1,5 @@
 PROJECT_NAME           = "libragephoto"
-PROJECT_NUMBER         = "Version: @PROJECT_VERSION@"
+PROJECT_NUMBER         = "Version: @ragephoto_VERSION@"
 INPUT                  = "@CMAKE_CURRENT_SOURCE_DIR@/index.doc" \
                          "src"
 OUTPUT_DIRECTORY       = "@CMAKE_CURRENT_BINARY_DIR@"

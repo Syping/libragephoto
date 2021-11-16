@@ -24,7 +24,7 @@
 #include <iostream>
 #include <cstdint>
 
-struct LIBRAGEPHOTO_EXPORT RagePhotoData
+struct LIBRAGEPHOTO_CXX_EXPORT RagePhotoData
 {
     bool photoLoaded;
     char* photoData;

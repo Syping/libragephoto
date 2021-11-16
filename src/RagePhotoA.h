@@ -21,6 +21,7 @@
 
 #ifdef __cplusplus
 #include "RagePhotoC.h"
+#include <iostream>
 
 /**
 * \brief ABI Stable Wrapper for RagePhoto.

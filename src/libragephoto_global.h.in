@@ -32,15 +32,25 @@
 #ifdef _WIN32
 #ifndef LIBRAGEPHOTO_STATIC
 #ifdef LIBRAGEPHOTO_LIBRARY
-#define LIBRAGEPHOTO_EXPORT __declspec(dllexport)
+#define LIBRAGEPHOTO_C_EXPORT __declspec(dllexport)
+#define LIBRAGEPHOTO_CXX_EXPORT __declspec(dllexport)
 #else
-#define LIBRAGEPHOTO_EXPORT __declspec(dllimport)
+#define LIBRAGEPHOTO_C_EXPORT __declspec(dllimport)
+#define LIBRAGEPHOTO_CXX_EXPORT __declspec(dllimport)
 #endif // LIBRAGEPHOTO_LIBRARY
 #else
-#define LIBRAGEPHOTO_EXPORT
+#define LIBRAGEPHOTO_C_EXPORT
+#define LIBRAGEPHOTO_CXX_EXPORT
 #endif // LIBRAGEPHOTO_STATIC
 #else
-#define LIBRAGEPHOTO_EXPORT
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+#define LIBRAGEPHOTO_C_EXPORT EMSCRIPTEN_KEEPALIVE
+#define LIBRAGEPHOTO_CXX_EXPORT
+#else
+#define LIBRAGEPHOTO_C_EXPORT
+#define LIBRAGEPHOTO_CXX_EXPORT
+#endif // __EMSCRIPTEN__
 #endif // _WIN32
 /* RAGEPHOTO LIBRARY EXPORT END */
 

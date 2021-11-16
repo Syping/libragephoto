@@ -35,124 +35,124 @@ extern "C" {
 typedef void* ragephoto_t;
 
 /** Opens a \p ragephoto_t instance. */
-LIBRAGEPHOTO_EXPORT ragephoto_t ragephoto_open();
+LIBRAGEPHOTO_C_EXPORT ragephoto_t ragephoto_open();
 
 /** Resets the \p ragephoto_t instance to default values.
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT void ragephoto_clear(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT void ragephoto_clear(ragephoto_t instance);
 
 /** Loads a Photo from a const char*.
 * \param instance \p ragephoto_t instance
 * \param data Photo data
 * \param size Photo data size
 */
-LIBRAGEPHOTO_EXPORT int ragephoto_load(ragephoto_t instance, const char *data, size_t size);
+LIBRAGEPHOTO_C_EXPORT int ragephoto_load(ragephoto_t instance, const char *data, size_t size);
 
 /** Loads a Photo from a file.
 * \param instance \p ragephoto_t instance
 * \param filename File to load
 */
-LIBRAGEPHOTO_EXPORT int ragephoto_loadfile(ragephoto_t instance, const char *filename);
+LIBRAGEPHOTO_C_EXPORT int ragephoto_loadfile(ragephoto_t instance, const char *filename);
 
 /** Returns the last error occurred.
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT uint8_t ragephoto_error(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT uint8_t ragephoto_error(ragephoto_t instance);
 
 /** Returns the GTA V default Photo Buffer Size. */
-LIBRAGEPHOTO_EXPORT uint32_t ragephoto_defpbuf_gta5();
+LIBRAGEPHOTO_C_EXPORT uint32_t ragephoto_defpbuf_gta5();
 
 /** Returns the RDR 2 default Photo Buffer Size. */
-LIBRAGEPHOTO_EXPORT uint32_t ragephoto_defpbuf_rdr2();
+LIBRAGEPHOTO_C_EXPORT uint32_t ragephoto_defpbuf_rdr2();
 
 /** Returns the GTA V Photo Format. */
-LIBRAGEPHOTO_EXPORT uint32_t ragephoto_format_gta5();
+LIBRAGEPHOTO_C_EXPORT uint32_t ragephoto_format_gta5();
 
 /** Returns the RDR 2 Photo Format. */
-LIBRAGEPHOTO_EXPORT uint32_t ragephoto_format_rdr2();
+LIBRAGEPHOTO_C_EXPORT uint32_t ragephoto_format_rdr2();
 
 /** Returns the Photo description.
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotodesc(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT const char* ragephoto_getphotodesc(ragephoto_t instance);
 
 /** Returns the Photo Format (GTA V or RDR 2).
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT uint32_t ragephoto_getphotoformat(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT uint32_t ragephoto_getphotoformat(ragephoto_t instance);
 
 /** Returns the Photo JPEG data.
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotojpeg(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT const char* ragephoto_getphotojpeg(ragephoto_t instance);
 
 /** Returns the Photo JSON data.
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotojson(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT const char* ragephoto_getphotojson(ragephoto_t instance);
 
 /** Returns the Photo header.
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT const char* ragephoto_getphotoheader(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT const char* ragephoto_getphotoheader(ragephoto_t instance);
 
 /** Returns the Photo JPEG data size.
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT uint32_t ragephoto_getphotosize(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT uint32_t ragephoto_getphotosize(ragephoto_t instance);
 
 /** Returns the Photo title.
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT const char* ragephoto_getphototitle(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT const char* ragephoto_getphototitle(ragephoto_t instance);
 
 /** Returns the Photo save file size.
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT size_t ragephoto_getsavesize(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT size_t ragephoto_getsavesize(ragephoto_t instance);
 
 /** Returns the Photo save file size.
 * \param instance \p ragephoto_t instance
 * \param photoFormat Photo Format (GTA V or RDR 2)
 */
-LIBRAGEPHOTO_EXPORT size_t ragephoto_getsavesizef(ragephoto_t instance, uint32_t photoFormat);
+LIBRAGEPHOTO_C_EXPORT size_t ragephoto_getsavesizef(ragephoto_t instance, uint32_t photoFormat);
 
 /** Saves a Photo to a char*.
 * \param instance \p ragephoto_t instance
 * \param data Photo data
 */
-LIBRAGEPHOTO_EXPORT int ragephoto_save(ragephoto_t instance, char *data);
+LIBRAGEPHOTO_C_EXPORT int ragephoto_save(ragephoto_t instance, char *data);
 
 /** Saves a Photo to a char*.
 * \param instance \p ragephoto_t instance
 * \param data Photo data
 * \param photoFormat Photo Format (GTA V or RDR 2)
 */
-LIBRAGEPHOTO_EXPORT int ragephoto_savef(ragephoto_t instance, char *data, uint32_t photoFormat);
+LIBRAGEPHOTO_C_EXPORT int ragephoto_savef(ragephoto_t instance, char *data, uint32_t photoFormat);
 
 /** Saves a Photo to a file.
 * \param instance \p ragephoto_t instance
 * \param filename File to save
 */
-LIBRAGEPHOTO_EXPORT int ragephoto_savefile(ragephoto_t instance, const char *filename);
+LIBRAGEPHOTO_C_EXPORT int ragephoto_savefile(ragephoto_t instance, const char *filename);
 
 /** Saves a Photo to a file.
 * \param instance \p ragephoto_t instance
 * \param filename File to save
 * \param photoFormat Photo Format (GTA V or RDR 2)
 */
-LIBRAGEPHOTO_EXPORT int ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t photoFormat);
+LIBRAGEPHOTO_C_EXPORT int ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t photoFormat);
 
 /** Sets all cross-format Buffer to default size.
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT void ragephoto_setbufferdefault(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT void ragephoto_setbufferdefault(ragephoto_t instance);
 
 /** Moves all Buffer offsets to correct position.
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT void ragephoto_setbufferoffsets(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT void ragephoto_setbufferoffsets(ragephoto_t instance);
 
 /** Sets the Photo description.
 * \param instance \p ragephoto_t instance
@@ -161,13 +161,13 @@ LIBRAGEPHOTO_EXPORT void ragephoto_setbufferoffsets(ragephoto_t instance);
 *
 * Default bufferSize: 256UL
 */
-LIBRAGEPHOTO_EXPORT void ragephoto_setphotodesc(ragephoto_t instance, const char *description, uint32_t bufferSize);
+LIBRAGEPHOTO_C_EXPORT void ragephoto_setphotodesc(ragephoto_t instance, const char *description, uint32_t bufferSize);
 
 /** Sets the Photo Format (GTA V or RDR 2).
 * \param instance \p ragephoto_t instance
 * \param photoFormat Photo Format (GTA V or RDR 2)
 */
-LIBRAGEPHOTO_EXPORT void ragephoto_setphotoformat(ragephoto_t instance, uint32_t photoFormat);
+LIBRAGEPHOTO_C_EXPORT void ragephoto_setphotoformat(ragephoto_t instance, uint32_t photoFormat);
 
 /** Sets the Photo JPEG data.
 * \param instance \p ragephoto_t instance
@@ -177,7 +177,7 @@ LIBRAGEPHOTO_EXPORT void ragephoto_setphotoformat(ragephoto_t instance, uint32_t
 *
 * Default bufferSize: ragephoto_defpbuf_gta5() or ragephoto_defpbuf_rdr2()
 */
-LIBRAGEPHOTO_EXPORT int ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize);
+LIBRAGEPHOTO_C_EXPORT int ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize);
 
 /** Sets the Photo JSON data.
 * \param instance \p ragephoto_t instance
@@ -186,10 +186,10 @@ LIBRAGEPHOTO_EXPORT int ragephoto_setphotojpeg(ragephoto_t instance, const char 
 *
 * Default bufferSize: 3072UL
 */
-LIBRAGEPHOTO_EXPORT void ragephoto_setphotojson(ragephoto_t instance, const char *json, uint32_t bufferSize);
+LIBRAGEPHOTO_C_EXPORT void ragephoto_setphotojson(ragephoto_t instance, const char *json, uint32_t bufferSize);
 
 /** Sets the Photo header. (EXPERT ONLY) */
-LIBRAGEPHOTO_EXPORT void ragephoto_setphotoheader(ragephoto_t instance, const char *header, uint32_t headerSum);
+LIBRAGEPHOTO_C_EXPORT void ragephoto_setphotoheader(ragephoto_t instance, const char *header, uint32_t headerSum);
 
 /** Sets the Photo title.
 * \param instance \p ragephoto_t instance
@@ -198,15 +198,15 @@ LIBRAGEPHOTO_EXPORT void ragephoto_setphotoheader(ragephoto_t instance, const ch
 *
 * Default bufferSize: 256UL
 */
-LIBRAGEPHOTO_EXPORT void ragephoto_setphototitle(ragephoto_t instance, const char *title, uint32_t bufferSize);
+LIBRAGEPHOTO_C_EXPORT void ragephoto_setphototitle(ragephoto_t instance, const char *title, uint32_t bufferSize);
 
 /** Closes a \p ragephoto_t instance.
 * \param instance \p ragephoto_t instance
 */
-LIBRAGEPHOTO_EXPORT void ragephoto_close(ragephoto_t instance);
+LIBRAGEPHOTO_C_EXPORT void ragephoto_close(ragephoto_t instance);
 
 /** Returns the library version. */
-LIBRAGEPHOTO_EXPORT const char* ragephoto_version();
+LIBRAGEPHOTO_C_EXPORT const char* ragephoto_version();
 
 #ifdef __cplusplus
 }

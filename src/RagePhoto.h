@@ -33,7 +33,7 @@ typedef std::function<bool(const char*, size_t, RagePhotoData*)> RagePhotoLoadFu
 /**
 * \brief GTA V and RDR 2 Photo Parser.
 */
-class LIBRAGEPHOTO_EXPORT RagePhoto
+class LIBRAGEPHOTO_CXX_EXPORT RagePhoto
 {
 public:
     /** Default sizes */
