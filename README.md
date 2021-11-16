@@ -37,8 +37,8 @@ RagePhoto::Error error = ragePhoto.error();
 uint32_t format = ragePhoto.format(); // RagePhoto::GTA5 or RagePhoto::RDR2
 ```
 
-[RagePhoto C API](https://libragephoto.syping.de/doc/_rage_photo_c_8h.html)  
-[RagePhoto C++ API](https://libragephoto.syping.de/doc/class_rage_photo.html)
+[RagePhoto C API](https://libragephoto.syping.de/doc/RagePhotoC_8h.html)  
+[RagePhoto C++ API](https://libragephoto.syping.de/doc/classRagePhoto.html)
 
 #### How to Use ragephoto-extract
 
