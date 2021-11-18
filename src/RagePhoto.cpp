@@ -41,6 +41,51 @@
 #include <stringapiset.h>
 #endif
 
+/* BEGIN OF STATIC LIBRARY FUNCTIONS */
+inline size_t readBuffer(const char *input, void *output, size_t *pos, size_t outputLen, size_t inputLen)
+{
+    size_t readLen = 0;
+    if (*pos >= inputLen)
+        return 0;
+    readLen = inputLen - *pos;
+    if (readLen > outputLen)
+        readLen = outputLen;
+    std::memcpy(output, &input[*pos], readLen);
+    *pos = *pos + readLen;
+    return readLen;
+}
+
+inline size_t writeBuffer(const void *input, char *output, size_t *pos, size_t outputLen, size_t inputLen)
+{
+    const size_t maxLen = outputLen - *pos;
+    size_t writeLen = inputLen;
+    if (*pos >= outputLen)
+        return 0;
+    if (inputLen > maxLen)
+        writeLen = maxLen;
+    std::memcpy(&output[*pos], input, writeLen);
+    *pos = *pos + writeLen;
+    return writeLen;
+}
+
+inline uint32_t charToUInt32LE(char *x)
+{
+    return (static_cast<unsigned char>(x[3]) << 24 |
+            static_cast<unsigned char>(x[2]) << 16 |
+            static_cast<unsigned char>(x[1]) << 8 |
+            static_cast<unsigned char>(x[0]));
+}
+
+inline void uInt32ToCharLE(uint32_t x, char *y)
+{
+    y[0] = x;
+    y[1] = x >> 8;
+    y[2] = x >> 16;
+    y[3] = x >> 24;
+}
+/* END OF STATIC LIBRARY FUNCTIONS */
+
+/* BEGIN OF RAGEPHOTO CLASS */
 RagePhoto::RagePhoto()
 {
     m_data.photoLoaded = false;
@@ -894,48 +939,6 @@ void RagePhoto::setTitle(const std::string &title, uint32_t bufferSize)
     }
 }
 
-inline size_t RagePhoto::readBuffer(const char *input, void *output, size_t *pos, size_t len, size_t inputLen)
-{
-    size_t readLen = 0;
-    if (*pos >= inputLen)
-        return 0;
-    readLen = inputLen - *pos;
-    if (readLen > len)
-        readLen = len;
-    std::memcpy(output, &input[*pos], readLen);
-    *pos = *pos + readLen;
-    return readLen;
-}
-
-inline size_t RagePhoto::writeBuffer(const void *input, char *output, size_t *pos, size_t len, size_t inputLen)
-{
-    const size_t maxLen = len - *pos;
-    size_t writeLen = inputLen;
-    if (*pos >= len)
-        return 0;
-    if (inputLen > maxLen)
-        writeLen = maxLen;
-    std::memcpy(&output[*pos], input, writeLen);
-    *pos = *pos + writeLen;
-    return writeLen;
-}
-
-inline uint32_t RagePhoto::charToUInt32LE(char *x)
-{
-    return (static_cast<unsigned char>(x[3]) << 24 |
-            static_cast<unsigned char>(x[2]) << 16 |
-            static_cast<unsigned char>(x[1]) << 8 |
-            static_cast<unsigned char>(x[0]));
-}
-
-inline void RagePhoto::uInt32ToCharLE(uint32_t x, char *y)
-{
-    y[0] = x;
-    y[1] = x >> 8;
-    y[2] = x >> 16;
-    y[3] = x >> 24;
-}
-
 #ifdef LIBRAGEPHOTO_C_API
 ragephoto_t ragephoto_open()
 {
@@ -1123,3 +1126,4 @@ const char* ragephoto_version()
     return RAGEPHOTO_VERSION;
 }
 #endif
+/* END OF RAGEPHOTO CLASS */

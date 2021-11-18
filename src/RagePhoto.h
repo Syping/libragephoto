@@ -167,11 +167,7 @@ public:
     bool setPhoto(const std::string &data, uint32_t bufferSize = 0);
     void setTitle(const std::string &title, uint32_t bufferSize = 0); /**< Sets the Photo title. */
 
-protected:
-    static size_t readBuffer(const char *input, void *output, size_t *pos, size_t len, size_t inputLen);
-    static size_t writeBuffer(const void *input, char *output, size_t *pos, size_t len, size_t inputLen);
-    static uint32_t charToUInt32LE(char *x);
-    static void uInt32ToCharLE(uint32_t x, char *y);
+private:
     std::unordered_map<uint8_t, RagePhotoLoadFunc> m_loadFuncs;
     RagePhotoData m_data;
 };
