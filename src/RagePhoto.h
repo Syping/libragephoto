@@ -25,6 +25,7 @@
 #include <unordered_map>
 #include <functional>
 #include <iostream>
+#include <cstdlib>
 #include <cstdint>
 #include <cstdio>
 

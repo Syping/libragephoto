@@ -21,6 +21,7 @@
 
 #ifdef __cplusplus
 #include "RagePhotoC.h"
+#include <cstdlib>
 #include <iostream>
 
 /**
@@ -93,7 +94,7 @@ public:
                 *ok = false;
             return std::string();
         }
-        char *data = static_cast<char*>(malloc(size));
+        char *data = static_cast<char*>(std::malloc(size));
         if (!data) {
             if (ok)
                 *ok = false;
@@ -103,7 +104,7 @@ public:
         if (ok)
             *ok = saved;
         const std::string sdata = std::string(data, size);
-        free(data);
+        std::free(data);
         return sdata;
     }
     const std::string save(bool *ok = nullptr) {
