@@ -704,7 +704,7 @@ const std::string RagePhoto::save(uint32_t photoFormat, bool *ok)
             *ok = false;
         return std::string();
     }
-    char *data = static_cast<char*>(malloc(size));
+    char *data = static_cast<char*>(std::malloc(size));
     if (!data) {
         if (ok)
             *ok = false;
@@ -714,7 +714,7 @@ const std::string RagePhoto::save(uint32_t photoFormat, bool *ok)
     if (ok)
         *ok = saved;
     const std::string sdata = std::string(data, size);
-    free(data);
+    std::free(data);
     return sdata;
 }
 
@@ -861,7 +861,7 @@ bool RagePhoto::setPhoto(const char *data, uint32_t size, uint32_t bufferSize)
         }
     }
     else {
-        m_data.photoData = static_cast<char*>(malloc(size));
+        m_data.photoData = static_cast<char*>(std::malloc(size));
         if (!m_data.photoData) {
             m_data.error = static_cast<uint8_t>(Error::PhotoMallocError); // 15
             return false;
