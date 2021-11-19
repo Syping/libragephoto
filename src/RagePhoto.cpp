@@ -743,24 +743,18 @@ bool RagePhoto::save(char *data)
 
 const std::string RagePhoto::save(uint32_t photoFormat, bool *ok)
 {
+    std::string data;
     const size_t size = saveSize(photoFormat);
     if (size == 0) {
         if (ok)
             *ok = false;
-        return std::string();
+        return data;
     }
-    char *data = static_cast<char*>(std::malloc(size));
-    if (!data) {
-        if (ok)
-            *ok = false;
-        return std::string();
-    }
-    const bool saved = save(data, photoFormat);
+    data.resize(size);
+    const bool saved = save(&data[0], photoFormat);
     if (ok)
         *ok = saved;
-    const std::string sdata = std::string(data, size);
-    std::free(data);
-    return sdata;
+    return data;
 }
 
 const std::string RagePhoto::save(bool *ok)

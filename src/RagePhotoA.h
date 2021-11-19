@@ -88,24 +88,18 @@ public:
         return ragephoto_save(instance, data);
     }
     const std::string save(uint32_t photoFormat, bool *ok = nullptr) {
+        std::string data;
         const size_t size = ragephoto_getsavesizef(instance, photoFormat);
         if (size == 0) {
             if (ok)
                 *ok = false;
-            return std::string();
+            return data;
         }
-        char *data = static_cast<char*>(std::malloc(size));
-        if (!data) {
-            if (ok)
-                *ok = false;
-            return std::string();
-        }
-        const bool saved = ragephoto_savef(instance, data, photoFormat);
+        data.resize(size);
+        const bool saved = ragephoto_savef(instance, &data[0], photoFormat);
         if (ok)
             *ok = saved;
-        const std::string sdata = std::string(data, size);
-        std::free(data);
-        return sdata;
+        return data;
     }
     const std::string save(bool *ok = nullptr) {
         return save(ragephoto_getphotoformat(instance), ok);
