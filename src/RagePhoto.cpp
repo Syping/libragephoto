@@ -111,6 +111,8 @@ void RagePhoto::clear()
     m_data.title.clear();
     m_data.error = 0U;
     m_data.photoFormat = 0UL;
+    m_data.unnamedSum1 = 0UL;
+    m_data.unnamedSum2 = 0UL;
     setBufferDefault();
 }
 
@@ -191,8 +193,29 @@ bool RagePhoto::load(const char *data, size_t length)
         m_data.headerSum = charToUInt32LE(uInt32Buffer);
 #endif
 
-        if (m_data.photoFormat == PhotoFormat::RDR2)
-            pos = pos + 8;
+        if (m_data.photoFormat == PhotoFormat::RDR2) {
+            size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+            if (size != 4) {
+                m_data.error = static_cast<uint8_t>(Error::IncompleteChecksum); // 6
+                return false;
+            }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+            std::memcpy(&m_data.unnamedSum1, uInt32Buffer, 4);
+#else
+            m_data.unnamedSum1 = charToUInt32LE(uInt32Buffer);
+#endif
+
+            size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+            if (size != 4) {
+                m_data.error = static_cast<uint8_t>(Error::IncompleteChecksum); // 6
+                return false;
+            }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+            std::memcpy(&m_data.unnamedSum2, uInt32Buffer, 4);
+#else
+            m_data.unnamedSum2 = charToUInt32LE(uInt32Buffer);
+#endif
+        }
         const size_t headerSize = pos;
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
@@ -413,6 +436,8 @@ bool RagePhoto::load(const char *data, size_t length)
 #ifdef RAGEPHOTO_DEBUG
         std::cout << "header: " << m_data.header << std::endl;
         std::cout << "headerSum: " << m_data.headerSum << std::endl;
+        std::cout << "unnamedSum1: " << m_data.unnamedSum1 << std::endl;
+        std::cout << "unnamedSum2: " << m_data.unnamedSum2 << std::endl;
         std::cout << "photoBuffer: " << m_data.photoBuffer << std::endl;
         std::cout << "descBuffer: " << m_data.descBuffer << std::endl;
         std::cout << "descOffset: " << m_data.descOffset << std::endl;
@@ -620,9 +645,19 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
         if (photoFormat == PhotoFormat::RDR2) {
-            for (size_t i = 0; i < 8; i++) {
-                writeBuffer("\0", data, &pos, length, 1);
-            }
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+            std::memcpy(uInt32Buffer, &m_data.unnamedSum1, 4);
+#else
+            uInt32ToCharLE(m_data.unnamedSum1, uInt32Buffer);
+#endif
+            writeBuffer(uInt32Buffer, data, &pos, length, 4);
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+            std::memcpy(uInt32Buffer, &m_data.unnamedSum2, 4);
+#else
+            uInt32ToCharLE(m_data.unnamedSum2, uInt32Buffer);
+#endif
+            writeBuffer(uInt32Buffer, data, &pos, length, 4);
         }
         const size_t headerSize = pos;
 

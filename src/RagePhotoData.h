@@ -44,6 +44,8 @@ struct LIBRAGEPHOTO_CXX_EXPORT RagePhotoData
     uint32_t photoSize;
     uint32_t titlBuffer;
     uint32_t titlOffset;
+    uint32_t unnamedSum1;
+    uint32_t unnamedSum2;
 };
 #endif // __cplusplus
 
