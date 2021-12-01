@@ -26,3 +26,12 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Install
       run: sudo cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: Ubuntu
+        path: |
+          /usr/local/bin/ragephoto-extract
+          /usr/local/lib/libragephoto.so
+          /usr/local/lib/pkgconfig/ragephoto.pc
+          /usr/local/include/RagePhoto/

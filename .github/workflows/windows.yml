@@ -21,3 +21,17 @@ jobs:
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - name: Install
+      run: cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --prefix ${{github.workspace}}/build
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: Windows MSVC
+        path: |
+          ${{github.workspace}}/build/libragephoto.dll
+          ${{github.workspace}}/build/libragephoto.dll.manifest
+          ${{github.workspace}}/build/ragephoto.exp
+          ${{github.workspace}}/build/ragephoto.lib
+          ${{github.workspace}}/build/ragephoto-extract.exe
+          ${{github.workspace}}/build/ragephoto-extract.exe.manifest
+          ${{github.workspace}}/build/include/RagePhoto/
