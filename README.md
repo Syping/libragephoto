@@ -9,33 +9,21 @@ Open Source RAGE Photo Parser for GTA V and RDR 2
 #### Build libragephoto
 
 ```bash
-git clone https://github.com/Syping/libragephoto && cd libragephoto
-mkdir -p build && cd build
-cmake ../
-make -j $(nproc --all)
-sudo make install
+git clone https://github.com/Syping/libragephoto
+cmake -B libragephoto-build libragephoto
+cmake --build libragephoto-build
+sudo cmake --install libragephoto-build
 ```
 
 ##### Optional CMake flags
-`-DWITH_DOCUMENTATION=ON`
-`-DWITH_EXTRACT=OFF`
-`-DWITH_GTK_EXAMPLE=ON`
-`-DWITH_QT_EXAMPLE=ON`
-`-DBUILD_SHARED=OFF`
+`-DRAGEPHOTO_C_API=OFF`  
+`-DRAGEPHOTO_DOC=ON`  
+`-DRAGEPHOTO_EXAMPLE_GTKVIEWER=ON`  
+`-DRAGEPHOTO_EXAMPLE_QTVIEWER=ON`  
+`-DRAGEPHOTO_EXTRACT=OFF`  
+`-DRAGEPHOTO_STATIC=ON`
 
-#### How to Use libragephoto
-
-```cpp
-RagePhoto ragePhoto;
-bool loaded = ragePhoto.load(data, size);
-std::string photo = ragePhoto.photo();
-const char* photoData = ragePhoto.photoData();
-uint32_t photoSize = ragePhoto.photoSize();
-std::string json = ragePhoto.json();
-std::string title = ragePhoto.title();
-RagePhoto::Error error = ragePhoto.error();
-uint32_t format = ragePhoto.format(); // RagePhoto::GTA5 or RagePhoto::RDR2
-```
+#### RagePhoto API
 
 [RagePhoto C API](https://libragephoto.syping.de/doc/RagePhotoC_8h.html)  
 [RagePhoto C++ API](https://libragephoto.syping.de/doc/classRagePhoto.html)

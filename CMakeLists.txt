@@ -27,6 +27,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # RagePhoto CMake includes
 include(cmake/unicode.cmake)
 
+# RagePhoto WebAssembly ON/OFF
+if (EMSCRIPTEN)
+    set(EM_ON ON)
+    set(EM_OFF OFF)
+else()
+    set(EM_ON OFF)
+    set(EM_OFF ON)
+endif()
+
 # RagePhoto Source files
 set(RAGEPHOTO_HEADERS
     src/RagePhoto.h
@@ -37,33 +46,25 @@ set(RAGEPHOTO_SOURCES
 )
 
 # RagePhoto Library Type
-if (EMSCRIPTEN)
-    option(BUILD_SHARED "Build libragephoto as shared library" OFF)
-else()
-    option(BUILD_SHARED "Build libragephoto as shared library" ON)
-endif()
-if (BUILD_SHARED)
-    option(WITH_C_API "Build libragephoto with C API support" ON)
-    set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_SHARED)
-else()
-    if (EMSCRIPTEN)
-        option(WITH_C_API "Build libragephoto with C API support" ON)
-    else()
-        option(WITH_C_API "Build libragephoto with C API support" OFF)
-    endif()
+option(RAGEPHOTO_STATIC "Build libragephoto as static library" ${EM_ON})
+if (RAGEPHOTO_STATIC)
+    option(RAGEPHOTO_C_API "Build libragephoto with C API support" ${EM_ON})
     set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_STATIC)
+else()
+    option(RAGEPHOTO_C_API "Build libragephoto with C API support" ON)
+    set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_SHARED)
 endif()
 
 # RagePhoto Benchmark
-option(WITH_BENCHMARK "Build with libragephoto benchmark" OFF)
-if (WITH_BENCHMARK)
+option(RAGEPHOTO_BENCHMARK "Build with libragephoto benchmark" OFF)
+if (RAGEPHOTO_BENCHMARK)
     list(APPEND LIBRAGEPHOTO_DEFINES
         RAGEPHOTO_BENCHMARK
     )
 endif()
 
 # RagePhoto C API
-if (WITH_C_API)
+if (RAGEPHOTO_C_API)
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_API)
     list(APPEND RAGEPHOTO_HEADERS
         src/RagePhotoA.h
@@ -88,13 +89,13 @@ configure_file(src/libragephoto_global.h.in include/libragephoto_global.h @ONLY)
 list(APPEND RAGEPHOTO_HEADERS
     ${PROJECT_BINARY_DIR}/include/libragephoto_global.h
 )
-if (BUILD_SHARED)
+if (RAGEPHOTO_STATIC)
+    add_library(ragephoto STATIC ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES} ${RAGEPHOTO_STATIC_RESOURCES})
+else()
     add_library(ragephoto SHARED ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES} ${RAGEPHOTO_SHARED_RESOURCES})
     set_target_properties(ragephoto PROPERTIES
         PREFIX "lib"
     )
-else()
-    add_library(ragephoto STATIC ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES} ${RAGEPHOTO_STATIC_RESOURCES})
 endif()
 target_compile_definitions(ragephoto PRIVATE
     LIBRAGEPHOTO_LIBRARY
@@ -137,31 +138,31 @@ if (EMSCRIPTEN)
 endif()
 
 # RagePhoto Documentation
-option(WITH_DOCUMENTATION "Build libragephoto with documentation" OFF)
-if (WITH_DOCUMENTATION)
+option(RAGEPHOTO_DOC "Build libragephoto with documentation" OFF)
+if (RAGEPHOTO_DOC)
     add_subdirectory(doc)
 endif()
 
 # RagePhoto Examples
-option(WITH_GTK_EXAMPLE "Build libragephoto with GTK Photo Viewer" OFF)
-if (WITH_GTK_EXAMPLE)
+option(RAGEPHOTO_EXAMPLE_GTKVIEWER "Build libragephoto with GTK Photo Viewer" OFF)
+if (RAGEPHOTO_EXAMPLE_GTKVIEWER)
     add_subdirectory(examples/ragephoto-gtkviewer)
 endif()
 
-option(WITH_QT_EXAMPLE "Build libragephoto with Qt Photo Viewer" OFF)
-if (WITH_QT_EXAMPLE)
+option(RAGEPHOTO_EXAMPLE_QTVIEWER "Build libragephoto with Qt Photo Viewer" OFF)
+if (RAGEPHOTO_EXAMPLE_QTVIEWER)
     add_subdirectory(examples/ragephoto-qtviewer)
 endif()
 
 # RagePhoto Extract Tool
 if (${CMAKE_PROJECT_NAME} STREQUAL "ragephoto")
-    option(WITH_EXTRACT "Build libragephoto with ragephoto-extract" ON)
+    option(RAGEPHOTO_EXTRACT "Build libragephoto with ragephoto-extract" ON)
 else()
-    option(WITH_EXTRACT "Build libragephoto with ragephoto-extract" OFF)
+    option(RAGEPHOTO_EXTRACT "Build libragephoto with ragephoto-extract" OFF)
 endif()
-if (WITH_EXTRACT)
+if (RAGEPHOTO_EXTRACT)
     # RagePhoto-Extract Source files
-    if (WITH_C_API)
+    if (RAGEPHOTO_C_API)
         enable_language(C)
         set(EXTRACT_SOURCES src/RagePhoto-Extract.c)
     else()
