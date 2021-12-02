@@ -1,20 +1,15 @@
 name: WebAssembly
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
-env:
-  BUILD_TYPE: Release
+on: push
 
 jobs:
-  build:
+  Release:
     runs-on: ubuntu-latest
+    env:
+      BUILD_TYPE: Release
     steps:
     - uses: actions/checkout@v2
-      with: 
+      with:
         submodules: recursive
     - name: Setup emsdk
       uses: mymindstorm/setup-emsdk@v11

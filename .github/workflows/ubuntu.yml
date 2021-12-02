@@ -1,20 +1,15 @@
 name: Ubuntu
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
-env:
-  BUILD_TYPE: Release
+on: push
 
 jobs:
-  build:
+  Release:
     runs-on: ubuntu-latest
+    env:
+      BUILD_TYPE: Release
     steps:
     - uses: actions/checkout@v2
-      with: 
+      with:
         submodules: recursive
     - name: Install packages
       run: |
@@ -25,13 +20,10 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Install
-      run: sudo cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --prefix ${{github.workspace}}/install/usr/local
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
         name: Ubuntu
         path: |
-          /usr/local/bin/ragephoto-extract
-          /usr/local/lib/libragephoto.so
-          /usr/local/lib/pkgconfig/ragephoto.pc
-          /usr/local/include/RagePhoto/
+          ${{github.workspace}}/install/

@@ -1,20 +1,15 @@
 name: Windows
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
-env:
-  BUILD_TYPE: Release
+on: push
 
 jobs:
-  build:
+  Release:
     runs-on: windows-latest
+    env:
+      BUILD_TYPE: Release
     steps:
     - uses: actions/checkout@v2
-      with: 
+      with:
         submodules: recursive
     - uses: ilammy/msvc-dev-cmd@v1
     - name: Configure CMake
@@ -22,16 +17,10 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Install
-      run: cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --prefix ${{github.workspace}}/build
+      run: cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --prefix ${{github.workspace}}/install
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
         name: Windows MSVC
         path: |
-          ${{github.workspace}}/build/libragephoto.dll
-          ${{github.workspace}}/build/libragephoto.dll.manifest
-          ${{github.workspace}}/build/ragephoto.exp
-          ${{github.workspace}}/build/ragephoto.lib
-          ${{github.workspace}}/build/ragephoto-extract.exe
-          ${{github.workspace}}/build/ragephoto-extract.exe.manifest
-          ${{github.workspace}}/build/include/RagePhoto/
+          ${{github.workspace}}/install/

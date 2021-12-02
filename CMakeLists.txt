@@ -27,13 +27,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # RagePhoto CMake includes
 include(cmake/unicode.cmake)
 
-# RagePhoto WebAssembly ON/OFF
+# RagePhoto WebAssembly ON
 if (EMSCRIPTEN)
     set(EM_ON ON)
-    set(EM_OFF OFF)
 else()
     set(EM_ON OFF)
-    set(EM_OFF ON)
 endif()
 
 # RagePhoto Source files
@@ -105,9 +103,15 @@ target_include_directories(ragephoto PUBLIC
     ${ragephoto_BINARY_DIR}/include
     ${ragephoto_SOURCE_DIR}/src
 )
-install(TARGETS ragephoto DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS ragephoto
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
 install(FILES ${RAGEPHOTO_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/RagePhoto)
-install(FILES ${ragephoto_BINARY_DIR}/pkgconfig/ragephoto.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+if (UNIX)
+    install(FILES ${ragephoto_BINARY_DIR}/pkgconfig/ragephoto.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+endif()
 
 # RagePhoto WebAssembly Target
 if (EMSCRIPTEN)
