@@ -48,7 +48,7 @@ public:
         RDR2_HEADERSIZE = 272UL, /**< RDR 2 Header Size */
     };
     /** Parsing and set errors */
-    enum class Error : uint8_t {
+    enum Error : uint8_t {
         DescBufferTight = 38, /**< Description Buffer is too tight */
         DescMallocError = 30, /**< Description Buffer can't be allocated */
         DescReadError = 31, /**< Description can't be read successfully */
@@ -111,7 +111,7 @@ public:
     * \param filename File to load
     */
     bool loadFile(const std::string &filename);
-    Error error() const; /**< Returns the last error occurred. */
+    uint8_t error() const; /**< Returns the last error occurred. */
     uint32_t format() const; /**< Returns the Photo Format (GTA V or RDR 2). */
     const std::string photo() const; /**< Returns the Photo JPEG data. */
     const char *photoData() const; /**< Returns the Photo JPEG data. */

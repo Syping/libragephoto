@@ -39,8 +39,8 @@ bool readPhotoFile(const std::string &filename, Gtk::Window *win, Gtk::Image *im
         RagePhoto ragePhoto;
         const bool loaded = ragePhoto.load(data);
         if (!loaded) {
-            const RagePhoto::Error error = ragePhoto.error();
-            if (error <= RagePhoto::Error::PhotoReadError) {
+            const uint8_t error = ragePhoto.error();
+            if (error <= RagePhoto::PhotoReadError) {
                 Gtk::MessageDialog msg(*win, "Failed to read photo: " + filename, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
                 msg.set_title("Open Photo");
                 msg.run();

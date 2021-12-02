@@ -51,7 +51,7 @@ public:
     bool loadFile(const char *filename) {
         return ragephoto_loadfile(instance, filename);
     }
-    uint32_t error() const {
+    uint8_t error() const {
         return ragephoto_error(instance);
     }
     uint32_t format() const {
@@ -88,18 +88,18 @@ public:
         return ragephoto_save(instance, data);
     }
     const std::string save(uint32_t photoFormat, bool *ok = nullptr) {
-        std::string data;
+        std::string sdata;
         const size_t size = ragephoto_getsavesizef(instance, photoFormat);
         if (size == 0) {
             if (ok)
                 *ok = false;
-            return data;
+            return sdata;
         }
-        data.resize(size);
-        const bool saved = ragephoto_savef(instance, &data[0], photoFormat);
+        sdata.resize(size);
+        const bool saved = ragephoto_savef(instance, &sdata[0], photoFormat);
         if (ok)
             *ok = saved;
-        return data;
+        return sdata;
     }
     const std::string save(bool *ok = nullptr) {
         return save(ragephoto_getphotoformat(instance), ok);

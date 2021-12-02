@@ -33,11 +33,11 @@ int main(int argc, char *argv[])
     const bool loaded = ragePhoto.loadFile(argv[1]);
 
     if (!loaded) {
-        if (ragePhoto.error() == RagePhoto::Error::Uninitialised) {
+        if (ragePhoto.error() == RagePhoto::Uninitialised) {
             std::cout << "Failed to open file: " << argv[1] << std::endl;
             return 1;
         }
-        else if (ragePhoto.error() <= RagePhoto::Error::PhotoReadError) {
+        else if (ragePhoto.error() <= RagePhoto::PhotoReadError) {
             std::cout << "Failed to load photo" << std::endl;
             return 1;
         }

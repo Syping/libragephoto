@@ -21,11 +21,11 @@
 #include "RagePhotoC.h"
 #endif
 
+#include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <iterator>
-#include <cstdlib>
-#include <cstring>
 
 #ifdef RAGEPHOTO_BENCHMARK
 #include <chrono>
@@ -129,7 +129,7 @@ bool RagePhoto::load(const char *data, size_t length)
     char uInt32Buffer[4];
     size_t size = readBuffer(data, uInt32Buffer, &pos, 4, length);
     if (size != 4) {
-        m_data.error = static_cast<uint8_t>(Error::NoFormatIdentifier); // 1
+        m_data.error = Error::NoFormatIdentifier; // 1
         return false;
     }
 
@@ -143,7 +143,7 @@ bool RagePhoto::load(const char *data, size_t length)
         char photoHeader[256];
         size = readBuffer(data, photoHeader, &pos, 256, length);
         if (size != 256) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteHeader); // 3
+            m_data.error = Error::IncompleteHeader; // 3
             return false;
         }
 
@@ -151,13 +151,13 @@ bool RagePhoto::load(const char *data, size_t length)
         std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
         m_data.header = convert.to_bytes(reinterpret_cast<char16_t*>(photoHeader));
         if (convert.converted() == 0) {
-            m_data.error = static_cast<uint8_t>(Error::UnicodeHeaderError); // 5
+            m_data.error = Error::UnicodeHeaderError; // 5
             return false;
         }
 #elif defined UNICODE_ICONV
         iconv_t iconv_in = iconv_open("UTF-8", "UTF-16LE");
         if (iconv_in == (iconv_t)-1) {
-            m_data.error = static_cast<uint8_t>(Error::UnicodeInitError); // 4
+            m_data.error = Error::UnicodeInitError; // 4
             return false;
         }
         char photoHeader_string[256];
@@ -168,7 +168,7 @@ bool RagePhoto::load(const char *data, size_t length)
         const size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
         iconv_close(iconv_in);
         if (ret == static_cast<size_t>(-1)) {
-            m_data.error = static_cast<uint8_t>(Error::UnicodeHeaderError); // 5
+            m_data.error = Error::UnicodeHeaderError; // 5
             return false;
         }
         m_data.header = std::string(photoHeader_string);
@@ -176,7 +176,7 @@ bool RagePhoto::load(const char *data, size_t length)
         char photoHeader_string[256];
         const int converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<wchar_t*>(photoHeader), -1, photoHeader_string, 256, NULL, NULL);
         if (converted == 0) {
-            m_data.error = static_cast<uint8_t>(Error::UnicodeHeaderError); // 5
+            m_data.error = Error::UnicodeHeaderError; // 5
             return false;
         }
         m_data.header = std::string(photoHeader_string);
@@ -184,7 +184,7 @@ bool RagePhoto::load(const char *data, size_t length)
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteChecksum); // 6
+            m_data.error = Error::IncompleteChecksum; // 6
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -196,7 +196,7 @@ bool RagePhoto::load(const char *data, size_t length)
         if (m_data.photoFormat == PhotoFormat::RDR2) {
             size = readBuffer(data, uInt32Buffer, &pos, 4, length);
             if (size != 4) {
-                m_data.error = static_cast<uint8_t>(Error::IncompleteChecksum); // 6
+                m_data.error = Error::IncompleteChecksum; // 6
                 return false;
             }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -207,7 +207,7 @@ bool RagePhoto::load(const char *data, size_t length)
 
             size = readBuffer(data, uInt32Buffer, &pos, 4, length);
             if (size != 4) {
-                m_data.error = static_cast<uint8_t>(Error::IncompleteChecksum); // 6
+                m_data.error = Error::IncompleteChecksum; // 6
                 return false;
             }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -220,7 +220,7 @@ bool RagePhoto::load(const char *data, size_t length)
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteEOF); // 7
+            m_data.error = Error::IncompleteEOF; // 7
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -231,7 +231,7 @@ bool RagePhoto::load(const char *data, size_t length)
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteJsonOffset); // 8
+            m_data.error = Error::IncompleteJsonOffset; // 8
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -241,7 +241,7 @@ bool RagePhoto::load(const char *data, size_t length)
 #endif
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteTitleOffset); // 9
+            m_data.error = Error::IncompleteTitleOffset; // 9
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -252,7 +252,7 @@ bool RagePhoto::load(const char *data, size_t length)
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteDescOffset); // 10
+            m_data.error = Error::IncompleteDescOffset; // 10
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -264,17 +264,17 @@ bool RagePhoto::load(const char *data, size_t length)
         char markerBuffer[4];
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteJpegMarker); // 11
+            m_data.error = Error::IncompleteJpegMarker; // 11
             return false;
         }
         if (strncmp(markerBuffer, "JPEG", 4) != 0) {
-            m_data.error = static_cast<uint8_t>(Error::IncorrectJpegMarker); // 12
+            m_data.error = Error::IncorrectJpegMarker; // 12
             return false;
         }
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompletePhotoBuffer); // 13
+            m_data.error = Error::IncompletePhotoBuffer; // 13
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -285,7 +285,7 @@ bool RagePhoto::load(const char *data, size_t length)
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompletePhotoSize); // 14
+            m_data.error = Error::IncompletePhotoSize; // 14
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -296,14 +296,14 @@ bool RagePhoto::load(const char *data, size_t length)
 
         m_data.photoData = static_cast<char*>(std::malloc(m_data.photoSize));
         if (!m_data.photoData) {
-            m_data.error = static_cast<uint8_t>(Error::PhotoMallocError); // 15
+            m_data.error = Error::PhotoMallocError; // 15
             return false;
         }
         size = readBuffer(data, m_data.photoData, &pos, m_data.photoSize, length);
         if (size != m_data.photoSize) {
             std::free(m_data.photoData);
             m_data.photoData = nullptr;
-            m_data.error = static_cast<uint8_t>(Error::PhotoReadError); // 16
+            m_data.error = Error::PhotoReadError; // 16
             return false;
         }
         m_data.photoLoaded = true;
@@ -311,17 +311,17 @@ bool RagePhoto::load(const char *data, size_t length)
         pos = m_data.jsonOffset + headerSize;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteJsonMarker); // 17
+            m_data.error = Error::IncompleteJsonMarker; // 17
             return false;
         }
         if (strncmp(markerBuffer, "JSON", 4) != 0) {
-            m_data.error = static_cast<uint8_t>(Error::IncorrectJsonMarker); // 18
+            m_data.error = Error::IncorrectJsonMarker; // 18
             return false;
         }
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteJsonBuffer); // 19
+            m_data.error = Error::IncompleteJsonBuffer; // 19
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -332,13 +332,13 @@ bool RagePhoto::load(const char *data, size_t length)
 
         char *t_jsonData = static_cast<char*>(std::malloc(m_data.jsonBuffer));
         if (!t_jsonData) {
-            m_data.error = static_cast<uint8_t>(Error::JsonMallocError); // 20
+            m_data.error = Error::JsonMallocError; // 20
             return false;
         }
         size = readBuffer(data, t_jsonData, &pos, m_data.jsonBuffer, length);
         if (size != m_data.jsonBuffer) {
             std::free(t_jsonData);
-            m_data.error = static_cast<uint8_t>(Error::JsonReadError); // 21
+            m_data.error = Error::JsonReadError; // 21
             return false;
         }
         m_data.json = std::string(t_jsonData);
@@ -347,17 +347,17 @@ bool RagePhoto::load(const char *data, size_t length)
         pos = m_data.titlOffset + headerSize;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteTitleMarker); // 22
+            m_data.error = Error::IncompleteTitleMarker; // 22
             return false;
         }
         if (strncmp(markerBuffer, "TITL", 4) != 0) {
-            m_data.error = static_cast<uint8_t>(Error::IncorrectTitleMarker); // 23
+            m_data.error = Error::IncorrectTitleMarker; // 23
             return false;
         }
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteTitleBuffer); // 24
+            m_data.error = Error::IncompleteTitleBuffer; // 24
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -368,13 +368,13 @@ bool RagePhoto::load(const char *data, size_t length)
 
         char *t_titlData = static_cast<char*>(std::malloc(m_data.titlBuffer));
         if (!t_titlData) {
-            m_data.error = static_cast<uint8_t>(Error::TitleMallocError); // 25
+            m_data.error = Error::TitleMallocError; // 25
             return false;
         }
         size = readBuffer(data, t_titlData, &pos, m_data.titlBuffer, length);
         if (size != m_data.titlBuffer) {
             std::free(t_titlData);
-            m_data.error = static_cast<uint8_t>(Error::TitleReadError); // 26
+            m_data.error = Error::TitleReadError; // 26
             return false;
         }
         m_data.title = std::string(t_titlData);
@@ -383,17 +383,17 @@ bool RagePhoto::load(const char *data, size_t length)
         pos = m_data.descOffset + headerSize;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteDescMarker); // 27
+            m_data.error = Error::IncompleteDescMarker; // 27
             return false;
         }
         if (strncmp(markerBuffer, "DESC", 4) != 0) {
-            m_data.error = static_cast<uint8_t>(Error::IncorrectDescMarker); // 28
+            m_data.error = Error::IncorrectDescMarker; // 28
             return false;
         }
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteDescBuffer); // 29
+            m_data.error = Error::IncompleteDescBuffer; // 29
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -404,13 +404,13 @@ bool RagePhoto::load(const char *data, size_t length)
 
         char *t_descData = static_cast<char*>(std::malloc(m_data.descBuffer));
         if (!t_descData) {
-            m_data.error = static_cast<uint8_t>(Error::DescMallocError); // 30
+            m_data.error = Error::DescMallocError; // 30
             return false;
         }
         size = readBuffer(data, t_descData, &pos, m_data.descBuffer, length);
         if (size != m_data.descBuffer) {
             std::free(t_descData);
-            m_data.error = static_cast<uint8_t>(Error::DescReadError); // 31
+            m_data.error = Error::DescReadError; // 31
             return false;
         }
         m_data.description = std::string(t_descData);
@@ -419,11 +419,11 @@ bool RagePhoto::load(const char *data, size_t length)
         pos = m_data.endOfFile + headerSize - 4;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
-            m_data.error = static_cast<uint8_t>(Error::IncompleteJendMarker); // 32
+            m_data.error = Error::IncompleteJendMarker; // 32
             return false;
         }
         if (strncmp(markerBuffer, "JEND", 4) != 0) {
-            m_data.error = static_cast<uint8_t>(Error::IncorrectJendMarker); // 33
+            m_data.error = Error::IncorrectJendMarker; // 33
             return false;
         }
 
@@ -456,11 +456,11 @@ bool RagePhoto::load(const char *data, size_t length)
         std::cout << "real size: " << length << std::endl;
 #endif
 
-        m_data.error = static_cast<uint8_t>(Error::NoError); // 255
+        m_data.error = Error::NoError; // 255
         return true;
 #else
         std::cout << "UTF-16LE decoding support missing" << std::endl;
-        m_data.error = static_cast<uint8_t>(Error::UnicodeInitError); // 4
+        m_data.error = Error::UnicodeInitError; // 4
         return false;
 #endif
     }
@@ -469,7 +469,7 @@ bool RagePhoto::load(const char *data, size_t length)
         if (it != m_loadFuncs.end())
             return it->second(data, length, &m_data);
     }
-    m_data.error = static_cast<uint8_t>(Error::IncompatibleFormat); // 2
+    m_data.error = Error::IncompatibleFormat; // 2
     return false;
 }
 
@@ -487,14 +487,14 @@ bool RagePhoto::loadFile(const std::string &filename)
         return load(sdata);
     }
     else {
-        m_data.error = static_cast<uint8_t>(Error::Uninitialised); // 0
+        m_data.error = Error::Uninitialised; // 0
         return false;
     }
 }
 
-RagePhoto::Error RagePhoto::error() const
+uint8_t RagePhoto::error() const
 {
-    return static_cast<Error>(m_data.error);
+    return m_data.error;
 }
 
 uint32_t RagePhoto::format() const
@@ -559,19 +559,19 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
         std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
         std::u16string photoHeader_string = convert.from_bytes(m_data.header);
         if (convert.converted() == 0) {
-            m_data.error = static_cast<uint8_t>(Error::UnicodeHeaderError); // 5
+            m_data.error = Error::UnicodeHeaderError; // 5
             return false;
         }
         const size_t photoHeader_size = photoHeader_string.size() * 2;
         if (photoHeader_size > 256) {
-            m_data.error = static_cast<uint8_t>(Error::HeaderBufferTight); // 34
+            m_data.error = Error::HeaderBufferTight; // 34
             return false;
         }
         const char *photoHeader = reinterpret_cast<const char*>(photoHeader_string.data());
 #elif defined UNICODE_ICONV
         iconv_t iconv_in = iconv_open("UTF-16LE", "UTF-8");
         if (iconv_in == (iconv_t)-1) {
-            m_data.error = static_cast<uint8_t>(Error::UnicodeInitError); // 4
+            m_data.error = Error::UnicodeInitError; // 4
             return false;
         }
         char photoHeader_string[256];
@@ -584,40 +584,40 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
         const size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
         iconv_close(iconv_in);
         if (ret == static_cast<size_t>(-1)) {
-            m_data.error = static_cast<uint8_t>(Error::UnicodeHeaderError); // 5
+            m_data.error = Error::UnicodeHeaderError; // 5
             return false;
         }
         const size_t photoHeader_size = 256;
 #elif defined UNICODE_WINCVT
         char photoHeader[256]{};
-        const int converted = MultiByteToWideChar(CP_UTF8, 0, m_data.header.data(), m_data.header.size(), reinterpret_cast<wchar_t*>(photoHeader), 256 / sizeof(wchar_t));
+        const int converted = MultiByteToWideChar(CP_UTF8, 0, m_data.header.data(), static_cast<int>(m_data.header.size()), reinterpret_cast<wchar_t*>(photoHeader), 256 / sizeof(wchar_t));
         if (converted == 0) {
-            m_data.error = static_cast<uint8_t>(Error::UnicodeHeaderError); // 5
+            m_data.error = Error::UnicodeHeaderError; // 5
             return false;
         }
         const size_t photoHeader_size = 256;
 #endif
 
         if (m_data.photoSize > m_data.photoBuffer) {
-            m_data.error = static_cast<uint8_t>(Error::PhotoBufferTight); // 35
+            m_data.error = Error::PhotoBufferTight; // 35
             return false;
         }
 
         const size_t jsonString_size = m_data.json.size() + 1;
         if (jsonString_size > m_data.jsonBuffer) {
-            m_data.error = static_cast<uint8_t>(Error::JsonBufferTight); // 36
+            m_data.error = Error::JsonBufferTight; // 36
             return false;
         }
 
         const size_t titlString_size = m_data.title.size() + 1;
         if (titlString_size > m_data.titlBuffer) {
-            m_data.error = static_cast<uint8_t>(Error::TitleBufferTight); // 37
+            m_data.error = Error::TitleBufferTight; // 37
             return false;
         }
 
         const size_t descString_size = m_data.description.size() + 1;
         if (descString_size > m_data.descBuffer) {
-            m_data.error = static_cast<uint8_t>(Error::DescBufferTight); // 38
+            m_data.error = Error::DescBufferTight; // 38
             return false;
         }
 
@@ -758,16 +758,16 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
         pos = m_data.endOfFile + headerSize - 4;
         writeBuffer("JEND", data, &pos, length, 4);
 
-        m_data.error = static_cast<uint8_t>(Error::NoError); // 255
+        m_data.error = Error::NoError; // 255
         return true;
 #else
         std::cout << "UTF-16LE encoding support missing" << std::endl;
-        m_data.error = static_cast<uint8_t>(Error::UnicodeInitError); // 4
+        m_data.error = Error::UnicodeInitError; // 4
         return false;
 #endif
     }
 
-    m_data.error = static_cast<uint8_t>(Error::IncompatibleFormat); // 2
+    m_data.error = Error::IncompatibleFormat; // 2
     return false;
 }
 
@@ -778,18 +778,18 @@ bool RagePhoto::save(char *data)
 
 const std::string RagePhoto::save(uint32_t photoFormat, bool *ok)
 {
-    std::string data;
+    std::string sdata;
     const size_t size = saveSize(photoFormat);
     if (size == 0) {
         if (ok)
             *ok = false;
-        return data;
+        return sdata;
     }
-    data.resize(size);
-    const bool saved = save(&data[0], photoFormat);
+    sdata.resize(size);
+    const bool saved = save(&sdata[0], photoFormat);
     if (ok)
         *ok = saved;
-    return data;
+    return sdata;
 }
 
 const std::string RagePhoto::save(bool *ok)
@@ -800,11 +800,11 @@ const std::string RagePhoto::save(bool *ok)
 bool RagePhoto::saveFile(const std::string &filename, uint32_t photoFormat)
 {
     bool ok;
-    const std::string sdata = save(photoFormat, &ok);
+    const std::string &sdata = save(photoFormat, &ok);
     if (ok) {
         std::ofstream ofs(filename, std::ios::out | std::ios::binary | std::ios::trunc);
         if (!ofs.is_open()) {
-            m_data.error = static_cast<uint8_t>(Error::Uninitialised); // 0
+            m_data.error = Error::Uninitialised; // 0
             return false;
         }
         ofs << sdata;
@@ -912,7 +912,7 @@ bool RagePhoto::setPhoto(const char *data, uint32_t size, uint32_t bufferSize)
         if (m_data.photoSize > size) {
             char *t_photoData = static_cast<char*>(std::realloc(m_data.photoData, size));
             if (!t_photoData) {
-                m_data.error = static_cast<uint8_t>(Error::PhotoMallocError); // 15
+                m_data.error = Error::PhotoMallocError; // 15
                 return false;
             }
             m_data.photoData = t_photoData;
@@ -923,7 +923,7 @@ bool RagePhoto::setPhoto(const char *data, uint32_t size, uint32_t bufferSize)
             std::free(m_data.photoData);
             m_data.photoData = static_cast<char*>(std::malloc(size));
             if (!m_data.photoData) {
-                m_data.error = static_cast<uint8_t>(Error::PhotoMallocError); // 15
+                m_data.error = Error::PhotoMallocError; // 15
                 m_data.photoLoaded = false;
                 return false;
             }
@@ -937,7 +937,7 @@ bool RagePhoto::setPhoto(const char *data, uint32_t size, uint32_t bufferSize)
     else {
         m_data.photoData = static_cast<char*>(std::malloc(size));
         if (!m_data.photoData) {
-            m_data.error = static_cast<uint8_t>(Error::PhotoMallocError); // 15
+            m_data.error = Error::PhotoMallocError; // 15
             return false;
         }
         std::memcpy(m_data.photoData, data, size);
@@ -950,7 +950,7 @@ bool RagePhoto::setPhoto(const char *data, uint32_t size, uint32_t bufferSize)
         setBufferOffsets();
     }
 
-    m_data.error = static_cast<uint8_t>(Error::NoError); // 255
+    m_data.error = Error::NoError; // 255
     return true;
 }
 
@@ -995,7 +995,7 @@ int ragephoto_loadfile(ragephoto_t instance, const char *filename)
 uint8_t ragephoto_error(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
-    return static_cast<uint8_t>(ragePhoto->error());
+    return ragePhoto->error();
 }
 
 uint32_t ragephoto_defpbuf_gta5()
