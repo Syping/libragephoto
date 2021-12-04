@@ -7,13 +7,21 @@ jobs:
     runs-on: windows-latest
     env:
       BUILD_TYPE: Release
+    strategy:
+      matrix:
+        arch:
+          - amd64
+          - amd64_x86
+          - amd64_arm64
     steps:
     - uses: actions/checkout@v2
       with:
         submodules: recursive
     - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{matrix.arch}}
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DRAGEPHOTO_UNICODE=wincvt -GNinja
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Install
@@ -21,6 +29,6 @@ jobs:
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
-        name: Windows MSVC
+        name: Windows MSVC ${{matrix.arch}}
         path: |
           ${{github.workspace}}/install/
