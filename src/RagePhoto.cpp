@@ -116,6 +116,11 @@ void RagePhoto::clear()
     setBufferDefault();
 }
 
+RagePhotoData* RagePhoto::data()
+{
+    return &m_data;
+}
+
 bool RagePhoto::load(const char *data, size_t length)
 {
 #ifdef RAGEPHOTO_BENCHMARK

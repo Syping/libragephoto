@@ -34,6 +34,13 @@ else()
     set(EM_ON OFF)
 endif()
 
+# RagePhoto Top Level ON
+if (${CMAKE_PROJECT_NAME} STREQUAL "ragephoto")
+    set(RPTL_ON ON)
+else()
+    set(RPTL_ON OFF)
+endif()
+
 # RagePhoto Source files
 set(RAGEPHOTO_HEADERS
     src/RagePhoto.h
@@ -75,17 +82,17 @@ endif()
 # RagePhoto Win32 Shared Resources
 if (WIN32)
     string(TIMESTAMP ragephoto_BUILD_YEAR "%Y" UTC)
-    configure_file(src/ragephoto.rc.in resources/ragephoto.rc @ONLY)
+    configure_file(src/ragephoto.rc.in "${ragephoto_BINARY_DIR}/resources/ragephoto.rc" @ONLY)
     list(APPEND RAGEPHOTO_SHARED_RESOURCES
-        ${PROJECT_BINARY_DIR}/resources/ragephoto.rc
+        "${ragephoto_BINARY_DIR}/resources/ragephoto.rc"
     )
 endif()
 
 # RagePhoto Configures + Target + Installs
-configure_file(src/ragephoto.pc.in pkgconfig/ragephoto.pc @ONLY)
-configure_file(src/libragephoto_global.h.in include/libragephoto_global.h @ONLY)
+configure_file(src/ragephoto.pc.in "${ragephoto_BINARY_DIR}/pkgconfig/ragephoto.pc" @ONLY)
+configure_file(src/libragephoto_global.h.in "${ragephoto_BINARY_DIR}/include/libragephoto_global.h" @ONLY)
 list(APPEND RAGEPHOTO_HEADERS
-    ${PROJECT_BINARY_DIR}/include/libragephoto_global.h
+    "${ragephoto_BINARY_DIR}/include/libragephoto_global.h"
 )
 if (RAGEPHOTO_STATIC)
     add_library(ragephoto STATIC ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES} ${RAGEPHOTO_STATIC_RESOURCES})
@@ -100,17 +107,17 @@ target_compile_definitions(ragephoto PRIVATE
     ${LIBRAGEPHOTO_DEFINES}
 )
 target_include_directories(ragephoto PUBLIC
-    ${ragephoto_BINARY_DIR}/include
-    ${ragephoto_SOURCE_DIR}/src
+    "${ragephoto_BINARY_DIR}/include"
+    "${ragephoto_SOURCE_DIR}/src"
 )
 install(TARGETS ragephoto
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
-install(FILES ${RAGEPHOTO_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/RagePhoto)
+install(FILES ${RAGEPHOTO_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/RagePhoto")
 if (UNIX)
-    install(FILES ${ragephoto_BINARY_DIR}/pkgconfig/ragephoto.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+    install(FILES "${ragephoto_BINARY_DIR}/pkgconfig/ragephoto.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 endif()
 
 # RagePhoto WebAssembly Target
@@ -126,7 +133,7 @@ if (EMSCRIPTEN)
             ${LIBRAGEPHOTO_DEFINES}
         )
         target_link_options(ragephoto-wasm PRIVATE
-            "SHELL:-O2"
+            "SHELL:-O3"
             "SHELL:--no-entry"
             "SHELL:-s WASM=1"
             "SHELL:-s EXPORTED_FUNCTIONS=_free"
@@ -159,11 +166,7 @@ if (RAGEPHOTO_EXAMPLE_QTVIEWER)
 endif()
 
 # RagePhoto Extract Tool
-if (${CMAKE_PROJECT_NAME} STREQUAL "ragephoto")
-    option(RAGEPHOTO_EXTRACT "Build libragephoto with ragephoto-extract" ON)
-else()
-    option(RAGEPHOTO_EXTRACT "Build libragephoto with ragephoto-extract" OFF)
-endif()
+option(RAGEPHOTO_EXTRACT "Build libragephoto with ragephoto-extract" ${RPTL_ON})
 if (RAGEPHOTO_EXTRACT)
     # RagePhoto-Extract Source files
     if (RAGEPHOTO_C_API)
@@ -175,9 +178,9 @@ if (RAGEPHOTO_EXTRACT)
     # RagePhoto-Extract Win32 Shared Resources
     if (WIN32)
         string(TIMESTAMP ragephoto_BUILD_YEAR "%Y" UTC)
-        configure_file(src/ragephoto-extract.rc.in resources/ragephoto-extract.rc @ONLY)
+        configure_file(src/ragephoto-extract.rc.in "${ragephoto_BINARY_DIR}/resources/ragephoto-extract.rc" @ONLY)
         list(APPEND EXTRACT_RESOURCES
-            ${ragephoto_BINARY_DIR}/resources/ragephoto-extract.rc
+            "${ragephoto_BINARY_DIR}/resources/ragephoto-extract.rc"
         )
     endif()
     # RagePhoto-Extract Target + Installs
@@ -186,5 +189,5 @@ if (RAGEPHOTO_EXTRACT)
         INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
     )
     target_link_libraries(ragephoto-extract PRIVATE ragephoto)
-    install(TARGETS ragephoto-extract DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(TARGETS ragephoto-extract DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endif()

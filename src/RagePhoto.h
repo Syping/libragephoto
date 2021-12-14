@@ -98,6 +98,7 @@ public:
     RagePhoto();
     ~RagePhoto();
     void clear(); /**< Resets the RagePhoto instance to default values. */
+    RagePhotoData* data(); /**< Returns the internal RagePhotoData object. */
     /** Loads a Photo from a const char*.
     * \param data Photo data
     * \param size Photo data size
