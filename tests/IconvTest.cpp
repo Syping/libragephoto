@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021 Syping
+* Copyright (C) 2021-2022 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -258,6 +258,5 @@ int main(int argc, char *argv[])
     if (strcmp(photoString, "相片 - 12/28/22 04:21:01") != 0)
         return 10;
 
-    iconv_close(iconv_in);
     return 0;
 }
