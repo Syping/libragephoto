@@ -210,30 +210,30 @@ int main(int argc, char *argv[])
     // Japanese
     converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_japanese), -1, photoString, 256, NULL, NULL);
     if (converted == 0)
-        return 2;
-    if (strcmp(photoString, "写真 - 12/28/22 04:22:57") != 0)
         return 3;
+    if (strcmp(photoString, "写真 - 12/28/22 04:22:57") != 0)
+        return 4;
 
     // Korean
     converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_korean), -1, photoString, 256, NULL, NULL);
     if (converted == 0)
-        return 4;
-    if (strcmp(photoString, "사진 - 12/28/22 04:18:28") != 0)
         return 5;
+    if (strcmp(photoString, "사진 - 12/28/22 04:18:28") != 0)
+        return 6;
 
     // Russian
     converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_russian), -1, photoString, 256, NULL, NULL);
     if (converted == 0)
-        return 6;
-    if (strcmp(photoString, "ФОТО - 12/28/22 04:25:10") != 0)
         return 7;
+    if (strcmp(photoString, "ФОТО - 12/28/22 04:25:10") != 0)
+        return 8;
 
     // Taiwanese
     converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_taiwanese), -1, photoString, 256, NULL, NULL);
     if (converted == 0)
-        return 8;
-    if (strcmp(photoString, "相片 - 12/28/22 04:21:01") != 0)
         return 9;
+    if (strcmp(photoString, "相片 - 12/28/22 04:21:01") != 0)
+        return 10;
 
     return 0;
 }

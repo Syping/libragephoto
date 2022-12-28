@@ -218,23 +218,23 @@ int main(int argc, char *argv[])
     // Korean
     photoString = convert.to_bytes(reinterpret_cast<const char16_t*>(photoHeader_korean));
     if (convert.converted() == 0)
-        return 4;
-    if (strcmp(photoString.c_str(), "사진 - 12/28/22 04:18:28") != 0)
         return 5;
+    if (strcmp(photoString.c_str(), "사진 - 12/28/22 04:18:28") != 0)
+        return 6;
 
     // Russian
     photoString = convert.to_bytes(reinterpret_cast<const char16_t*>(photoHeader_russian));
     if (convert.converted() == 0)
-        return 6;
-    if (strcmp(photoString.c_str(), "ФОТО - 12/28/22 04:25:10") != 0)
         return 7;
+    if (strcmp(photoString.c_str(), "ФОТО - 12/28/22 04:25:10") != 0)
+        return 8;
 
     // Taiwanese
     photoString = convert.to_bytes(reinterpret_cast<const char16_t*>(photoHeader_taiwanese));
     if (convert.converted() == 0)
-        return 8;
-    if (strcmp(photoString.c_str(), "相片 - 12/28/22 04:21:01") != 0)
         return 9;
+    if (strcmp(photoString.c_str(), "相片 - 12/28/22 04:21:01") != 0)
+        return 10;
     
     return 0;
 }
