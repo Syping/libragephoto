@@ -137,7 +137,7 @@ if (EMSCRIPTEN)
             "SHELL:--no-entry"
             "SHELL:-s WASM=1"
             "SHELL:-s ALLOW_MEMORY_GROWTH=1"
-            "SHELL:-s EXPORTED_FUNCTIONS=_free"
+            "SHELL:-s EXPORTED_FUNCTIONS=_free,_malloc"
             "SHELL:-s EXPORTED_RUNTIME_METHODS=ccall,cwrap"
         )
         target_include_directories(ragephoto-wasm PUBLIC
