@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2022 Syping
+* Copyright (C) 2021-2023 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -224,7 +224,7 @@ bool RagePhoto::load(const char *data, size_t length)
             return false;
         }
         size_t src_s = sizeof(photoHeader);
-        size_t dst_s = sizeof(m_data.header);
+        size_t dst_s = 256;
         char *src = photoHeader;
         char *dst = m_data.header;
         const size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
