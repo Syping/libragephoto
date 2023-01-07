@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2022 Syping
+* Copyright (C) 2021-2023 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -26,12 +26,11 @@
 
 struct LIBRAGEPHOTO_CXX_EXPORT RagePhotoData
 {
-    bool photoLoaded;
     char* photoData;
-    std::string description;
-    std::string json;
-    std::string header;
-    std::string title;
+    char* description;
+    char* json;
+    char* header;
+    char* title;
     uint8_t error;
     uint32_t descBuffer;
     uint32_t descOffset;

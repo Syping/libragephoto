@@ -47,7 +47,7 @@ bool readPhotoFile(const QString &filename, QMainWindow *mainWindow, QLabel *pho
         const QByteArray photoData = QByteArray::fromRawData(ragePhoto.photoData(), ragePhoto.photoSize());
         const QImage image = QImage::fromData(photoData, "JPEG");
         photoLabel->setPixmap(QPixmap::fromImage(image));
-        mainWindow->setWindowTitle("RagePhoto Qt Photo Viewer - " + QString::fromStdString(ragePhoto.title()));
+        mainWindow->setWindowTitle(QStringLiteral("RagePhoto Qt Photo Viewer - ") + QString::fromUtf8(ragePhoto.title()));
         return true;
     }
     else {

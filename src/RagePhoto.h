@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2022 Syping
+* Copyright (C) 2021-2023 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -22,14 +22,10 @@
 #ifdef __cplusplus
 #include "libragephoto_global.h"
 #include "RagePhotoData.h"
-#include <unordered_map>
-#include <functional>
 #include <iostream>
 #include <cstdlib>
 #include <cstdint>
 #include <cstdio>
-
-typedef std::function<bool(const char*, size_t, RagePhotoData*)> RagePhotoLoadFunc;
 
 /**
 * \brief GTA V and RDR 2 Photo Parser.
@@ -117,10 +113,10 @@ public:
     const std::string photo() const; /**< Returns the Photo JPEG data. */
     const char *photoData() const; /**< Returns the Photo JPEG data. */
     uint32_t photoSize() const; /**< Returns the Photo JPEG data size. */
-    const std::string& description() const; /**< Returns the Photo description. */
-    const std::string& json() const; /**< Returns the Photo JSON data. */
-    const std::string& header() const; /**< Returns the Photo header. */
-    const std::string& title() const; /**< Returns the Photo title. */
+    const char* description() const; /**< Returns the Photo description. */
+    const char* json() const; /**< Returns the Photo JSON data. */
+    const char* header() const; /**< Returns the Photo header. */
+    const char* title() const; /**< Returns the Photo title. */
     static const char* version(); /**< Returns the library version. */
     /** Saves a Photo to a char*.
     * \param data Photo data
@@ -150,11 +146,10 @@ public:
     static void setBufferDefault(RagePhotoData *ragePhotoData); /**< Sets all cross-format Buffer to default size. */
     void setBufferOffsets(); /**< Moves all Buffer offsets to correct position. */
     static void setBufferOffsets(RagePhotoData *ragePhotoData); /**< Moves all Buffer offsets to correct position. */
-    void setDescription(const std::string &description, uint32_t bufferSize = 0); /**< Sets the Photo description. */
+    void setDescription(const char *description, uint32_t bufferSize = 0); /**< Sets the Photo description. */
     void setFormat(uint32_t photoFormat); /**< Sets the Photo Format (GTA V or RDR 2). */
-    void setFormatLoadFunction(uint32_t photoFormat, RagePhotoLoadFunc func); /**< Sets a custom Photo Format load function. */
-    void setJson(const std::string &json, uint32_t bufferSize = 0); /**< Sets the Photo JSON data. */
-    void setHeader(const std::string &header, uint32_t headerSum); /**< Sets the Photo header. (EXPERT ONLY) */
+    void setJson(const char *json, uint32_t bufferSize = 0); /**< Sets the Photo JSON data. */
+    void setHeader(const char *header, uint32_t headerSum); /**< Sets the Photo header. (EXPERT ONLY) */
     /** Sets the Photo JPEG data.
     * \param data JPEG data
     * \param size JPEG data size
@@ -166,10 +161,9 @@ public:
     * \param bufferSize JPEG buffer size
     */
     bool setPhoto(const std::string &data, uint32_t bufferSize = 0);
-    void setTitle(const std::string &title, uint32_t bufferSize = 0); /**< Sets the Photo title. */
+    void setTitle(const char *title, uint32_t bufferSize = 0); /**< Sets the Photo title. */
 
 private:
-    std::unordered_map<uint8_t, RagePhotoLoadFunc> m_loadFuncs;
     RagePhotoData m_data;
 };
 #else

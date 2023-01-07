@@ -52,7 +52,7 @@ bool readPhotoFile(const std::string &filename, Gtk::Window *win, Gtk::Image *im
         GdkPixbuf *pixbuf = gdk_pixbuf_loader_get_pixbuf(pixbuf_loader);
         gdk_pixbuf_loader_close(pixbuf_loader, NULL);
         image->set(Glib::wrap(pixbuf));
-        win->set_title("RagePhoto GTK Photo Viewer - " + ragePhoto.title());
+        win->set_title("RagePhoto GTK Photo Viewer - " + std::string(ragePhoto.title()));
         return true;
     }
     else {

@@ -17,7 +17,7 @@
 ****************************************************************************]]
 
 cmake_minimum_required(VERSION 3.7)
-project(ragephoto VERSION 0.1.0 LANGUAGES CXX)
+project(ragephoto VERSION 0.2.0 LANGUAGES CXX)
 include(GNUInstallDirs)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
