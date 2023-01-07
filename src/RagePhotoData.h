@@ -19,13 +19,9 @@
 #ifndef RAGEPHOTODATA_H
 #define RAGEPHOTODATA_H
 
-#ifdef __cplusplus
-#include "libragephoto_global.h"
-#include <iostream>
-#include <cstdint>
+#include "stdint.h"
 
-struct LIBRAGEPHOTO_CXX_EXPORT RagePhotoData
-{
+typedef struct RagePhotoData {
     char* photoData;
     char* description;
     char* json;
@@ -45,7 +41,6 @@ struct LIBRAGEPHOTO_CXX_EXPORT RagePhotoData
     uint32_t titlOffset;
     uint32_t unnamedSum1;
     uint32_t unnamedSum2;
-};
-#endif // __cplusplus
+} RagePhotoData;
 
 #endif // RAGEPHOTODATA_H
