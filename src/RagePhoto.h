@@ -165,7 +165,7 @@ public:
     void setTitle(const char *title, uint32_t bufferSize = 0); /**< Sets the Photo title. */
 
 private:
-    RagePhotoData m_data;
+    RagePhotoData *m_data;
 };
 #else
 #include "RagePhotoC.h"
