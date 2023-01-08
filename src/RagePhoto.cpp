@@ -939,18 +939,18 @@ inline void RagePhoto::setBufferOffsets(RagePhotoData *ragePhotoData)
 
 bool RagePhoto::setData(RagePhotoData *ragePhotoData, bool takeOwnership)
 {
-    std::free(m_data->jpeg);
-    std::free(m_data->description);
-    std::free(m_data->json);
-    std::free(m_data->header);
-    std::free(m_data->title);
-    delete m_data;
-
     if (takeOwnership) {
+        std::free(m_data->jpeg);
+        std::free(m_data->description);
+        std::free(m_data->json);
+        std::free(m_data->header);
+        std::free(m_data->title);
+        delete m_data;
+
         m_data = ragePhotoData;
     }
     else {
-        m_data = new RagePhotoData { 0 };
+        clear();
 
         m_data->photoFormat = ragePhotoData->photoFormat;
 
