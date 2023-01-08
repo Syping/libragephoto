@@ -125,6 +125,7 @@ inline void uInt32ToCharLE(uint32_t x, char *y)
 /* BEGIN OF RAGEPHOTO CLASS */
 RagePhoto::RagePhoto()
 {
+#if __cplusplus >= 201707L
     m_data = new RagePhotoData {
             .jpeg = nullptr,
             .description = nullptr,
@@ -135,6 +136,9 @@ RagePhoto::RagePhoto()
             .unnamedSum1 = 0,
             .unnamedSum2 = 0
     };
+#else
+    m_data = new RagePhotoData { 0 };
+#endif
     setBufferDefault();
 }
 
