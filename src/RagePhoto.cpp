@@ -1082,6 +1082,12 @@ uint32_t ragephoto_format_rdr2()
     return RagePhoto::RDR2;
 }
 
+RagePhotoData* ragephoto_getphotodata(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->data();
+}
+
 const char* ragephoto_getphotodesc(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);

@@ -19,7 +19,7 @@
 #ifndef RAGEPHOTODATA_H
 #define RAGEPHOTODATA_H
 
-#include "stdint.h"
+#include <stdint.h>
 
 typedef struct RagePhotoData {
     char* jpeg;

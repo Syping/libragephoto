@@ -102,6 +102,10 @@ public:
     void clear() {
         ragephoto_clear(instance);
     }
+    /** Returns the internal RagePhotoData object. */
+    RagePhotoData* data() {
+        return ragephoto_getphotodata(instance);
+    }
     /** Loads a Photo from a const char*.
     * \param data Photo data
     * \param size Photo data size

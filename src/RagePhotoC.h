@@ -20,6 +20,7 @@
 #define RAGEPHOTOC_H
 
 #include "libragephoto_global.h"
+#include "RagePhotoData.h"
 #include <stdint.h>
 #include <stdio.h>
 
@@ -71,6 +72,11 @@ LIBRAGEPHOTO_C_EXPORT uint32_t ragephoto_format_gta5();
 
 /** Returns the RDR 2 Photo Format. */
 LIBRAGEPHOTO_C_EXPORT uint32_t ragephoto_format_rdr2();
+
+/** Returns the internal RagePhotoData object.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_C_EXPORT RagePhotoData* ragephoto_getphotodata(ragephoto_t instance);
 
 /** Returns the Photo description.
 * \param instance \p ragephoto_t instance
