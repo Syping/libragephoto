@@ -961,7 +961,7 @@ void RagePhoto::setJson(const char *json, uint32_t bufferSize)
 void RagePhoto::setHeader(const char *header, uint32_t headerSum)
 {
     if (!writeDataChar(header, &m_data.header)) {
-        //m_data.error = Error::HeaderMallocError;
+        m_data.error = Error::HeaderMallocError; // 4
         return;
     }
     m_data.headerSum = headerSum;
