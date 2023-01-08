@@ -937,6 +937,77 @@ inline void RagePhoto::setBufferOffsets(RagePhotoData *ragePhotoData)
     ragePhotoData->endOfFile = ragePhotoData->descOffset + ragePhotoData->descBuffer + 12;
 }
 
+bool RagePhoto::setData(RagePhotoData *ragePhotoData, bool takeOwnership)
+{
+    std::free(m_data->jpeg);
+    std::free(m_data->description);
+    std::free(m_data->json);
+    std::free(m_data->header);
+    std::free(m_data->title);
+    delete m_data;
+
+    if (takeOwnership) {
+        m_data = ragePhotoData;
+    }
+    else {
+        m_data = new RagePhotoData { 0 };
+
+        m_data->photoFormat = ragePhotoData->photoFormat;
+
+        if (ragePhotoData->header) {
+            const size_t headerSize = strlen(ragePhotoData->header) + 1;
+            m_data->header = static_cast<char*>(std::malloc(headerSize));
+            if (!m_data->header)
+                return false;
+            std::memcpy(m_data->header, ragePhotoData->header, headerSize);
+            m_data->headerSum = ragePhotoData->headerSum;
+        }
+
+        if (ragePhotoData->jpeg) {
+            m_data->jpeg = static_cast<char*>(std::malloc(ragePhotoData->jpegSize));
+            if (!m_data->jpeg)
+                return false;
+            std::memcpy(m_data->jpeg, ragePhotoData->jpeg, ragePhotoData->jpegSize);
+            m_data->jpegSize = ragePhotoData->jpegSize;
+            m_data->photoBuffer = ragePhotoData->photoBuffer;
+        }
+
+        if (ragePhotoData->json) {
+            const size_t jsonSize = strlen(ragePhotoData->json) + 1;
+            m_data->json = static_cast<char*>(std::malloc(jsonSize));
+            if (!m_data->json)
+                return false;
+            std::memcpy(m_data->json, ragePhotoData->json, jsonSize);
+            m_data->jsonBuffer = ragePhotoData->jsonBuffer;
+        }
+
+        if (ragePhotoData->title) {
+            const size_t titleSize = strlen(ragePhotoData->title) + 1;
+            m_data->title = static_cast<char*>(std::malloc(titleSize));
+            if (!m_data->title)
+                return false;
+            std::memcpy(m_data->title, ragePhotoData->title, titleSize);
+            m_data->titlBuffer = ragePhotoData->titlBuffer;
+        }
+
+        if (ragePhotoData->description) {
+            const size_t descriptionSize = strlen(ragePhotoData->description) + 1;
+            m_data->description = static_cast<char*>(std::malloc(descriptionSize));
+            if (!m_data->description)
+                return false;
+            std::memcpy(m_data->description, ragePhotoData->description, descriptionSize);
+            m_data->descBuffer = ragePhotoData->descBuffer;
+        }
+
+        m_data->unnamedSum1 = ragePhotoData->unnamedSum1;
+        m_data->unnamedSum2 = ragePhotoData->unnamedSum2;
+
+        setBufferOffsets();
+    }
+
+    return true;
+}
+
 void RagePhoto::setDescription(const char *description, uint32_t bufferSize)
 {
     if (!writeDataChar(description, &m_data->description)) {
@@ -1054,13 +1125,13 @@ void ragephoto_clear(ragephoto_t instance)
     ragePhoto->clear();
 }
 
-int ragephoto_load(ragephoto_t instance, const char *data, size_t size)
+ragephoto_bool_t ragephoto_load(ragephoto_t instance, const char *data, size_t size)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->load(data, size);
 }
 
-int ragephoto_loadfile(ragephoto_t instance, const char *filename)
+ragephoto_bool_t ragephoto_loadfile(ragephoto_t instance, const char *filename)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->loadFile(filename);
@@ -1152,25 +1223,25 @@ size_t ragephoto_getsavesizef(ragephoto_t instance, uint32_t photoFormat)
     return ragePhoto->saveSize(photoFormat);
 }
 
-int ragephoto_save(ragephoto_t instance, char *data)
+ragephoto_bool_t ragephoto_save(ragephoto_t instance, char *data)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->save(data);
 }
 
-int ragephoto_savef(ragephoto_t instance, char *data, uint32_t photoFormat)
+ragephoto_bool_t ragephoto_savef(ragephoto_t instance, char *data, uint32_t photoFormat)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->save(data, photoFormat);
 }
 
-int ragephoto_savefile(ragephoto_t instance, const char *filename)
+ragephoto_bool_t ragephoto_savefile(ragephoto_t instance, const char *filename)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->saveFile(filename);
 }
 
-int ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t photoFormat)
+ragephoto_bool_t ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t photoFormat)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->saveFile(filename, photoFormat);
@@ -1188,6 +1259,12 @@ void ragephoto_setbufferoffsets(ragephoto_t instance)
     ragePhoto->setBufferOffsets();
 }
 
+void ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *ragePhotoData, ragephoto_bool_t takeOwnership)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    ragePhoto->setData(ragePhotoData, takeOwnership);
+}
+
 void ragephoto_setphotodesc(ragephoto_t instance, const char *description, uint32_t bufferSize)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
@@ -1200,7 +1277,7 @@ void ragephoto_setphotoformat(ragephoto_t instance, uint32_t photoFormat)
     ragePhoto->setFormat(photoFormat);
 }
 
-int ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize)
+ragephoto_bool_t ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->setPhoto(data, size, bufferSize);

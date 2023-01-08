@@ -147,6 +147,7 @@ public:
     static void setBufferDefault(RagePhotoData *ragePhotoData); /**< Sets all cross-format Buffer to default size. */
     void setBufferOffsets(); /**< Moves all Buffer offsets to correct position. */
     static void setBufferOffsets(RagePhotoData *ragePhotoData); /**< Moves all Buffer offsets to correct position. */
+    bool setData(RagePhotoData *ragePhotoData, bool takeOwnership = true); /**< Sets the internal RagePhotoData object. */
     void setDescription(const char *description, uint32_t bufferSize = 0); /**< Sets the Photo description. */
     void setFormat(uint32_t photoFormat); /**< Sets the Photo Format (GTA V or RDR 2). */
     void setJson(const char *json, uint32_t bufferSize = 0); /**< Sets the Photo JSON data. */

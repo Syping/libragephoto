@@ -226,6 +226,10 @@ public:
     void setBufferOffsets() {
         ragephoto_setbufferoffsets(instance);
     }
+    /** Sets the internal RagePhotoData object. */
+    bool setData(RagePhotoData *ragePhotoData, bool takeOwnership = true) {
+        ragephoto_setphotodata(instance, ragePhotoData, takeOwnership);
+    }
     /** Sets the Photo description. */
     void setDescription(const char *description, uint32_t bufferSize = 0) {
         ragephoto_setphotodesc(instance, description, bufferSize);
