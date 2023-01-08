@@ -45,45 +45,46 @@ public:
     };
     /** Parsing and set errors */
     enum Error : uint8_t {
-        DescBufferTight = 38, /**< Description Buffer is too tight */
-        DescMallocError = 30, /**< Description Buffer can't be allocated */
-        DescReadError = 31, /**< Description can't be read successfully */
-        HeaderBufferTight = 34, /**< Header Buffer is too tight */
+        DescBufferTight = 39, /**< Description Buffer is too tight */
+        DescMallocError = 31, /**< Description Buffer can't be allocated */
+        DescReadError = 32, /**< Description can't be read successfully */
+        HeaderBufferTight = 35, /**< Header Buffer is too tight */
+        HeaderMallocError = 4, /**< Header Buffer can't be allocated */
         IncompatibleFormat = 2, /**< Format is incompatible */
-        IncompleteChecksum = 6, /**< Header checksum is incomplete */
-        IncompleteDescBuffer = 29, /**< Description Buffer Size is incomplete */
-        IncompleteDescMarker = 27, /**< Description Marker is incomplete */
-        IncompleteDescOffset = 10, /**< Description Offset is incomplete */
-        IncompleteEOF = 7, /**< End Of File Offset is incomplete */
+        IncompleteChecksum = 7, /**< Header checksum is incomplete */
+        IncompleteDescBuffer = 30, /**< Description Buffer Size is incomplete */
+        IncompleteDescMarker = 28, /**< Description Marker is incomplete */
+        IncompleteDescOffset = 11, /**< Description Offset is incomplete */
+        IncompleteEOF = 8, /**< End Of File Offset is incomplete */
         IncompleteHeader = 3, /**< Header is incomplete */
-        IncompleteJendMarker = 32, /**< JEND Marker is incomplete */
-        IncompleteJpegMarker = 11, /**< JPEG Marker is incomplete */
-        IncompleteJsonBuffer = 19, /**< JSON Buffer Size is incomplete */
-        IncompleteJsonMarker = 17, /**< JSON Marker incomplete */
-        IncompleteJsonOffset = 8, /**< JSON Offset incomplete */
-        IncompletePhotoBuffer = 13, /**< Photo Buffer Size is incomplete */
-        IncompletePhotoSize = 14, /**< Photo Size is incomplete */
-        IncompleteTitleBuffer = 24, /**< Title Buffer Size is incomplete */
-        IncompleteTitleMarker = 22, /**< Title Marker is incomplete */
-        IncompleteTitleOffset = 9, /**< Title Offset is incomplete */
-        IncorrectDescMarker = 28, /**< Description Marker is incorrect */
-        IncorrectJendMarker = 33, /**< JEND Marker is incorrect */
-        IncorrectJpegMarker = 12, /**< JPEG Marker is incorrect */
-        IncorrectJsonMarker = 18, /**< JSON Marker is incorrect */
-        IncorrectTitleMarker = 23, /**< Title Marker is incorrect */
-        JsonBufferTight = 36, /**< JSON Buffer is too tight */
-        JsonMallocError = 20, /**< JSON Buffer can't be allocated */
-        JsonReadError = 21, /**< JSON can't be read successfully */
+        IncompleteJendMarker = 33, /**< JEND Marker is incomplete */
+        IncompleteJpegMarker = 12, /**< JPEG Marker is incomplete */
+        IncompleteJsonBuffer = 20, /**< JSON Buffer Size is incomplete */
+        IncompleteJsonMarker = 18, /**< JSON Marker incomplete */
+        IncompleteJsonOffset = 9, /**< JSON Offset incomplete */
+        IncompletePhotoBuffer = 14, /**< Photo Buffer Size is incomplete */
+        IncompletePhotoSize = 15, /**< Photo Size is incomplete */
+        IncompleteTitleBuffer = 25, /**< Title Buffer Size is incomplete */
+        IncompleteTitleMarker = 23, /**< Title Marker is incomplete */
+        IncompleteTitleOffset = 10, /**< Title Offset is incomplete */
+        IncorrectDescMarker = 29, /**< Description Marker is incorrect */
+        IncorrectJendMarker = 34, /**< JEND Marker is incorrect */
+        IncorrectJpegMarker = 13, /**< JPEG Marker is incorrect */
+        IncorrectJsonMarker = 19, /**< JSON Marker is incorrect */
+        IncorrectTitleMarker = 24, /**< Title Marker is incorrect */
+        JsonBufferTight = 37, /**< JSON Buffer is too tight */
+        JsonMallocError = 21, /**< JSON Buffer can't be allocated */
+        JsonReadError = 22, /**< JSON can't be read successfully */
         NoError = 255, /**< Finished without errors */
         NoFormatIdentifier = 1, /**< No format detected, empty file */
-        PhotoBufferTight = 35, /**< Photo Buffer is too tight */
-        PhotoMallocError = 15, /**< Photo Buffer can't be allocated */
-        PhotoReadError = 16, /**< Photo can't be read */
-        TitleBufferTight = 37, /**< Title Buffer is too tight */
-        TitleMallocError = 25, /**< Title Buffer can't be allocated */
-        TitleReadError = 26, /**< Title can't be read */
-        UnicodeHeaderError = 5, /**< Header can't be decoded */
-        UnicodeInitError = 4, /**< Failed to initialise Unicode decoder */
+        PhotoBufferTight = 36, /**< Photo Buffer is too tight */
+        PhotoMallocError = 16, /**< Photo Buffer can't be allocated */
+        PhotoReadError = 17, /**< Photo can't be read */
+        TitleBufferTight = 38, /**< Title Buffer is too tight */
+        TitleMallocError = 26, /**< Title Buffer can't be allocated */
+        TitleReadError = 27, /**< Title can't be read */
+        UnicodeInitError = 5, /**< Failed to initialise Unicode decoder */
+        UnicodeHeaderError = 6, /**< Header can't be encoded/decoded successfully */
         Uninitialised = 0, /**< Uninitialised, file access failed */
     };
     /** Photo Formats */
@@ -97,54 +98,86 @@ public:
     ~RagePhotoA() {
         ragephoto_close(instance);
     }
+    /** Resets the RagePhoto instance to default values. */
     void clear() {
         ragephoto_clear(instance);
     }
+    /** Loads a Photo from a const char*.
+    * \param data Photo data
+    * \param size Photo data size
+    */
     bool load(const char *data, size_t size) {
         return ragephoto_load(instance, data, size);
     }
+    /** Loads a Photo from a std::string.
+    * \param data Photo data
+    */
     bool load(const std::string &data) {
         return ragephoto_load(instance, data.data(), data.size());
     }
+    /** Loads a Photo from a file.
+    * \param filename File to load
+    */
     bool loadFile(const char *filename) {
         return ragephoto_loadfile(instance, filename);
     }
+    /** Returns the last error occurred. */
     uint8_t error() const {
         return ragephoto_error(instance);
     }
+    /** Returns the Photo Format (GTA V or RDR 2). */
     uint32_t format() const {
         return ragephoto_getphotoformat(instance);
     }
+    /** Returns the Photo JPEG data. */
     const std::string photo() const {
         return std::string(ragephoto_getphotojpeg(instance), ragephoto_getphotosize(instance));
     }
+    /** Returns the Photo JPEG data. */
     const char *photoData() const {
         return ragephoto_getphotojpeg(instance);
     }
+    /** Returns the Photo JPEG data size. */
     uint32_t photoSize() const {
         return ragephoto_getphotosize(instance);
     }
+    /** Returns the Photo description. */
     const char* description() const {
         return ragephoto_getphotodesc(instance);
     }
+    /** Returns the Photo JSON data. */
     const char* json() const {
         return ragephoto_getphotojson(instance);
     }
+    /** Returns the Photo header. */
     const char* header() const {
         return ragephoto_getphotoheader(instance);
     }
+    /** Returns the Photo title. */
     const char* title() const {
         return ragephoto_getphototitle(instance);
     }
+    /** Returns the library version. */
     static const char* version() {
         return ragephoto_version();
     }
+    /** Saves a Photo to a char*.
+    * \param data Photo data
+    * \param photoFormat Photo Format (GTA V or RDR 2)
+    */
     bool save(char *data, uint32_t photoFormat) {
         return ragephoto_savef(instance, data, photoFormat);
     }
+    /** Saves a Photo to a char*.
+    * \param data Photo data
+    */
     bool save(char *data) {
         return ragephoto_save(instance, data);
     }
+    /** Saves a Photo to a std::string.
+    * \param photoFormat Photo Format (GTA V or RDR 2)
+    * \param ok \p true when saved successfully
+    */
     const std::string save(uint32_t photoFormat, bool *ok = nullptr) {
         std::string sdata;
         const size_t size = ragephoto_getsavesizef(instance, photoFormat);
@@ -159,45 +192,68 @@ public:
             *ok = saved;
         return sdata;
     }
+    /** Saves a Photo to a std::string.
+    * \param ok \p true when saved successfully
+    */
     const std::string save(bool *ok = nullptr) {
         return save(ragephoto_getphotoformat(instance), ok);
     }
+    /** Saves a Photo to a file. */
     bool saveFile(const char *filename, uint32_t photoFormat) {
         return ragephoto_savefilef(instance, filename, photoFormat);
     }
+    /** Saves a Photo to a file. */
     bool saveFile(const char *filename) {
         return ragephoto_savefile(instance, filename);
     }
+    /** Returns the Photo save file size. */
     size_t saveSize(uint32_t photoFormat) {
         return ragephoto_getsavesizef(instance, photoFormat);
     }
+    /** Returns the Photo save file size. */
     size_t saveSize() {
         return ragephoto_getsavesize(instance);
     }
+    /** Sets all cross-format Buffer to default size. */
     void setBufferDefault() {
         ragephoto_setbufferdefault(instance);
     }
+    /** Moves all Buffer offsets to correct position. */
     void setBufferOffsets() {
         ragephoto_setbufferoffsets(instance);
     }
+    /** Sets the Photo description. */
     void setDescription(const char *description, uint32_t bufferSize = 0) {
         ragephoto_setphotodesc(instance, description, bufferSize);
     }
+    /** Sets the Photo Format (GTA V or RDR 2). */
     void setFormat(uint32_t photoFormat) {
         ragephoto_setphotoformat(instance, photoFormat);
     }
+    /** Sets the Photo JSON data. */
     void setJson(const char *json, uint32_t bufferSize = 0) {
         ragephoto_setphotojson(instance, json, bufferSize);
     }
+    /** Sets the Photo header. (EXPERT ONLY) */
     void setHeader(const char *header, uint32_t headerSum) {
         ragephoto_setphotoheader(instance, header, headerSum);
     }
+    /** Sets the Photo JPEG data.
+    * \param data JPEG data
+    * \param size JPEG data size
+    * \param bufferSize JPEG buffer size
+    */
     bool setPhoto(const char *data, uint32_t size, uint32_t bufferSize = 0) {
         return ragephoto_setphotojpeg(instance, data, size, bufferSize);
     }
+    /** Sets the Photo JPEG data.
+    * \param data JPEG data
+    * \param bufferSize JPEG buffer size
+    */
     bool setPhoto(const std::string &data, uint32_t bufferSize = 0) {
         return ragephoto_setphotojpeg(instance, data.data(), static_cast<uint32_t>(data.size()), bufferSize);
     }
+    /** Sets the Photo title. */
     void setTitle(const char *title, uint32_t bufferSize = 0) {
         ragephoto_setphototitle(instance, title, bufferSize);
     }

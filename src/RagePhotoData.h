@@ -22,7 +22,7 @@
 #include "stdint.h"
 
 typedef struct RagePhotoData {
-    char* photoData;
+    char* jpeg;
     char* description;
     char* json;
     char* header;
@@ -32,11 +32,11 @@ typedef struct RagePhotoData {
     uint32_t descOffset;
     uint32_t endOfFile;
     uint32_t headerSum;
+    uint32_t jpegSize;
     uint32_t jsonBuffer;
     uint32_t jsonOffset;
     uint32_t photoBuffer;
     uint32_t photoFormat;
-    uint32_t photoSize;
     uint32_t titlBuffer;
     uint32_t titlOffset;
     uint32_t unnamedSum1;
