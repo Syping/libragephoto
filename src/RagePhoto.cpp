@@ -939,6 +939,9 @@ inline void RagePhoto::setBufferOffsets(RagePhotoData *ragePhotoData)
 
 bool RagePhoto::setData(RagePhotoData *ragePhotoData, bool takeOwnership)
 {
+    if (m_data == ragePhotoData)
+        return true;
+
     if (takeOwnership) {
         std::free(m_data->jpeg);
         std::free(m_data->description);
