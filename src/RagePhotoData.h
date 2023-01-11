@@ -21,6 +21,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 typedef struct RagePhotoData {
     char* jpeg;
     char* description;
@@ -42,5 +46,9 @@ typedef struct RagePhotoData {
     uint32_t unnamedSum1;
     uint32_t unnamedSum2;
 } RagePhotoData;
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif // RAGEPHOTODATA_H
