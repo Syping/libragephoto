@@ -44,7 +44,7 @@ public:
         RDR2_HEADERSIZE = 272UL, /**< RDR 2 Header Size */
     };
     /** Parsing and set errors */
-    enum Error : uint8_t {
+    enum Error : int32_t {
         DescBufferTight = 39, /**< Description Buffer is too tight */
         DescMallocError = 31, /**< Description Buffer can't be allocated */
         DescReadError = 32, /**< Description can't be read successfully */
@@ -228,7 +228,10 @@ public:
     }
     /** Sets the internal RagePhotoData object. */
     bool setData(RagePhotoData *ragePhotoData, bool takeOwnership = true) {
-        ragephoto_setphotodata(instance, ragePhotoData, takeOwnership);
+        if (takeOwnership)
+            ragephoto_setphotodata(&instance, ragePhotoData);
+        else
+            ragephoto_setphotodatac(instance, ragePhotoData);
     }
     /** Sets the Photo description. */
     void setDescription(const char *description, uint32_t bufferSize = 0) {

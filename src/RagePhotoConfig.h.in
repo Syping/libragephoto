@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2023 Syping
+* Copyright (C) 2023 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -16,39 +16,16 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#ifndef RAGEPHOTODATA_H
-#define RAGEPHOTODATA_H
+#ifndef RAGEPHOTOCONFIG_H
+#define RAGEPHOTOCONFIG_H
 
-#include <stdint.h>
+/* CMAKE CONFIG BEGIN */
+#define @LIBRAGEPHOTO_API@
+#define @LIBRAGEPHOTO_LIBTYPE@
+#define RAGEPHOTO_VERSION "@ragephoto_VERSION@"
+#define RAGEPHOTO_VERSION_MAJOR @ragephoto_VERSION_MAJOR@
+#define RAGEPHOTO_VERSION_MINOR @ragephoto_VERSION_MINOR@
+#define RAGEPHOTO_VERSION_PATCH @ragephoto_VERSION_PATCH@
+/* CMAKE CONFIG END */
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
-typedef struct RagePhotoData {
-    char* jpeg;
-    char* description;
-    char* json;
-    char* header;
-    char* title;
-    uint8_t error;
-    uint32_t descBuffer;
-    uint32_t descOffset;
-    uint32_t endOfFile;
-    uint32_t headerSum;
-    uint32_t jpegSize;
-    uint32_t jsonBuffer;
-    uint32_t jsonOffset;
-    uint32_t photoBuffer;
-    uint32_t photoFormat;
-    uint32_t titlBuffer;
-    uint32_t titlOffset;
-    uint32_t unnamedSum1;
-    uint32_t unnamedSum2;
-} RagePhotoData;
-
-#ifdef __cplusplus
-}
-#endif // __cplusplus
-
-#endif // RAGEPHOTODATA_H
+#endif // RAGEPHOTOCONFIG_H

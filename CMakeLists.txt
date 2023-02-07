@@ -17,7 +17,7 @@
 ****************************************************************************]]
 
 cmake_minimum_required(VERSION 3.7)
-project(ragephoto VERSION 0.2.0 LANGUAGES CXX)
+project(ragephoto VERSION 0.3.0 LANGUAGES CXX)
 include(GNUInstallDirs)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -26,13 +26,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # RagePhoto CMake includes
 include(cmake/unicode.cmake)
-
-# RagePhoto WebAssembly ON
-if (EMSCRIPTEN)
-    set(EM_ON ON)
-else()
-    set(EM_ON OFF)
-endif()
 
 # RagePhoto Top Level ON
 if (${CMAKE_PROJECT_NAME} STREQUAL "ragephoto")
@@ -44,16 +37,17 @@ endif()
 # RagePhoto Source files
 set(RAGEPHOTO_HEADERS
     src/RagePhoto.h
-    src/RagePhotoData.h
+    src/RagePhotoLibrary.h
+    src/RagePhotoTypedefs.h
 )
 set(RAGEPHOTO_SOURCES
     src/RagePhoto.cpp
 )
 
 # RagePhoto Library Type
-option(RAGEPHOTO_STATIC "Build libragephoto as static library" ${EM_ON})
+option(RAGEPHOTO_STATIC "Build libragephoto as static library" OFF)
 if (RAGEPHOTO_STATIC)
-    option(RAGEPHOTO_C_API "Build libragephoto with C API support" ${EM_ON})
+    option(RAGEPHOTO_C_API "Build libragephoto with C API support" OFF)
     set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_STATIC)
 else()
     option(RAGEPHOTO_C_API "Build libragephoto with C API support" ON)
@@ -90,9 +84,9 @@ endif()
 
 # RagePhoto Configures + Target + Installs
 configure_file(src/ragephoto.pc.in "${ragephoto_BINARY_DIR}/pkgconfig/ragephoto.pc" @ONLY)
-configure_file(src/libragephoto_global.h.in "${ragephoto_BINARY_DIR}/include/libragephoto_global.h" @ONLY)
+configure_file(src/RagePhotoConfig.h.in "${ragephoto_BINARY_DIR}/include/RagePhotoConfig.h" @ONLY)
 list(APPEND RAGEPHOTO_HEADERS
-    "${ragephoto_BINARY_DIR}/include/libragephoto_global.h"
+    "${ragephoto_BINARY_DIR}/include/RagePhotoConfig.h"
 )
 if (RAGEPHOTO_STATIC)
     add_library(ragephoto STATIC ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES} ${RAGEPHOTO_STATIC_RESOURCES})
@@ -100,6 +94,7 @@ else()
     add_library(ragephoto SHARED ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES} ${RAGEPHOTO_SHARED_RESOURCES})
     set_target_properties(ragephoto PROPERTIES
         PREFIX "lib"
+        VERSION "${ragephoto_VERSION}"
     )
 endif()
 target_compile_definitions(ragephoto PRIVATE
@@ -130,13 +125,16 @@ if (EMSCRIPTEN)
         )
         target_compile_definitions(ragephoto-wasm PRIVATE
             LIBRAGEPHOTO_LIBRARY
+            LIBRAGEPHOTO_WASM
             ${LIBRAGEPHOTO_DEFINES}
         )
         target_link_options(ragephoto-wasm PRIVATE
             "SHELL:-O3"
             "SHELL:--no-entry"
-            "SHELL:-s WASM=1"
             "SHELL:-s ALLOW_MEMORY_GROWTH=1"
+            "SHELL:-s MODULARIZE=1"
+            "SHELL:-s WASM=1"
+            "SHELL:-s EXPORT_NAME=libragephotoModule"
             "SHELL:-s EXPORTED_FUNCTIONS=_free,_malloc"
             "SHELL:-s EXPORTED_RUNTIME_METHODS=ccall,cwrap"
         )

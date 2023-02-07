@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2022 Syping
+* Copyright (C) 2023 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -16,42 +16,44 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#ifndef LIBRAGEPHOTO_GLOBAL_H
-#define LIBRAGEPHOTO_GLOBAL_H
+#ifndef RAGEPHOTOLIBRARY_H
+#define RAGEPHOTOLIBRARY_H
 
-/* CMAKE CONFIG BEGIN */
-#define @LIBRAGEPHOTO_API@
-#define @LIBRAGEPHOTO_LIBTYPE@
-#define RAGEPHOTO_VERSION "@ragephoto_VERSION@"
-#define RAGEPHOTO_VERSION_MAJOR @ragephoto_VERSION_MAJOR@
-#define RAGEPHOTO_VERSION_MINOR @ragephoto_VERSION_MINOR@
-#define RAGEPHOTO_VERSION_PATCH @ragephoto_VERSION_PATCH@
-/* CMAKE CONFIG END */
+#include "RagePhotoConfig.h"
 
-/* RAGEPHOTO LIBRARY EXPORT BEGIN */
+/* RAGEPHOTO LIBRARY BINDING BEGIN */
 #ifdef _WIN32
 #ifndef LIBRAGEPHOTO_STATIC
 #ifdef LIBRAGEPHOTO_LIBRARY
-#define LIBRAGEPHOTO_C_EXPORT __declspec(dllexport)
-#define LIBRAGEPHOTO_CXX_EXPORT __declspec(dllexport)
+#define LIBRAGEPHOTO_C_BINDING __declspec(dllexport)
+#define LIBRAGEPHOTO_CXX_BINDING __declspec(dllexport)
 #else
-#define LIBRAGEPHOTO_C_EXPORT __declspec(dllimport)
-#define LIBRAGEPHOTO_CXX_EXPORT __declspec(dllimport)
+#define LIBRAGEPHOTO_C_BINDING __declspec(dllimport)
+#define LIBRAGEPHOTO_CXX_BINDING __declspec(dllimport)
 #endif // LIBRAGEPHOTO_LIBRARY
 #else
-#define LIBRAGEPHOTO_C_EXPORT
-#define LIBRAGEPHOTO_CXX_EXPORT
+#define LIBRAGEPHOTO_C_BINDING
+#define LIBRAGEPHOTO_CXX_BINDING
 #endif // LIBRAGEPHOTO_STATIC
 #else
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
-#define LIBRAGEPHOTO_C_EXPORT EMSCRIPTEN_KEEPALIVE
-#define LIBRAGEPHOTO_CXX_EXPORT
+#define LIBRAGEPHOTO_C_BINDING EMSCRIPTEN_KEEPALIVE
+#define LIBRAGEPHOTO_CXX_BINDING
 #else
-#define LIBRAGEPHOTO_C_EXPORT
-#define LIBRAGEPHOTO_CXX_EXPORT
+#define LIBRAGEPHOTO_C_BINDING
+#define LIBRAGEPHOTO_CXX_BINDING
 #endif // __EMSCRIPTEN__
 #endif // _WIN32
-/* RAGEPHOTO LIBRARY EXPORT END */
+/* RAGEPHOTO LIBRARY BINDING END */
 
-#endif // LIBRAGEPHOTO_GLOBAL_H
+/* ENABLE C API FOR RAGEPHOTO WASM LIBRARY BEGIN */
+#ifdef LIBRAGEPHOTO_WASM
+#ifdef RAGEPHOTO_C_NOAPI
+#undef RAGEPHOTO_C_NOAPI
+#define RAGEPHOTO_C_API
+#endif // RAGEPHOTO_C_NOAPI
+#endif // LIBRAGEPHOTO_WASM
+/* ENABLE C API FOR RAGEPHOTO WASM LIBRARY END */
+
+#endif // RAGEPHOTOLIBRARY_H

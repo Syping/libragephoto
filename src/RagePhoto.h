@@ -20,8 +20,8 @@
 #define RAGEPHOTO_H
 
 #ifdef __cplusplus
-#include "libragephoto_global.h"
-#include "RagePhotoData.h"
+#include "RagePhotoLibrary.h"
+#include "RagePhotoTypedefs.h"
 #include <iostream>
 #include <cstdlib>
 #include <cstdint>
@@ -30,7 +30,7 @@
 /**
 * \brief GTA V and RDR 2 Photo Parser.
 */
-class LIBRAGEPHOTO_CXX_EXPORT RagePhoto
+class LIBRAGEPHOTO_CXX_BINDING RagePhoto
 {
 public:
     /** Default sizes */
@@ -44,7 +44,7 @@ public:
         RDR2_HEADERSIZE = 272UL, /**< RDR 2 Header Size */
     };
     /** Parsing and set errors */
-    enum Error : uint8_t {
+    enum Error : int32_t {
         DescBufferTight = 39, /**< Description Buffer is too tight */
         DescMallocError = 31, /**< Description Buffer can't be allocated */
         DescReadError = 32, /**< Description can't be read successfully */
@@ -109,7 +109,7 @@ public:
     * \param filename File to load
     */
     bool loadFile(const std::string &filename);
-    uint8_t error() const; /**< Returns the last error occurred. */
+    int32_t error() const; /**< Returns the last error occurred. */
     uint32_t format() const; /**< Returns the Photo Format (GTA V or RDR 2). */
     const std::string photo() const; /**< Returns the Photo JPEG data. */
     const char *photoData() const; /**< Returns the Photo JPEG data. */

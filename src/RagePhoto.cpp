@@ -125,20 +125,7 @@ inline void uInt32ToCharLE(uint32_t x, char *y)
 /* BEGIN OF RAGEPHOTO CLASS */
 RagePhoto::RagePhoto()
 {
-#if __cplusplus >= 201707L
-    m_data = new RagePhotoData {
-            .jpeg = nullptr,
-            .description = nullptr,
-            .json = nullptr,
-            .title = nullptr,
-            .error = 0,
-            .photoFormat = 0,
-            .unnamedSum1 = 0,
-            .unnamedSum2 = 0
-    };
-#else
     m_data = new RagePhotoData { 0 };
-#endif
     setBufferDefault();
 }
 
@@ -354,9 +341,9 @@ bool RagePhoto::load(const char *data, size_t length)
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&m_data->photoBuffer, uInt32Buffer, 4);
+        std::memcpy(&m_data->jpegBuffer, uInt32Buffer, 4);
 #else
-        m_data->photoBuffer = charToUInt32LE(uInt32Buffer);
+        m_data->jpegBuffer = charToUInt32LE(uInt32Buffer);
 #endif
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
@@ -510,7 +497,7 @@ bool RagePhoto::load(const char *data, size_t length)
         std::cout << "headerSum: " << m_data->headerSum << std::endl;
         std::cout << "unnamedSum1: " << m_data->unnamedSum1 << std::endl;
         std::cout << "unnamedSum2: " << m_data->unnamedSum2 << std::endl;
-        std::cout << "photoBuffer: " << m_data->photoBuffer << std::endl;
+        std::cout << "photoBuffer: " << m_data->jpegBuffer << std::endl;
         std::cout << "descBuffer: " << m_data->descBuffer << std::endl;
         std::cout << "descOffset: " << m_data->descOffset << std::endl;
         std::cout << "description: " << m_data->description << std::endl;
@@ -562,7 +549,7 @@ bool RagePhoto::loadFile(const std::string &filename)
     }
 }
 
-uint8_t RagePhoto::error() const
+int32_t RagePhoto::error() const
 {
     return m_data->error;
 }
@@ -590,7 +577,7 @@ uint32_t RagePhoto::photoSize() const
     if (m_data->jpeg)
         return m_data->jpegSize;
     else
-        return 0UL;
+        return 0;
 }
 
 const char* RagePhoto::description() const
@@ -663,7 +650,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
         const size_t photoHeader_size = 256;
 #endif
 
-        if (m_data->jpegSize > m_data->photoBuffer) {
+        if (m_data->jpegSize > m_data->jpegBuffer) {
             m_data->error = Error::PhotoBufferTight; // 36
             return false;
         }
@@ -757,9 +744,9 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
         writeBuffer("JPEG", data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(uInt32Buffer, &m_data->photoBuffer, 4);
+        std::memcpy(uInt32Buffer, &m_data->jpegBuffer, 4);
 #else
-        uInt32ToCharLE(m_data->photoBuffer, uInt32Buffer);
+        uInt32ToCharLE(m_data->jpegBuffer, uInt32Buffer);
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
@@ -771,7 +758,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
         writeBuffer(m_data->jpeg, data, &pos, length, m_data->jpegSize);
-        for (size_t i = m_data->jpegSize; i < m_data->photoBuffer; i++) {
+        for (size_t i = m_data->jpegSize; i < m_data->jpegBuffer; i++) {
             writeBuffer("\0", data, &pos, length, 1);
         }
 
@@ -889,9 +876,9 @@ bool RagePhoto::saveFile(const std::string &filename)
 inline size_t RagePhoto::saveSize(RagePhotoData *ragePhotoData, uint32_t photoFormat)
 {
     if (photoFormat == PhotoFormat::GTA5)
-        return (ragePhotoData->photoBuffer + ragePhotoData->jsonBuffer + ragePhotoData->titlBuffer + ragePhotoData->descBuffer + GTA5_HEADERSIZE + 56UL);
+        return (ragePhotoData->jpegBuffer + ragePhotoData->jsonBuffer + ragePhotoData->titlBuffer + ragePhotoData->descBuffer + GTA5_HEADERSIZE + 56UL);
     else if (photoFormat == PhotoFormat::RDR2)
-        return (ragePhotoData->photoBuffer + ragePhotoData->jsonBuffer + ragePhotoData->titlBuffer + ragePhotoData->descBuffer + RDR2_HEADERSIZE + 56UL);
+        return (ragePhotoData->jpegBuffer + ragePhotoData->jsonBuffer + ragePhotoData->titlBuffer + ragePhotoData->descBuffer + RDR2_HEADERSIZE + 56UL);
     else
         return 0;
 }
@@ -931,7 +918,7 @@ inline void RagePhoto::setBufferOffsets()
 
 inline void RagePhoto::setBufferOffsets(RagePhotoData *ragePhotoData)
 {
-    ragePhotoData->jsonOffset = ragePhotoData->photoBuffer + 28;
+    ragePhotoData->jsonOffset = ragePhotoData->jpegBuffer + 28;
     ragePhotoData->titlOffset = ragePhotoData->jsonOffset + ragePhotoData->jsonBuffer + 8;
     ragePhotoData->descOffset = ragePhotoData->titlOffset + ragePhotoData->titlBuffer + 8;
     ragePhotoData->endOfFile = ragePhotoData->descOffset + ragePhotoData->descBuffer + 12;
@@ -972,7 +959,7 @@ bool RagePhoto::setData(RagePhotoData *ragePhotoData, bool takeOwnership)
                 return false;
             std::memcpy(m_data->jpeg, ragePhotoData->jpeg, ragePhotoData->jpegSize);
             m_data->jpegSize = ragePhotoData->jpegSize;
-            m_data->photoBuffer = ragePhotoData->photoBuffer;
+            m_data->jpegBuffer = ragePhotoData->jpegBuffer;
         }
 
         if (ragePhotoData->json) {
@@ -1090,7 +1077,7 @@ bool RagePhoto::setPhoto(const char *data, uint32_t size, uint32_t bufferSize)
     }
 
     if (bufferSize != 0) {
-        m_data->photoBuffer = bufferSize;
+        m_data->jpegBuffer = bufferSize;
         setBufferOffsets();
     }
 
@@ -1140,7 +1127,7 @@ ragephoto_bool_t ragephoto_loadfile(ragephoto_t instance, const char *filename)
     return ragePhoto->loadFile(filename);
 }
 
-uint8_t ragephoto_error(ragephoto_t instance)
+int32_t ragephoto_error(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->error();
@@ -1262,10 +1249,16 @@ void ragephoto_setbufferoffsets(ragephoto_t instance)
     ragePhoto->setBufferOffsets();
 }
 
-void ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *ragePhotoData, ragephoto_bool_t takeOwnership)
+void ragephoto_setphotodata(ragephoto_t *instance, RagePhotoData *ragePhotoData)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(*instance);
+    ragePhoto->setData(ragePhotoData, true);
+}
+
+void ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *ragePhotoData)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
-    ragePhoto->setData(ragePhotoData, takeOwnership);
+    ragePhoto->setData(ragePhotoData, false);
 }
 
 void ragephoto_setphotodesc(ragephoto_t instance, const char *description, uint32_t bufferSize)
