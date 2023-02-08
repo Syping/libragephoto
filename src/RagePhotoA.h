@@ -229,9 +229,9 @@ public:
     /** Sets the internal RagePhotoData object. */
     bool setData(RagePhotoData *ragePhotoData, bool takeOwnership = true) {
         if (takeOwnership)
-            ragephoto_setphotodata(&instance, ragePhotoData);
+            return ragephoto_setphotodata(&instance, ragePhotoData);
         else
-            ragephoto_setphotodatac(instance, ragePhotoData);
+            return ragephoto_setphotodatac(instance, ragePhotoData);
     }
     /** Sets the Photo description. */
     void setDescription(const char *description, uint32_t bufferSize = 0) {

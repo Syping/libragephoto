@@ -167,13 +167,13 @@ LIBRAGEPHOTO_C_BINDING void ragephoto_setbufferoffsets(ragephoto_t instance);
 * \param instance \p ragephoto_t instance
 * \param ragePhotoData RagePhotoData object being set
 */
-LIBRAGEPHOTO_C_BINDING void ragephoto_setphotodata(ragephoto_t *instance, RagePhotoData *ragePhotoData);
+LIBRAGEPHOTO_C_BINDING ragephoto_bool_t ragephoto_setphotodata(ragephoto_t *instance, RagePhotoData *ragePhotoData);
 
 /** Copies RagePhotoData object to internal RagePhotoData object.
 * \param instance \p ragephoto_t instance
 * \param ragePhotoData RagePhotoData object being copied
 */
-LIBRAGEPHOTO_C_BINDING void ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *ragePhotoData);
+LIBRAGEPHOTO_C_BINDING ragephoto_bool_t ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *ragePhotoData);
 
 /** Sets the Photo description.
 * \param instance \p ragephoto_t instance

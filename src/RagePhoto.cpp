@@ -1249,16 +1249,16 @@ void ragephoto_setbufferoffsets(ragephoto_t instance)
     ragePhoto->setBufferOffsets();
 }
 
-void ragephoto_setphotodata(ragephoto_t *instance, RagePhotoData *ragePhotoData)
+ragephoto_bool_t ragephoto_setphotodata(ragephoto_t *instance, RagePhotoData *ragePhotoData)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(*instance);
-    ragePhoto->setData(ragePhotoData, true);
+    return ragePhoto->setData(ragePhotoData, true);
 }
 
-void ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *ragePhotoData)
+ragephoto_bool_t ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *ragePhotoData)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
-    ragePhoto->setData(ragePhotoData, false);
+    return ragePhoto->setData(ragePhotoData, false);
 }
 
 void ragephoto_setphotodesc(ragephoto_t instance, const char *description, uint32_t bufferSize)
