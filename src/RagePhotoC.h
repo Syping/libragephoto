@@ -35,9 +35,6 @@ extern "C" {
 /** RagePhoto C++ class typedef for C API. */
 typedef void* ragephoto_t;
 
-/** RagePhoto bool typedef for C API. */
-typedef int32_t ragephoto_bool_t;
-
 /** Opens a \p ragephoto_t instance. */
 LIBRAGEPHOTO_C_BINDING ragephoto_t ragephoto_open();
 

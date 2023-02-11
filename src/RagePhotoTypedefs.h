@@ -48,6 +48,26 @@ typedef struct RagePhotoData {
     uint32_t unnamedSum2; /**< 2nd unnamed checksum for Red Dead Redemption 2 */
 } RagePhotoData;
 
+/** RagePhoto bool typedef. */
+typedef int32_t ragephoto_bool_t;
+
+/** RagePhoto load function typedef. */
+typedef ragephoto_bool_t (*ragephoto_loadfunc_t)(RagePhotoData*, const char*, size_t);
+
+/** RagePhoto save function typedef (char* allocated by caller). */
+typedef ragephoto_bool_t (*ragephoto_savefunc_t)(RagePhotoData*, char*, uint32_t);
+
+/** RagePhoto save function typedef (char* allocated by function). */
+typedef ragephoto_bool_t (*ragephoto_savepfunc_t)(RagePhotoData*, char**, uint32_t);
+
+/** RagePhoto format parser struct for registering custom formats. */
+typedef struct RagePhotoFormatParser {
+    uint32_t photoFormat; /**< Photo file format magic */
+    ragephoto_loadfunc_t funcLoad; /**< Pointer to load function */
+    ragephoto_savefunc_t funcSave; /**< Pointer to save function */
+    ragephoto_savepfunc_t funcSavep; /**< Pointer to savep function */
+} RagePhotoFormatParser;
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
