@@ -1244,9 +1244,9 @@ void ragephoto_setbufferoffsets(ragephoto_t instance)
     ragePhoto->setBufferOffsets();
 }
 
-ragephoto_bool_t ragephoto_setphotodata(ragephoto_t *instance, RagePhotoData *ragePhotoData)
+ragephoto_bool_t ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *ragePhotoData)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(*instance);
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->setData(ragePhotoData, true);
 }
 

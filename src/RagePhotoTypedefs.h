@@ -61,12 +61,16 @@ typedef ragephoto_bool_t (*ragephoto_savefunc_t)(RagePhotoData*, char*, uint32_t
 /** RagePhoto save function typedef (char* allocated by function). */
 typedef ragephoto_bool_t (*ragephoto_savepfunc_t)(RagePhotoData*, char**, uint32_t);
 
+/** RagePhoto saveSize function typedef. */
+typedef size_t (*ragephoto_saveszfunc_t)(RagePhotoData*, uint32_t);
+
 /** RagePhoto format parser struct for registering custom formats. */
 typedef struct RagePhotoFormatParser {
     uint32_t photoFormat; /**< Photo file format magic */
     ragephoto_loadfunc_t funcLoad; /**< Pointer to load function */
     ragephoto_savefunc_t funcSave; /**< Pointer to save function */
     ragephoto_savepfunc_t funcSavep; /**< Pointer to savep function */
+    ragephoto_saveszfunc_t funcSaveSz; /**< Pointer to saveSize function */
 } RagePhotoFormatParser;
 
 #ifdef __cplusplus

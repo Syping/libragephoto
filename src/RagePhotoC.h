@@ -32,6 +32,7 @@
 extern "C" {
 #endif // __cplusplus
 /** \file RagePhotoC.h */
+
 /** RagePhoto C++ class typedef for C API. */
 typedef void* ragephoto_t;
 
@@ -164,7 +165,7 @@ LIBRAGEPHOTO_C_BINDING void ragephoto_setbufferoffsets(ragephoto_t instance);
 * \param instance \p ragephoto_t instance
 * \param ragePhotoData RagePhotoData object being set
 */
-LIBRAGEPHOTO_C_BINDING ragephoto_bool_t ragephoto_setphotodata(ragephoto_t *instance, RagePhotoData *ragePhotoData);
+LIBRAGEPHOTO_C_BINDING ragephoto_bool_t ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *ragePhotoData);
 
 /** Copies RagePhotoData object to internal RagePhotoData object.
 * \param instance \p ragephoto_t instance
