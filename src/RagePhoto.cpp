@@ -125,7 +125,10 @@ inline void uInt32ToCharLE(uint32_t x, char *y)
 /* BEGIN OF RAGEPHOTO CLASS */
 RagePhoto::RagePhoto()
 {
-    m_data = new RagePhotoData { 0 };
+    m_data = static_cast<RagePhotoData*>(std::malloc(sizeof(RagePhotoData)));
+    if (!m_data)
+        throw std::runtime_error("RagePhotoData data struct can't be allocated");
+    std::memset(m_data, 0, sizeof(RagePhotoData));
     setBufferDefault();
 }
 
@@ -136,25 +139,17 @@ RagePhoto::~RagePhoto()
     std::free(m_data->json);
     std::free(m_data->header);
     std::free(m_data->title);
-    delete m_data;
+    std::free(m_data);
 }
 
 void RagePhoto::clear()
 {
     std::free(m_data->jpeg);
-    m_data->jpeg = nullptr;
     std::free(m_data->description);
-    m_data->description = nullptr;
     std::free(m_data->json);
-    m_data->json = nullptr;
     std::free(m_data->header);
-    m_data->header = nullptr;
     std::free(m_data->title);
-    m_data->title = nullptr;
-    m_data->error = 0;
-    m_data->photoFormat = 0;
-    m_data->unnamedSum1 = 0;
-    m_data->unnamedSum2 = 0;
+    std::memset(m_data, 0, sizeof(RagePhotoData));
     setBufferDefault();
 }
 
@@ -935,7 +930,7 @@ bool RagePhoto::setData(RagePhotoData *ragePhotoData, bool takeOwnership)
         std::free(m_data->json);
         std::free(m_data->header);
         std::free(m_data->title);
-        delete m_data;
+        std::free(m_data);
 
         m_data = ragePhotoData;
     }
