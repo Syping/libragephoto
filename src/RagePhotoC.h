@@ -21,8 +21,8 @@
 
 #include "RagePhotoLibrary.h"
 #include "RagePhotoTypedefs.h"
+#include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
 
 #ifdef LIBRAGEPHOTO_C_NOAPI
 #error "libragephoto was built without C API"

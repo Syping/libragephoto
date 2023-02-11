@@ -19,6 +19,7 @@
 #ifndef RAGEPHOTOTYPEDEFS_H
 #define RAGEPHOTOTYPEDEFS_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
