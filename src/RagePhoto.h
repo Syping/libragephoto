@@ -95,8 +95,10 @@ public:
     RagePhoto();
     ~RagePhoto();
     void addParser(RagePhotoFormatParser *rp_parser); /**< Add a custom defined RagePhotoFormatParser. */
-    void clear(); /**< Resets the RagePhoto instance to default values. */
+    static void clear(RagePhotoData *rp_data); /**< Resets the RagePhotoData object to default values. */
+    void clear(); /**< Resets the RagePhotoData object to default values. */
     RagePhotoData* data(); /**< Returns the internal RagePhotoData object. */
+    static bool load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, const char *data, size_t size); /**< Loads a Photo from a const char*. */
     /** Loads a Photo from a const char*.
     * \param data Photo data
     * \param size Photo data size

@@ -164,15 +164,20 @@ void RagePhoto::addParser(RagePhotoFormatParser *rp_parser)
     }
 }
 
+void RagePhoto::clear(RagePhotoData *rp_data)
+{
+    std::free(rp_data->jpeg);
+    std::free(rp_data->description);
+    std::free(rp_data->json);
+    std::free(rp_data->header);
+    std::free(rp_data->title);
+    std::memset(rp_data, 0, sizeof(RagePhotoData));
+    setBufferDefault(rp_data);
+}
+
 void RagePhoto::clear()
 {
-    std::free(m_data->jpeg);
-    std::free(m_data->description);
-    std::free(m_data->json);
-    std::free(m_data->header);
-    std::free(m_data->title);
-    std::memset(m_data, 0, sizeof(RagePhotoData));
-    setBufferDefault();
+    clear(m_data);
 }
 
 RagePhotoData* RagePhoto::data()
@@ -180,34 +185,34 @@ RagePhotoData* RagePhoto::data()
     return m_data;
 }
 
-bool RagePhoto::load(const char *data, size_t length)
+bool RagePhoto::load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, const char *data, size_t length)
 {
 #ifdef RAGEPHOTO_BENCHMARK
     auto benchmark_parse_start = std::chrono::high_resolution_clock::now();
 #endif
 
     // Avoid data conflicts
-    clear();
+    clear(rp_data);
 
     size_t pos = 0;
     char uInt32Buffer[4];
     size_t size = readBuffer(data, uInt32Buffer, &pos, 4, length);
     if (size != 4) {
-        m_data->error = Error::NoFormatIdentifier; // 1
+        rp_data->error = Error::NoFormatIdentifier; // 1
         return false;
     }
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-    std::memcpy(&m_data->photoFormat, uInt32Buffer, 4);
+    std::memcpy(&rp_data->photoFormat, uInt32Buffer, 4);
 #else
-    m_data->photoFormat = charToUInt32LE(uInt32Buffer);
+    rp_data->photoFormat = charToUInt32LE(uInt32Buffer);
 #endif
-    if (m_data->photoFormat == PhotoFormat::GTA5 || m_data->photoFormat == PhotoFormat::RDR2) {
+    if (rp_data->photoFormat == PhotoFormat::GTA5 || rp_data->photoFormat == PhotoFormat::RDR2) {
 #if defined UNICODE_ICONV || defined UNICODE_CODECVT || defined UNICODE_WINCVT
         char photoHeader[256];
         size = readBuffer(data, photoHeader, &pos, 256, length);
         if (size != 256) {
-            m_data->error = Error::IncompleteHeader; // 3
+            rp_data->error = Error::IncompleteHeader; // 3
             return false;
         }
 
@@ -215,291 +220,291 @@ bool RagePhoto::load(const char *data, size_t length)
         std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
         const std::string photoHeader_string = convert.to_bytes(reinterpret_cast<char16_t*>(photoHeader));
         if (convert.converted() == 0) {
-            m_data->error = Error::UnicodeHeaderError; // 6
+            rp_data->error = Error::UnicodeHeaderError; // 6
             return false;
         }
         const size_t photoHeader_size = photoHeader_string.size() + 1;
-        m_data->header = static_cast<char*>(std::malloc(photoHeader_size));
-        if (!m_data->header) {
-            m_data->error = Error::HeaderMallocError; // 4
+        rp_data->header = static_cast<char*>(std::malloc(photoHeader_size));
+        if (!rp_data->header) {
+            rp_data->error = Error::HeaderMallocError; // 4
             return false;
         }
-        std::memcpy(m_data->header, photoHeader_string.c_str(), photoHeader_size);
+        std::memcpy(rp_data->header, photoHeader_string.c_str(), photoHeader_size);
 #elif defined UNICODE_ICONV
         iconv_t iconv_in = iconv_open("UTF-8", "UTF-16LE");
         if (iconv_in == (iconv_t)-1) {
-            m_data->error = Error::UnicodeInitError; // 4
+            rp_data->error = Error::UnicodeInitError; // 4
             return false;
         }
-        m_data->header = static_cast<char*>(std::malloc(256));
-        if (!m_data->header) {
-            m_data->error = Error::HeaderMallocError; // 4
+        rp_data->header = static_cast<char*>(std::malloc(256));
+        if (!rp_data->header) {
+            rp_data->error = Error::HeaderMallocError; // 4
             iconv_close(iconv_in);
             return false;
         }
         size_t src_s = sizeof(photoHeader);
         size_t dst_s = 256;
         char *src = photoHeader;
-        char *dst = m_data->header;
+        char *dst = rp_data->header;
         const size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
         iconv_close(iconv_in);
         if (ret == static_cast<size_t>(-1)) {
-            m_data->error = Error::UnicodeHeaderError; // 6
+            rp_data->error = Error::UnicodeHeaderError; // 6
             return false;
         }
 #elif defined UNICODE_WINCVT
-        m_data->header = static_cast<char*>(std::malloc(256));
-        if (!m_data->header) {
-            m_data->error = Error::HeaderMallocError; // 4
+        rp_data->header = static_cast<char*>(std::malloc(256));
+        if (!rp_data->header) {
+            rp_data->error = Error::HeaderMallocError; // 4
             return false;
         }
-        const int converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<wchar_t*>(photoHeader), -1, m_data->header, 256, NULL, NULL);
+        const int converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<wchar_t*>(photoHeader), -1, rp_data->header, 256, NULL, NULL);
         if (converted == 0) {
-            std::free(m_data->header);
-            m_data->header = nullptr;
-            m_data->error = Error::UnicodeHeaderError; // 6
+            std::free(rp_data->header);
+            rp_data->header = nullptr;
+            rp_data->error = Error::UnicodeHeaderError; // 6
             return false;
         }
 #endif
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteChecksum; // 7
+            rp_data->error = Error::IncompleteChecksum; // 7
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&m_data->headerSum, uInt32Buffer, 4);
+        std::memcpy(&rp_data->headerSum, uInt32Buffer, 4);
 #else
-        m_data->headerSum = charToUInt32LE(uInt32Buffer);
+        rp_data->headerSum = charToUInt32LE(uInt32Buffer);
 #endif
 
-        if (m_data->photoFormat == PhotoFormat::RDR2) {
+        if (rp_data->photoFormat == PhotoFormat::RDR2) {
             size = readBuffer(data, uInt32Buffer, &pos, 4, length);
             if (size != 4) {
-                m_data->error = Error::IncompleteChecksum; // 7
+                rp_data->error = Error::IncompleteChecksum; // 7
                 return false;
             }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-            std::memcpy(&m_data->unnamedSum1, uInt32Buffer, 4);
+            std::memcpy(&rp_data->unnamedSum1, uInt32Buffer, 4);
 #else
-            m_data->unnamedSum1 = charToUInt32LE(uInt32Buffer);
+            rp_data->unnamedSum1 = charToUInt32LE(uInt32Buffer);
 #endif
 
             size = readBuffer(data, uInt32Buffer, &pos, 4, length);
             if (size != 4) {
-                m_data->error = Error::IncompleteChecksum; // 7
+                rp_data->error = Error::IncompleteChecksum; // 7
                 return false;
             }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-            std::memcpy(&m_data->unnamedSum2, uInt32Buffer, 4);
+            std::memcpy(&rp_data->unnamedSum2, uInt32Buffer, 4);
 #else
-            m_data->unnamedSum2 = charToUInt32LE(uInt32Buffer);
+            rp_data->unnamedSum2 = charToUInt32LE(uInt32Buffer);
 #endif
         }
         const size_t headerSize = pos;
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteEOF; // 8
+            rp_data->error = Error::IncompleteEOF; // 8
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&m_data->endOfFile, uInt32Buffer, 4);
+        std::memcpy(&rp_data->endOfFile, uInt32Buffer, 4);
 #else
-        m_data->endOfFile = charToUInt32LE(uInt32Buffer);
+        rp_data->endOfFile = charToUInt32LE(uInt32Buffer);
 #endif
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteJsonOffset; // 9
+            rp_data->error = Error::IncompleteJsonOffset; // 9
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&m_data->jsonOffset, uInt32Buffer, 4);
+        std::memcpy(&rp_data->jsonOffset, uInt32Buffer, 4);
 #else
-        m_data->jsonOffset = charToUInt32LE(uInt32Buffer);
+        rp_data->jsonOffset = charToUInt32LE(uInt32Buffer);
 #endif
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteTitleOffset; // 10
+            rp_data->error = Error::IncompleteTitleOffset; // 10
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&m_data->titlOffset, uInt32Buffer, 4);
+        std::memcpy(&rp_data->titlOffset, uInt32Buffer, 4);
 #else
-        m_data->titlOffset = charToUInt32LE(uInt32Buffer);
+        rp_data->titlOffset = charToUInt32LE(uInt32Buffer);
 #endif
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteDescOffset; // 11
+            rp_data->error = Error::IncompleteDescOffset; // 11
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&m_data->descOffset, uInt32Buffer, 4);
+        std::memcpy(&rp_data->descOffset, uInt32Buffer, 4);
 #else
-        m_data->descOffset = charToUInt32LE(uInt32Buffer);
+        rp_data->descOffset = charToUInt32LE(uInt32Buffer);
 #endif
 
         char markerBuffer[4];
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteJpegMarker; // 12
+            rp_data->error = Error::IncompleteJpegMarker; // 12
             return false;
         }
         if (strncmp(markerBuffer, "JPEG", 4) != 0) {
-            m_data->error = Error::IncorrectJpegMarker; // 13
+            rp_data->error = Error::IncorrectJpegMarker; // 13
             return false;
         }
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompletePhotoBuffer; // 14
+            rp_data->error = Error::IncompletePhotoBuffer; // 14
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&m_data->jpegBuffer, uInt32Buffer, 4);
+        std::memcpy(&rp_data->jpegBuffer, uInt32Buffer, 4);
 #else
-        m_data->jpegBuffer = charToUInt32LE(uInt32Buffer);
+        rp_data->jpegBuffer = charToUInt32LE(uInt32Buffer);
 #endif
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompletePhotoSize; // 15
+            rp_data->error = Error::IncompletePhotoSize; // 15
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&m_data->jpegSize, uInt32Buffer, 4);
+        std::memcpy(&rp_data->jpegSize, uInt32Buffer, 4);
 #else
-        m_data->jpegSize = charToUInt32LE(uInt32Buffer);
+        rp_data->jpegSize = charToUInt32LE(uInt32Buffer);
 #endif
 
-        m_data->jpeg = static_cast<char*>(std::malloc(m_data->jpegSize));
-        if (!m_data->jpeg) {
-            m_data->error = Error::PhotoMallocError; // 16
+        rp_data->jpeg = static_cast<char*>(std::malloc(rp_data->jpegSize));
+        if (!rp_data->jpeg) {
+            rp_data->error = Error::PhotoMallocError; // 16
             return false;
         }
-        size = readBuffer(data, m_data->jpeg, &pos, m_data->jpegSize, length);
-        if (size != m_data->jpegSize) {
-            std::free(m_data->jpeg);
-            m_data->jpeg = nullptr;
-            m_data->error = Error::PhotoReadError; // 17
+        size = readBuffer(data, rp_data->jpeg, &pos, rp_data->jpegSize, length);
+        if (size != rp_data->jpegSize) {
+            std::free(rp_data->jpeg);
+            rp_data->jpeg = nullptr;
+            rp_data->error = Error::PhotoReadError; // 17
             return false;
         }
 
-        pos = m_data->jsonOffset + headerSize;
+        pos = rp_data->jsonOffset + headerSize;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteJsonMarker; // 18
+            rp_data->error = Error::IncompleteJsonMarker; // 18
             return false;
         }
         if (strncmp(markerBuffer, "JSON", 4) != 0) {
-            m_data->error = Error::IncorrectJsonMarker; // 19
+            rp_data->error = Error::IncorrectJsonMarker; // 19
             return false;
         }
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteJsonBuffer; // 20
+            rp_data->error = Error::IncompleteJsonBuffer; // 20
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&m_data->jsonBuffer, uInt32Buffer, 4);
+        std::memcpy(&rp_data->jsonBuffer, uInt32Buffer, 4);
 #else
-        m_data->jsonBuffer = charToUInt32LE(uInt32Buffer);
+        rp_data->jsonBuffer = charToUInt32LE(uInt32Buffer);
 #endif
 
-        m_data->json = static_cast<char*>(std::malloc(m_data->jsonBuffer));
-        if (!m_data->json) {
-            m_data->error = Error::JsonMallocError; // 21
+        rp_data->json = static_cast<char*>(std::malloc(rp_data->jsonBuffer));
+        if (!rp_data->json) {
+            rp_data->error = Error::JsonMallocError; // 21
             return false;
         }
-        size = readBuffer(data, m_data->json, &pos, m_data->jsonBuffer, length);
-        if (size != m_data->jsonBuffer) {
-            std::free(m_data->json);
-            m_data->json = nullptr;
-            m_data->error = Error::JsonReadError; // 22
+        size = readBuffer(data, rp_data->json, &pos, rp_data->jsonBuffer, length);
+        if (size != rp_data->jsonBuffer) {
+            std::free(rp_data->json);
+            rp_data->json = nullptr;
+            rp_data->error = Error::JsonReadError; // 22
             return false;
         }
 
-        pos = m_data->titlOffset + headerSize;
+        pos = rp_data->titlOffset + headerSize;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteTitleMarker; // 23
+            rp_data->error = Error::IncompleteTitleMarker; // 23
             return false;
         }
         if (strncmp(markerBuffer, "TITL", 4) != 0) {
-            m_data->error = Error::IncorrectTitleMarker; // 24
+            rp_data->error = Error::IncorrectTitleMarker; // 24
             return false;
         }
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteTitleBuffer; // 25
+            rp_data->error = Error::IncompleteTitleBuffer; // 25
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&m_data->titlBuffer, uInt32Buffer, 4);
+        std::memcpy(&rp_data->titlBuffer, uInt32Buffer, 4);
 #else
-        m_data->titlBuffer = charToUInt32LE(uInt32Buffer);
+        rp_data->titlBuffer = charToUInt32LE(uInt32Buffer);
 #endif
 
-        m_data->title = static_cast<char*>(std::malloc(m_data->titlBuffer));
-        if (!m_data->title) {
-            m_data->error = Error::TitleMallocError; // 26
+        rp_data->title = static_cast<char*>(std::malloc(rp_data->titlBuffer));
+        if (!rp_data->title) {
+            rp_data->error = Error::TitleMallocError; // 26
             return false;
         }
-        size = readBuffer(data, m_data->title, &pos, m_data->titlBuffer, length);
-        if (size != m_data->titlBuffer) {
-            std::free(m_data->title);
-            m_data->title = nullptr;
-            m_data->error = Error::TitleReadError; // 27
+        size = readBuffer(data, rp_data->title, &pos, rp_data->titlBuffer, length);
+        if (size != rp_data->titlBuffer) {
+            std::free(rp_data->title);
+            rp_data->title = nullptr;
+            rp_data->error = Error::TitleReadError; // 27
             return false;
         }
 
-        pos = m_data->descOffset + headerSize;
+        pos = rp_data->descOffset + headerSize;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteDescMarker; // 28
+            rp_data->error = Error::IncompleteDescMarker; // 28
             return false;
         }
         if (strncmp(markerBuffer, "DESC", 4) != 0) {
-            m_data->error = Error::IncorrectDescMarker; // 29
+            rp_data->error = Error::IncorrectDescMarker; // 29
             return false;
         }
 
         size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteDescBuffer; // 30
+            rp_data->error = Error::IncompleteDescBuffer; // 30
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&m_data->descBuffer, uInt32Buffer, 4);
+        std::memcpy(&rp_data->descBuffer, uInt32Buffer, 4);
 #else
-        m_data->descBuffer = charToUInt32LE(uInt32Buffer);
+        rp_data->descBuffer = charToUInt32LE(uInt32Buffer);
 #endif
 
-        m_data->description = static_cast<char*>(std::malloc(m_data->descBuffer));
-        if (!m_data->description) {
-            m_data->error = Error::DescMallocError; // 31
+        rp_data->description = static_cast<char*>(std::malloc(rp_data->descBuffer));
+        if (!rp_data->description) {
+            rp_data->error = Error::DescMallocError; // 31
             return false;
         }
-        size = readBuffer(data, m_data->description, &pos, m_data->descBuffer, length);
-        if (size != m_data->descBuffer) {
-            std::free(m_data->description);
-            m_data->description = nullptr;
-            m_data->error = Error::DescReadError; // 32
+        size = readBuffer(data, rp_data->description, &pos, rp_data->descBuffer, length);
+        if (size != rp_data->descBuffer) {
+            std::free(rp_data->description);
+            rp_data->description = nullptr;
+            rp_data->error = Error::DescReadError; // 32
             return false;
         }
 
-        pos = m_data->endOfFile + headerSize - 4;
+        pos = rp_data->endOfFile + headerSize - 4;
         size = readBuffer(data, markerBuffer, &pos, 4, length);
         if (size != 4) {
-            m_data->error = Error::IncompleteJendMarker; // 33
+            rp_data->error = Error::IncompleteJendMarker; // 33
             return false;
         }
         if (strncmp(markerBuffer, "JEND", 4) != 0) {
-            m_data->error = Error::IncorrectJendMarker; // 34
+            rp_data->error = Error::IncorrectJendMarker; // 34
             return false;
         }
 
@@ -510,49 +515,54 @@ bool RagePhoto::load(const char *data, size_t length)
 #endif
 
 #ifdef RAGEPHOTO_DEBUG
-        std::cout << "header: " << m_data->header << std::endl;
-        std::cout << "headerSum: " << m_data->headerSum << std::endl;
-        std::cout << "unnamedSum1: " << m_data->unnamedSum1 << std::endl;
-        std::cout << "unnamedSum2: " << m_data->unnamedSum2 << std::endl;
-        std::cout << "photoBuffer: " << m_data->jpegBuffer << std::endl;
-        std::cout << "descBuffer: " << m_data->descBuffer << std::endl;
-        std::cout << "descOffset: " << m_data->descOffset << std::endl;
-        std::cout << "description: " << m_data->description << std::endl;
-        std::cout << "jsonBuffer: " << m_data->jsonBuffer << std::endl;
-        std::cout << "jsonOffset: " << m_data->jsonOffset << std::endl;
-        std::cout << "json: " << m_data->json << std::endl;
-        std::cout << "titlBuffer: " << m_data->titlBuffer << std::endl;
-        std::cout << "titlOffset: " << m_data->titlOffset << std::endl;
-        std::cout << "title: " << m_data->title << std::endl;
-        std::cout << "eofOffset: " << m_data->endOfFile << std::endl;
+        std::cout << "header: " << rp_data->header << std::endl;
+        std::cout << "headerSum: " << rp_data->headerSum << std::endl;
+        std::cout << "unnamedSum1: " << rp_data->unnamedSum1 << std::endl;
+        std::cout << "unnamedSum2: " << rp_data->unnamedSum2 << std::endl;
+        std::cout << "photoBuffer: " << rp_data->jpegBuffer << std::endl;
+        std::cout << "descBuffer: " << rp_data->descBuffer << std::endl;
+        std::cout << "descOffset: " << rp_data->descOffset << std::endl;
+        std::cout << "description: " << rp_data->description << std::endl;
+        std::cout << "jsonBuffer: " << rp_data->jsonBuffer << std::endl;
+        std::cout << "jsonOffset: " << rp_data->jsonOffset << std::endl;
+        std::cout << "json: " << rp_data->json << std::endl;
+        std::cout << "titlBuffer: " << rp_data->titlBuffer << std::endl;
+        std::cout << "titlOffset: " << rp_data->titlOffset << std::endl;
+        std::cout << "title: " << rp_data->title << std::endl;
+        std::cout << "eofOffset: " << rp_data->endOfFile << std::endl;
         std::cout << "setBufferOffsets()" << std::endl;
-        setBufferOffsets();
-        std::cout << "descOffset: " << m_data->descOffset << std::endl;
-        std::cout << "jsonOffset: " << m_data->jsonOffset << std::endl;
-        std::cout << "titlOffset: " << m_data->titlOffset << std::endl;
-        std::cout << "eofOffset: " << m_data->endOfFile << std::endl;
-        std::cout << "calc size: " << saveSize() << std::endl;
+        setBufferOffsets(rp_data);
+        std::cout << "descOffset: " << rp_data->descOffset << std::endl;
+        std::cout << "jsonOffset: " << rp_data->jsonOffset << std::endl;
+        std::cout << "titlOffset: " << rp_data->titlOffset << std::endl;
+        std::cout << "eofOffset: " << rp_data->endOfFile << std::endl;
+        std::cout << "calc size: " << saveSize(rp_data, rp_parser) << std::endl;
         std::cout << "real size: " << length << std::endl;
 #endif
 
-        m_data->error = Error::NoError; // 255
+        rp_data->error = Error::NoError; // 255
         return true;
 #else
         std::cout << "UTF-16LE decoding support missing" << std::endl;
-        m_data->error = Error::UnicodeInitError; // 4
+        rp_data->error = Error::UnicodeInitError; // 4
         return false;
 #endif
     }
-    else if (m_parser) {
+    else if (rp_parser) {
         RagePhotoFormatParser n_parser[1]{};
-        for (size_t i = 0; std::memcmp(&n_parser[0], &m_parser[i], sizeof(RagePhotoFormatParser)); i++) {
-            if (m_data->photoFormat == m_parser[i].photoFormat)
-                if (m_parser[i].funcLoad)
-                    return (m_parser[i].funcLoad)(m_data, data, length);
+        for (size_t i = 0; std::memcmp(&n_parser[0], &rp_parser[i], sizeof(RagePhotoFormatParser)); i++) {
+            if (rp_data->photoFormat == rp_parser[i].photoFormat)
+                if (rp_parser[i].funcLoad)
+                    return (rp_parser[i].funcLoad)(rp_data, data, length);
         }
     }
-    m_data->error = Error::IncompatibleFormat; // 2
+    rp_data->error = Error::IncompatibleFormat; // 2
     return false;
+}
+
+bool RagePhoto::load(const char *data, size_t length)
+{
+    return load(m_data, m_parser, data, length);
 }
 
 bool RagePhoto::load(const std::string &data)
