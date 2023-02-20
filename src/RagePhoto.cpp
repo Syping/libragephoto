@@ -129,6 +129,10 @@ RagePhoto::RagePhoto()
     if (!m_data)
         throw std::runtime_error("RagePhotoData data struct can't be allocated");
     std::memset(m_data, 0, sizeof(RagePhotoData));
+    m_parser = static_cast<RagePhotoFormatParser*>(std::malloc(sizeof(RagePhotoFormatParser)));
+    if (!m_parser)
+        throw std::runtime_error("RagePhotoFormatParser parser struct can't be allocated");
+    std::memset(m_parser, 0, sizeof(RagePhotoFormatParser));
     setBufferDefault();
 }
 
@@ -140,6 +144,24 @@ RagePhoto::~RagePhoto()
     std::free(m_data->header);
     std::free(m_data->title);
     std::free(m_data);
+    std::free(m_parser);
+}
+
+void RagePhoto::addParser(RagePhotoFormatParser *rp_parser)
+{
+    if (rp_parser) {
+        RagePhotoFormatParser n_parser[1]{};
+        if (!std::memcmp(&n_parser[0], rp_parser, sizeof(RagePhotoFormatParser)))
+            return;
+        size_t length;
+        for (length = 0; std::memcmp(&n_parser[0], &m_parser[length], sizeof(RagePhotoFormatParser)); length++);
+        RagePhotoFormatParser *t_parser = static_cast<RagePhotoFormatParser*>(std::realloc(m_parser, (length + 2 * sizeof(RagePhotoFormatParser))));
+        if (!t_parser)
+            throw std::runtime_error("RagePhotoFormatParser array can't be expanded");
+        m_parser = t_parser;
+        std::memcpy(&m_parser[length], rp_parser, sizeof(RagePhotoFormatParser));
+        std::memset(&m_parser[length+1], 0, sizeof(RagePhotoFormatParser));
+    }
 }
 
 void RagePhoto::clear()
@@ -521,6 +543,14 @@ bool RagePhoto::load(const char *data, size_t length)
         return false;
 #endif
     }
+    else if (m_parser) {
+        RagePhotoFormatParser n_parser[1]{};
+        for (size_t i = 0; std::memcmp(&n_parser[0], &m_parser[i], sizeof(RagePhotoFormatParser)); i++) {
+            if (m_data->photoFormat == m_parser[i].photoFormat)
+                if (m_parser[i].funcLoad)
+                    return (m_parser[i].funcLoad)(m_data, data, length);
+        }
+    }
     m_data->error = Error::IncompatibleFormat; // 2
     return false;
 }
@@ -813,6 +843,14 @@ bool RagePhoto::save(char *data, uint32_t photoFormat)
         return false;
 #endif
     }
+    else if (m_parser) {
+        RagePhotoFormatParser n_parser[1]{};
+        for (size_t i = 0; std::memcmp(&n_parser[0], &m_parser[i], sizeof(RagePhotoFormatParser)); i++) {
+            if (photoFormat == m_parser[i].photoFormat)
+                if (m_parser[i].funcSave)
+                    return (m_parser[i].funcSave)(m_data, data, photoFormat);
+        }
+    }
 
     m_data->error = Error::IncompatibleFormat; // 2
     return false;
@@ -868,24 +906,31 @@ bool RagePhoto::saveFile(const std::string &filename)
     return saveFile(filename, m_data->photoFormat);
 }
 
-inline size_t RagePhoto::saveSize(RagePhotoData *ragePhotoData, uint32_t photoFormat)
+inline size_t RagePhoto::saveSize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, uint32_t photoFormat)
 {
     if (photoFormat == PhotoFormat::GTA5)
-        return (ragePhotoData->jpegBuffer + ragePhotoData->jsonBuffer + ragePhotoData->titlBuffer + ragePhotoData->descBuffer + GTA5_HEADERSIZE + 56UL);
+        return (rp_data->jpegBuffer + rp_data->jsonBuffer + rp_data->titlBuffer + rp_data->descBuffer + GTA5_HEADERSIZE + 56UL);
     else if (photoFormat == PhotoFormat::RDR2)
-        return (ragePhotoData->jpegBuffer + ragePhotoData->jsonBuffer + ragePhotoData->titlBuffer + ragePhotoData->descBuffer + RDR2_HEADERSIZE + 56UL);
-    else
-        return 0;
+        return (rp_data->jpegBuffer + rp_data->jsonBuffer + rp_data->titlBuffer + rp_data->descBuffer + RDR2_HEADERSIZE + 56UL);
+    else if (rp_parser) {
+        RagePhotoFormatParser n_parser[1]{};
+        for (size_t i = 0; std::memcmp(&n_parser[0], &rp_parser[i], sizeof(RagePhotoFormatParser)); i++) {
+            if (photoFormat == rp_parser[i].photoFormat)
+                if (rp_parser[i].funcSaveSz)
+                    return (rp_parser[i].funcSaveSz)(rp_data, photoFormat);
+        }
+    }
+    return 0;
 }
 
-inline size_t RagePhoto::saveSize(RagePhotoData *ragePhotoData)
+inline size_t RagePhoto::saveSize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser)
 {
-    return saveSize(ragePhotoData, ragePhotoData->photoFormat);
+    return saveSize(rp_data, rp_parser, rp_data->photoFormat);
 }
 
 inline size_t RagePhoto::saveSize(uint32_t photoFormat)
 {
-    return saveSize(m_data, photoFormat);
+    return saveSize(m_data, m_parser, photoFormat);
 }
 
 inline size_t RagePhoto::saveSize()
@@ -898,12 +943,12 @@ inline void RagePhoto::setBufferDefault()
     setBufferDefault(m_data);
 }
 
-inline void RagePhoto::setBufferDefault(RagePhotoData *ragePhotoData)
+inline void RagePhoto::setBufferDefault(RagePhotoData *rp_data)
 {
-    ragePhotoData->descBuffer = DEFAULT_DESCBUFFER;
-    ragePhotoData->jsonBuffer = DEFAULT_JSONBUFFER;
-    ragePhotoData->titlBuffer = DEFAULT_TITLBUFFER;
-    setBufferOffsets(ragePhotoData);
+    rp_data->descBuffer = DEFAULT_DESCBUFFER;
+    rp_data->jsonBuffer = DEFAULT_JSONBUFFER;
+    rp_data->titlBuffer = DEFAULT_TITLBUFFER;
+    setBufferOffsets(rp_data);
 }
 
 inline void RagePhoto::setBufferOffsets()
@@ -911,17 +956,17 @@ inline void RagePhoto::setBufferOffsets()
     setBufferOffsets(m_data);
 }
 
-inline void RagePhoto::setBufferOffsets(RagePhotoData *ragePhotoData)
+inline void RagePhoto::setBufferOffsets(RagePhotoData *rp_data)
 {
-    ragePhotoData->jsonOffset = ragePhotoData->jpegBuffer + 28;
-    ragePhotoData->titlOffset = ragePhotoData->jsonOffset + ragePhotoData->jsonBuffer + 8;
-    ragePhotoData->descOffset = ragePhotoData->titlOffset + ragePhotoData->titlBuffer + 8;
-    ragePhotoData->endOfFile = ragePhotoData->descOffset + ragePhotoData->descBuffer + 12;
+    rp_data->jsonOffset = rp_data->jpegBuffer + 28;
+    rp_data->titlOffset = rp_data->jsonOffset + rp_data->jsonBuffer + 8;
+    rp_data->descOffset = rp_data->titlOffset + rp_data->titlBuffer + 8;
+    rp_data->endOfFile = rp_data->descOffset + rp_data->descBuffer + 12;
 }
 
-bool RagePhoto::setData(RagePhotoData *ragePhotoData, bool takeOwnership)
+bool RagePhoto::setData(RagePhotoData *rp_data, bool takeOwnership)
 {
-    if (m_data == ragePhotoData)
+    if (m_data == rp_data)
         return true;
 
     if (takeOwnership) {
@@ -932,60 +977,60 @@ bool RagePhoto::setData(RagePhotoData *ragePhotoData, bool takeOwnership)
         std::free(m_data->title);
         std::free(m_data);
 
-        m_data = ragePhotoData;
+        m_data = rp_data;
     }
     else {
         clear();
 
-        m_data->photoFormat = ragePhotoData->photoFormat;
+        m_data->photoFormat = rp_data->photoFormat;
 
-        if (ragePhotoData->header) {
-            const size_t headerSize = strlen(ragePhotoData->header) + 1;
+        if (rp_data->header) {
+            const size_t headerSize = strlen(rp_data->header) + 1;
             m_data->header = static_cast<char*>(std::malloc(headerSize));
             if (!m_data->header)
                 return false;
-            std::memcpy(m_data->header, ragePhotoData->header, headerSize);
-            m_data->headerSum = ragePhotoData->headerSum;
+            std::memcpy(m_data->header, rp_data->header, headerSize);
+            m_data->headerSum = rp_data->headerSum;
         }
 
-        if (ragePhotoData->jpeg) {
-            m_data->jpeg = static_cast<char*>(std::malloc(ragePhotoData->jpegSize));
+        if (rp_data->jpeg) {
+            m_data->jpeg = static_cast<char*>(std::malloc(rp_data->jpegSize));
             if (!m_data->jpeg)
                 return false;
-            std::memcpy(m_data->jpeg, ragePhotoData->jpeg, ragePhotoData->jpegSize);
-            m_data->jpegSize = ragePhotoData->jpegSize;
-            m_data->jpegBuffer = ragePhotoData->jpegBuffer;
+            std::memcpy(m_data->jpeg, rp_data->jpeg, rp_data->jpegSize);
+            m_data->jpegSize = rp_data->jpegSize;
+            m_data->jpegBuffer = rp_data->jpegBuffer;
         }
 
-        if (ragePhotoData->json) {
-            const size_t jsonSize = strlen(ragePhotoData->json) + 1;
+        if (rp_data->json) {
+            const size_t jsonSize = strlen(rp_data->json) + 1;
             m_data->json = static_cast<char*>(std::malloc(jsonSize));
             if (!m_data->json)
                 return false;
-            std::memcpy(m_data->json, ragePhotoData->json, jsonSize);
-            m_data->jsonBuffer = ragePhotoData->jsonBuffer;
+            std::memcpy(m_data->json, rp_data->json, jsonSize);
+            m_data->jsonBuffer = rp_data->jsonBuffer;
         }
 
-        if (ragePhotoData->title) {
-            const size_t titleSize = strlen(ragePhotoData->title) + 1;
+        if (rp_data->title) {
+            const size_t titleSize = strlen(rp_data->title) + 1;
             m_data->title = static_cast<char*>(std::malloc(titleSize));
             if (!m_data->title)
                 return false;
-            std::memcpy(m_data->title, ragePhotoData->title, titleSize);
-            m_data->titlBuffer = ragePhotoData->titlBuffer;
+            std::memcpy(m_data->title, rp_data->title, titleSize);
+            m_data->titlBuffer = rp_data->titlBuffer;
         }
 
-        if (ragePhotoData->description) {
-            const size_t descriptionSize = strlen(ragePhotoData->description) + 1;
+        if (rp_data->description) {
+            const size_t descriptionSize = strlen(rp_data->description) + 1;
             m_data->description = static_cast<char*>(std::malloc(descriptionSize));
             if (!m_data->description)
                 return false;
-            std::memcpy(m_data->description, ragePhotoData->description, descriptionSize);
-            m_data->descBuffer = ragePhotoData->descBuffer;
+            std::memcpy(m_data->description, rp_data->description, descriptionSize);
+            m_data->descBuffer = rp_data->descBuffer;
         }
 
-        m_data->unnamedSum1 = ragePhotoData->unnamedSum1;
-        m_data->unnamedSum2 = ragePhotoData->unnamedSum2;
+        m_data->unnamedSum1 = rp_data->unnamedSum1;
+        m_data->unnamedSum2 = rp_data->unnamedSum2;
 
         setBufferOffsets();
     }
@@ -1102,6 +1147,12 @@ void RagePhoto::setTitle(const char *title, uint32_t bufferSize)
 ragephoto_t ragephoto_open()
 {
     return static_cast<ragephoto_t>(new RagePhoto);
+}
+
+void ragephoto_addparser(ragephoto_t instance, RagePhotoFormatParser *rp_parser)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    ragePhoto->addParser(rp_parser);
 }
 
 void ragephoto_clear(ragephoto_t instance)
@@ -1244,16 +1295,16 @@ void ragephoto_setbufferoffsets(ragephoto_t instance)
     ragePhoto->setBufferOffsets();
 }
 
-ragephoto_bool_t ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *ragePhotoData)
+ragephoto_bool_t ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *rp_data)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
-    return ragePhoto->setData(ragePhotoData, true);
+    return ragePhoto->setData(rp_data, true);
 }
 
-ragephoto_bool_t ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *ragePhotoData)
+ragephoto_bool_t ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *rp_data)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
-    return ragePhoto->setData(ragePhotoData, false);
+    return ragePhoto->setData(rp_data, false);
 }
 
 void ragephoto_setphotodesc(ragephoto_t instance, const char *description, uint32_t bufferSize)

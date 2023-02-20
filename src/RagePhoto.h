@@ -94,6 +94,7 @@ public:
     };
     RagePhoto();
     ~RagePhoto();
+    void addParser(RagePhotoFormatParser *rp_parser); /**< Add a custom defined RagePhotoFormatParser. */
     void clear(); /**< Resets the RagePhoto instance to default values. */
     RagePhotoData* data(); /**< Returns the internal RagePhotoData object. */
     /** Loads a Photo from a const char*.
@@ -139,15 +140,15 @@ public:
     const std::string save(bool *ok = nullptr);
     bool saveFile(const std::string &filename, uint32_t photoFormat); /**< Saves a Photo to a file. */
     bool saveFile(const std::string &filename); /**< Saves a Photo to a file. */
-    static size_t saveSize(RagePhotoData *ragePhotoData, uint32_t photoFormat); /**< Returns the Photo save file size. */
-    static size_t saveSize(RagePhotoData *ragePhotoData); /**< Returns the Photo save file size. */
+    static size_t saveSize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, uint32_t photoFormat); /**< Returns the Photo save file size. */
+    static size_t saveSize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser); /**< Returns the Photo save file size. */
     size_t saveSize(uint32_t photoFormat); /**< Returns the Photo save file size. */
     size_t saveSize(); /**< Returns the Photo save file size. */
     void setBufferDefault(); /**< Sets all cross-format Buffer to default size. */
-    static void setBufferDefault(RagePhotoData *ragePhotoData); /**< Sets all cross-format Buffer to default size. */
+    static void setBufferDefault(RagePhotoData *rp_data); /**< Sets all cross-format Buffer to default size. */
     void setBufferOffsets(); /**< Moves all Buffer offsets to correct position. */
-    static void setBufferOffsets(RagePhotoData *ragePhotoData); /**< Moves all Buffer offsets to correct position. */
-    bool setData(RagePhotoData *ragePhotoData, bool takeOwnership = true); /**< Sets the internal RagePhotoData object. */
+    static void setBufferOffsets(RagePhotoData *rp_data); /**< Moves all Buffer offsets to correct position. */
+    bool setData(RagePhotoData *rp_data, bool takeOwnership = true); /**< Sets the internal RagePhotoData object. */
     void setDescription(const char *description, uint32_t bufferSize = 0); /**< Sets the Photo description. */
     void setFormat(uint32_t photoFormat); /**< Sets the Photo Format (GTA V or RDR 2). */
     void setJson(const char *json, uint32_t bufferSize = 0); /**< Sets the Photo JSON data. */
@@ -167,6 +168,7 @@ public:
 
 private:
     RagePhotoData *m_data;
+    RagePhotoFormatParser *m_parser;
 };
 #else
 #include "RagePhotoC.h"

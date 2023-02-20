@@ -39,6 +39,12 @@ typedef void* ragephoto_t;
 /** Opens a \p ragephoto_t instance. */
 LIBRAGEPHOTO_C_BINDING ragephoto_t ragephoto_open();
 
+/** Add a custom defined RagePhotoFormatParser.
+* \param instance \p ragephoto_t instance
+* \param rp_parser RagePhotoFormatParser parser to add
+*/
+LIBRAGEPHOTO_C_BINDING void ragephoto_addparser(ragephoto_t instance, RagePhotoFormatParser *rp_parser);
+
 /** Resets the \p ragephoto_t instance to default values.
 * \param instance \p ragephoto_t instance
 */
@@ -163,15 +169,15 @@ LIBRAGEPHOTO_C_BINDING void ragephoto_setbufferoffsets(ragephoto_t instance);
 
 /** Sets the internal RagePhotoData object.
 * \param instance \p ragephoto_t instance
-* \param ragePhotoData RagePhotoData object being set
+* \param rp_data RagePhotoData object being set
 */
-LIBRAGEPHOTO_C_BINDING ragephoto_bool_t ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *ragePhotoData);
+LIBRAGEPHOTO_C_BINDING ragephoto_bool_t ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *rp_data);
 
 /** Copies RagePhotoData object to internal RagePhotoData object.
 * \param instance \p ragephoto_t instance
-* \param ragePhotoData RagePhotoData object being copied
+* \param rp_data RagePhotoData object being copied
 */
-LIBRAGEPHOTO_C_BINDING ragephoto_bool_t ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *ragePhotoData);
+LIBRAGEPHOTO_C_BINDING ragephoto_bool_t ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *rp_data);
 
 /** Sets the Photo description.
 * \param instance \p ragephoto_t instance
