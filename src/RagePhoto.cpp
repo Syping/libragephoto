@@ -916,7 +916,7 @@ bool RagePhoto::saveFile(const std::string &filename)
     return saveFile(filename, m_data->photoFormat);
 }
 
-inline size_t RagePhoto::saveSize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, uint32_t photoFormat)
+size_t RagePhoto::saveSize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, uint32_t photoFormat)
 {
     if (photoFormat == PhotoFormat::GTA5)
         return (rp_data->jpegBuffer + rp_data->jsonBuffer + rp_data->titlBuffer + rp_data->descBuffer + GTA5_HEADERSIZE + 56UL);
@@ -933,27 +933,22 @@ inline size_t RagePhoto::saveSize(RagePhotoData *rp_data, RagePhotoFormatParser 
     return 0;
 }
 
-inline size_t RagePhoto::saveSize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser)
+size_t RagePhoto::saveSize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser)
 {
     return saveSize(rp_data, rp_parser, rp_data->photoFormat);
 }
 
-inline size_t RagePhoto::saveSize(uint32_t photoFormat)
+size_t RagePhoto::saveSize(uint32_t photoFormat)
 {
     return saveSize(m_data, m_parser, photoFormat);
 }
 
-inline size_t RagePhoto::saveSize()
+size_t RagePhoto::saveSize()
 {
     return saveSize(m_data->photoFormat);
 }
 
-inline void RagePhoto::setBufferDefault()
-{
-    setBufferDefault(m_data);
-}
-
-inline void RagePhoto::setBufferDefault(RagePhotoData *rp_data)
+void RagePhoto::setBufferDefault(RagePhotoData *rp_data)
 {
     rp_data->descBuffer = DEFAULT_DESCBUFFER;
     rp_data->jsonBuffer = DEFAULT_JSONBUFFER;
@@ -961,17 +956,22 @@ inline void RagePhoto::setBufferDefault(RagePhotoData *rp_data)
     setBufferOffsets(rp_data);
 }
 
-inline void RagePhoto::setBufferOffsets()
+void RagePhoto::setBufferDefault()
 {
-    setBufferOffsets(m_data);
+    setBufferDefault(m_data);
 }
 
-inline void RagePhoto::setBufferOffsets(RagePhotoData *rp_data)
+void RagePhoto::setBufferOffsets(RagePhotoData *rp_data)
 {
     rp_data->jsonOffset = rp_data->jpegBuffer + 28;
     rp_data->titlOffset = rp_data->jsonOffset + rp_data->jsonBuffer + 8;
     rp_data->descOffset = rp_data->titlOffset + rp_data->titlBuffer + 8;
     rp_data->endOfFile = rp_data->descOffset + rp_data->descBuffer + 12;
+}
+
+void RagePhoto::setBufferOffsets()
+{
+    setBufferOffsets(m_data);
 }
 
 bool RagePhoto::setData(RagePhotoData *rp_data, bool takeOwnership)
