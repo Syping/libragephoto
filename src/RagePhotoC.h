@@ -45,10 +45,15 @@ LIBRAGEPHOTO_C_BINDING ragephoto_t ragephoto_open();
 */
 LIBRAGEPHOTO_C_BINDING void ragephoto_addparser(ragephoto_t instance, RagePhotoFormatParser *rp_parser);
 
-/** Resets the \p ragephoto_t instance to default values.
+/** Resets the RagePhotoData object to default values.
 * \param instance \p ragephoto_t instance
 */
 LIBRAGEPHOTO_C_BINDING void ragephoto_clear(ragephoto_t instance);
+
+/** Resets the RagePhotoData object to default values.
+* \param rp_data RagePhotoData object
+*/
+LIBRAGEPHOTO_C_BINDING void ragephotodata_clear(RagePhotoData *rp_data);
 
 /** Loads a Photo from a const char*.
 * \param instance \p ragephoto_t instance
@@ -56,6 +61,14 @@ LIBRAGEPHOTO_C_BINDING void ragephoto_clear(ragephoto_t instance);
 * \param size Photo data size
 */
 LIBRAGEPHOTO_C_BINDING ragephoto_bool_t ragephoto_load(ragephoto_t instance, const char *data, size_t size);
+
+/** Loads a Photo from a const char*.
+* \param rp_data RagePhotoData object
+* \param rp_parser RagePhotoFormatParser parser array
+* \param data Photo data
+* \param size Photo data size
+*/
+LIBRAGEPHOTO_C_BINDING ragephoto_bool_t ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, const char *data, size_t size);
 
 /** Loads a Photo from a file.
 * \param instance \p ragephoto_t instance
@@ -126,10 +139,23 @@ LIBRAGEPHOTO_C_BINDING const char* ragephoto_getphototitle(ragephoto_t instance)
 LIBRAGEPHOTO_C_BINDING size_t ragephoto_getsavesize(ragephoto_t instance);
 
 /** Returns the Photo save file size.
+* \param rp_data RagePhotoData object
+* \param rp_parser RagePhotoFormatParser parser array
+*/
+LIBRAGEPHOTO_C_BINDING size_t ragephotodata_getsavesize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser);
+
+/** Returns the Photo save file size.
 * \param instance \p ragephoto_t instance
 * \param photoFormat Photo Format (GTA V or RDR 2)
 */
 LIBRAGEPHOTO_C_BINDING size_t ragephoto_getsavesizef(ragephoto_t instance, uint32_t photoFormat);
+
+/** Returns the Photo save file size.
+* \param rp_data RagePhotoData object
+* \param rp_parser RagePhotoFormatParser parser array
+* \param photoFormat Photo Format (GTA V or RDR 2)
+*/
+LIBRAGEPHOTO_C_BINDING size_t ragephotodata_getsavesizef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, uint32_t photoFormat);
 
 /** Saves a Photo to a char*.
 * \param instance \p ragephoto_t instance
@@ -162,10 +188,20 @@ LIBRAGEPHOTO_C_BINDING ragephoto_bool_t ragephoto_savefilef(ragephoto_t instance
 */
 LIBRAGEPHOTO_C_BINDING void ragephoto_setbufferdefault(ragephoto_t instance);
 
+/** Sets all cross-format Buffer to default size.
+* \param rp_data RagePhotoData object
+*/
+LIBRAGEPHOTO_C_BINDING void ragephotodata_setbufferdefault(RagePhotoData *rp_data);
+
 /** Moves all Buffer offsets to correct position.
 * \param instance \p ragephoto_t instance
 */
 LIBRAGEPHOTO_C_BINDING void ragephoto_setbufferoffsets(ragephoto_t instance);
+
+/** Moves all Buffer offsets to correct position.
+* \param rp_data RagePhotoData object
+*/
+LIBRAGEPHOTO_C_BINDING void ragephotodata_setbufferoffsets(RagePhotoData *rp_data);
 
 /** Sets the internal RagePhotoData object.
 * \param instance \p ragephoto_t instance

@@ -98,13 +98,25 @@ public:
     ~RagePhotoA() {
         ragephoto_close(instance);
     }
-    /** Resets the RagePhoto instance to default values. */
+    /** Add a custom defined RagePhotoFormatParser. */
+    void addParser(RagePhotoFormatParser *rp_parser) {
+        ragephoto_addparser(instance, rp_parser);
+    }
+    /** Resets the RagePhotoData object to default values. */
+    static void clear(RagePhotoData *rp_data) {
+        ragephotodata_clear(rp_data);
+    }
+    /** Resets the RagePhotoData object to default values. */
     void clear() {
         ragephoto_clear(instance);
     }
     /** Returns the internal RagePhotoData object. */
     RagePhotoData* data() {
         return ragephoto_getphotodata(instance);
+    }
+    /** Loads a Photo from a const char*. */
+    static bool load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, const char *data, size_t size) {
+        return ragephotodata_load(rp_data, rp_parser, data, size);
     }
     /** Loads a Photo from a const char*.
     * \param data Photo data
@@ -211,6 +223,14 @@ public:
         return ragephoto_savefile(instance, filename);
     }
     /** Returns the Photo save file size. */
+    static size_t saveSize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, uint32_t photoFormat) {
+        return ragephotodata_getsavesizef(rp_data, rp_parser, photoFormat);
+    }
+    /** Returns the Photo save file size. */
+    static size_t saveSize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser) {
+        return ragephotodata_getsavesize(rp_data, rp_parser);
+    }
+    /** Returns the Photo save file size. */
     size_t saveSize(uint32_t photoFormat) {
         return ragephoto_getsavesizef(instance, photoFormat);
     }
@@ -219,8 +239,16 @@ public:
         return ragephoto_getsavesize(instance);
     }
     /** Sets all cross-format Buffer to default size. */
+    static void setBufferDefault(RagePhotoData *rp_data) {
+        ragephotodata_setbufferdefault(rp_data);
+    }
+    /** Sets all cross-format Buffer to default size. */
     void setBufferDefault() {
         ragephoto_setbufferdefault(instance);
+    }
+    /** Moves all Buffer offsets to correct position. */
+    static void setBufferOffsets(RagePhotoData *rp_data) {
+        ragephotodata_setbufferoffsets(rp_data);
     }
     /** Moves all Buffer offsets to correct position. */
     void setBufferOffsets() {

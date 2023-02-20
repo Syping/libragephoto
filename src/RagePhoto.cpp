@@ -1171,10 +1171,20 @@ void ragephoto_clear(ragephoto_t instance)
     ragePhoto->clear();
 }
 
+void ragephotodata_clear(RagePhotoData *rp_data)
+{
+    RagePhoto::clear(rp_data);
+}
+
 ragephoto_bool_t ragephoto_load(ragephoto_t instance, const char *data, size_t size)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->load(data, size);
+}
+
+ragephoto_bool_t ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, const char *data, size_t size)
+{
+    return RagePhoto::load(rp_data, rp_parser, data, size);
 }
 
 ragephoto_bool_t ragephoto_loadfile(ragephoto_t instance, const char *filename)
@@ -1263,10 +1273,20 @@ size_t ragephoto_getsavesize(ragephoto_t instance)
     return ragePhoto->saveSize();
 }
 
+size_t ragephotodata_getsavesize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser)
+{
+    return RagePhoto::saveSize(rp_data, rp_parser);
+}
+
 size_t ragephoto_getsavesizef(ragephoto_t instance, uint32_t photoFormat)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->saveSize(photoFormat);
+}
+
+size_t ragephotodata_getsavesizef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, uint32_t photoFormat)
+{
+    return RagePhoto::saveSize(rp_data, rp_parser, photoFormat);
 }
 
 ragephoto_bool_t ragephoto_save(ragephoto_t instance, char *data)
@@ -1299,10 +1319,20 @@ void ragephoto_setbufferdefault(ragephoto_t instance)
     ragePhoto->setBufferDefault();
 }
 
+void ragephotodata_setbufferdefault(RagePhotoData *rp_data)
+{
+    RagePhoto::setBufferDefault(rp_data);
+}
+
 void ragephoto_setbufferoffsets(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     ragePhoto->setBufferOffsets();
+}
+
+void ragephotodata_setbufferoffsets(RagePhotoData *rp_data)
+{
+    RagePhoto::setBufferOffsets(rp_data);
 }
 
 ragephoto_bool_t ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *rp_data)
