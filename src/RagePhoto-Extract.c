@@ -35,10 +35,12 @@ int main(int argc, char *argv[])
     if (loaded != 1) {
         if (ragephoto_error(ragephoto_in) == 0) {
             printf("Failed to open file: %s\n", argv[1]);
+            ragephoto_close(ragephoto_in);
             return 1;
         }
         else if (ragephoto_getphotosize(ragephoto_in) <= 0) {
             printf("Failed to load photo\n");
+            ragephoto_close(ragephoto_in);
             return 1;
         }
     }
@@ -52,20 +54,26 @@ int main(int argc, char *argv[])
 #endif
     if (!file) {
         printf("Failed to write file: %s\n", argv[2]);
+        ragephoto_close(ragephoto_in);
         return 1;
     }
-    const size_t size = fwrite(ragephoto_getphotojpeg(ragephoto_in), sizeof(char), ragephoto_getphotosize(ragephoto_in), file);
+    const size_t jpegSize = ragephoto_getphotosize(ragephoto_in);
+    const size_t fileSize = fwrite(ragephoto_getphotojpeg(ragephoto_in), sizeof(char), jpegSize, file);
     fclose(file);
 
-    if (size != ragephoto_getphotosize(ragephoto_in)) {
+    if (fileSize != jpegSize) {
         printf("Failed to write file: %s\n", argv[2]);
+        ragephoto_close(ragephoto_in);
         return 1;
     }
 
-    if (ragephoto_getphotoformat(ragephoto_in) == ragephoto_format_gta5())
+    const uint32_t photoFormat = ragephoto_getphotoformat(ragephoto_in);
+    if (photoFormat == ragephoto_format_gta5())
         printf("GTA V Photo successfully exported\n");
-    else
+    else if (photoFormat == ragephoto_format_rdr2())
         printf("RDR 2 Photo successfully exported\n");
+    else
+        printf("Photo successfully exported\n");
 
     ragephoto_close(ragephoto_in);
 

@@ -139,8 +139,8 @@ if (EMSCRIPTEN)
             "SHELL:-s EXPORTED_RUNTIME_METHODS=ccall,cwrap"
         )
         target_include_directories(ragephoto-wasm PUBLIC
-            ${ragephoto_BINARY_DIR}/include
-            ${ragephoto_SOURCE_DIR}/src
+            "${ragephoto_BINARY_DIR}/include"
+            "${ragephoto_SOURCE_DIR}/src"
         )
     else()
         message(WARNING "A useable WebAssembly build needs at least CMake 3.13.0 or newer")

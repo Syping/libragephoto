@@ -115,7 +115,7 @@ public:
         return ragephoto_getphotodata(instance);
     }
     /** Loads a Photo from a const char*. */
-    static bool load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, const char *data, size_t size) {
+    static bool load(const char *data, size_t size, RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser) {
         return ragephotodata_load(rp_data, rp_parser, data, size);
     }
     /** Loads a Photo from a const char*.
@@ -146,15 +146,15 @@ public:
         return ragephoto_getphotoformat(instance);
     }
     /** Returns the Photo JPEG data. */
-    const std::string photo() const {
+    const std::string jpeg() const {
         return std::string(ragephoto_getphotojpeg(instance), ragephoto_getphotosize(instance));
     }
     /** Returns the Photo JPEG data. */
-    const char *photoData() const {
+    const char *jpegData() const {
         return ragephoto_getphotojpeg(instance);
     }
     /** Returns the Photo JPEG data size. */
-    uint32_t photoSize() const {
+    uint32_t jpegSize() const {
         return ragephoto_getphotosize(instance);
     }
     /** Returns the Photo description. */
@@ -176,6 +176,14 @@ public:
     /** Returns the library version. */
     static const char* version() {
         return ragephoto_version();
+    }
+    /** Saves a Photo to a char*. */
+    static bool save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser) {
+        return ragephotodata_savef(rp_data, rp_parser, data, photoFormat);
+    }
+    /** Saves a Photo to a char*. */
+    static bool save(char *data, RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser) {
+        return ragephotodata_save(rp_data, rp_parser, data);
     }
     /** Saves a Photo to a char*.
     * \param data Photo data
@@ -223,7 +231,7 @@ public:
         return ragephoto_savefile(instance, filename);
     }
     /** Returns the Photo save file size. */
-    static size_t saveSize(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, uint32_t photoFormat) {
+    static size_t saveSize(uint32_t photoFormat, RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser) {
         return ragephotodata_getsavesizef(rp_data, rp_parser, photoFormat);
     }
     /** Returns the Photo save file size. */
@@ -255,11 +263,11 @@ public:
         ragephoto_setbufferoffsets(instance);
     }
     /** Sets the internal RagePhotoData object. */
-    bool setData(RagePhotoData *ragePhotoData, bool takeOwnership = true) {
-        if (takeOwnership)
-            return ragephoto_setphotodata(&instance, ragePhotoData);
-        else
+    bool setData(RagePhotoData *ragePhotoData, bool takeCopy = true) {
+        if (takeCopy)
             return ragephoto_setphotodatac(instance, ragePhotoData);
+        else
+            return ragephoto_setphotodata(&instance, ragePhotoData);
     }
     /** Sets the Photo description. */
     void setDescription(const char *description, uint32_t bufferSize = 0) {
@@ -269,6 +277,21 @@ public:
     void setFormat(uint32_t photoFormat) {
         ragephoto_setphotoformat(instance, photoFormat);
     }
+    /** Sets the Photo JPEG data.
+    * \param data JPEG data
+    * \param size JPEG data size
+    * \param bufferSize JPEG buffer size
+    */
+    bool setJpeg(const char *data, uint32_t size, uint32_t bufferSize = 0) {
+        return ragephoto_setphotojpeg(instance, data, size, bufferSize);
+    }
+    /** Sets the Photo JPEG data.
+    * \param data JPEG data
+    * \param bufferSize JPEG buffer size
+    */
+    bool setJpeg(const std::string &data, uint32_t bufferSize = 0) {
+        return ragephoto_setphotojpeg(instance, data.data(), static_cast<uint32_t>(data.size()), bufferSize);
+    }
     /** Sets the Photo JSON data. */
     void setJson(const char *json, uint32_t bufferSize = 0) {
         ragephoto_setphotojson(instance, json, bufferSize);
@@ -276,21 +299,6 @@ public:
     /** Sets the Photo header. (EXPERT ONLY) */
     void setHeader(const char *header, uint32_t headerSum) {
         ragephoto_setphotoheader(instance, header, headerSum);
-    }
-    /** Sets the Photo JPEG data.
-    * \param data JPEG data
-    * \param size JPEG data size
-    * \param bufferSize JPEG buffer size
-    */
-    bool setPhoto(const char *data, uint32_t size, uint32_t bufferSize = 0) {
-        return ragephoto_setphotojpeg(instance, data, size, bufferSize);
-    }
-    /** Sets the Photo JPEG data.
-    * \param data JPEG data
-    * \param bufferSize JPEG buffer size
-    */
-    bool setPhoto(const std::string &data, uint32_t bufferSize = 0) {
-        return ragephoto_setphotojpeg(instance, data.data(), static_cast<uint32_t>(data.size()), bufferSize);
     }
     /** Sets the Photo title. */
     void setTitle(const char *title, uint32_t bufferSize = 0) {

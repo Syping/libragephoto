@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2022 Syping
+* Copyright (C) 2021-2023 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -44,8 +44,8 @@ bool readPhotoFile(const QString &filename, QMainWindow *mainWindow, QLabel *pho
                 return false;
             }
         }
-        const QByteArray photoData = QByteArray::fromRawData(ragePhoto.photoData(), ragePhoto.photoSize());
-        const QImage image = QImage::fromData(photoData, "JPEG");
+        const QByteArray jpegData = QByteArray::fromRawData(ragePhoto.jpegData(), ragePhoto.jpegSize());
+        const QImage image = QImage::fromData(jpegData, "JPEG");
         photoLabel->setPixmap(QPixmap::fromImage(image));
         mainWindow->setWindowTitle(QStringLiteral("RagePhoto Qt Photo Viewer - ") + QString::fromUtf8(ragePhoto.title()));
         return true;

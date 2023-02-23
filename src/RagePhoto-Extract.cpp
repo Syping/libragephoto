@@ -33,11 +33,12 @@ int main(int argc, char *argv[])
     const bool loaded = ragePhoto.loadFile(argv[1]);
 
     if (!loaded) {
-        if (ragePhoto.error() == RagePhoto::Uninitialised) {
+        const int32_t error = ragePhoto.error();
+        if (error == RagePhoto::Uninitialised) {
             std::cout << "Failed to open file: " << argv[1] << std::endl;
             return 1;
         }
-        else if (ragePhoto.error() <= RagePhoto::PhotoReadError) {
+        else if (error <= RagePhoto::PhotoReadError) {
             std::cout << "Failed to load photo" << std::endl;
             return 1;
         }
@@ -49,7 +50,7 @@ int main(int argc, char *argv[])
         std::cout << "Failed to write file: " << argv[2] << std::endl;
         return 1;
     }
-    ofs << ragePhoto.photo();
+    ofs << ragePhoto.jpeg();
     const bool ok = ofs.good();
     ofs.close();
 
@@ -58,10 +59,13 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if (ragePhoto.format() == RagePhoto::GTA5)
+    const uint32_t photoFormat = ragePhoto.format();
+    if (photoFormat == RagePhoto::GTA5)
         std::cout << "GTA V Photo successfully exported" << std::endl;
-    else
+    else if (photoFormat == RagePhoto::RDR2)
         std::cout << "RDR 2 Photo successfully exported" << std::endl;
+    else
+        std::cout << "Photo successfully exported" << std::endl;
 
     return 0;
 }

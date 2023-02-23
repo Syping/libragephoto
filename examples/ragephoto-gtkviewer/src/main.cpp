@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2022 Syping
+* Copyright (C) 2021-2023 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -48,7 +48,7 @@ bool readPhotoFile(const std::string &filename, Gtk::Window *win, Gtk::Image *im
             }
         }
         GdkPixbufLoader *pixbuf_loader = gdk_pixbuf_loader_new();
-        gdk_pixbuf_loader_write(pixbuf_loader, reinterpret_cast<const guchar*>(ragePhoto.photoData()), ragePhoto.photoSize(), NULL);
+        gdk_pixbuf_loader_write(pixbuf_loader, reinterpret_cast<const guchar*>(ragePhoto.jpegData()), ragePhoto.jpegSize(), NULL);
         GdkPixbuf *pixbuf = gdk_pixbuf_loader_get_pixbuf(pixbuf_loader);
         gdk_pixbuf_loader_close(pixbuf_loader, NULL);
         image->set(Glib::wrap(pixbuf));
