@@ -352,7 +352,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteJpegMarker; // 12
             return false;
         }
-        if (strncmp(markerBuffer, "JPEG", 4) != 0) {
+        if (std::memcmp(markerBuffer, "JPEG", 4) != 0) {
             rp_data->error = Error::IncorrectJpegMarker; // 13
             return false;
         }
@@ -398,7 +398,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteJsonMarker; // 18
             return false;
         }
-        if (strncmp(markerBuffer, "JSON", 4) != 0) {
+        if (std::memcmp(markerBuffer, "JSON", 4) != 0) {
             rp_data->error = Error::IncorrectJsonMarker; // 19
             return false;
         }
@@ -433,7 +433,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteTitleMarker; // 23
             return false;
         }
-        if (strncmp(markerBuffer, "TITL", 4) != 0) {
+        if (std::memcmp(markerBuffer, "TITL", 4) != 0) {
             rp_data->error = Error::IncorrectTitleMarker; // 24
             return false;
         }
@@ -468,7 +468,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteDescMarker; // 28
             return false;
         }
-        if (strncmp(markerBuffer, "DESC", 4) != 0) {
+        if (std::memcmp(markerBuffer, "DESC", 4) != 0) {
             rp_data->error = Error::IncorrectDescMarker; // 29
             return false;
         }
@@ -503,7 +503,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteJendMarker; // 33
             return false;
         }
-        if (strncmp(markerBuffer, "JEND", 4) != 0) {
+        if (std::memcmp(markerBuffer, "JEND", 4) != 0) {
             rp_data->error = Error::IncorrectJendMarker; // 34
             return false;
         }

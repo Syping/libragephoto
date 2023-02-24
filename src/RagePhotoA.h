@@ -28,7 +28,7 @@
 * \brief ABI Stable Wrapper for RagePhoto.
 *
 * Using RagePhotoA instead of RagePhoto allows your library or application to survive more changes in the RagePhoto class,
-* disadvantages include worse performance, which should be pretty minimal, and not always include the newest features.
+* disadvantages include that it doesn't always include the newest features, performance is about the same.
 */
 class RagePhotoA
 {
@@ -150,7 +150,7 @@ public:
         return std::string(ragephoto_getphotojpeg(instance), ragephoto_getphotosize(instance));
     }
     /** Returns the Photo JPEG data. */
-    const char *jpegData() const {
+    const char* jpegData() const {
         return ragephoto_getphotojpeg(instance);
     }
     /** Returns the Photo JPEG data size. */
