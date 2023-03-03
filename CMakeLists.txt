@@ -16,15 +16,12 @@
 * responsible for anything with use of the software, you are self responsible.
 ****************************************************************************]]
 
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.8)
 project(ragephoto VERSION 0.3.0 LANGUAGES CXX)
 include(GNUInstallDirs)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # RagePhoto CMake includes
+include(cmake/cxxstd.cmake)
 include(cmake/unicode.cmake)
 
 # RagePhoto Top Level ON
@@ -117,34 +114,7 @@ endif()
 
 # RagePhoto WebAssembly Target
 if (EMSCRIPTEN)
-    if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.13.0")
-        add_executable(ragephoto-wasm ${RAGEPHOTO_HEADERS} ${RAGEPHOTO_SOURCES})
-        set_target_properties(ragephoto-wasm PROPERTIES
-            PREFIX "lib"
-            OUTPUT_NAME "ragephoto"
-        )
-        target_compile_definitions(ragephoto-wasm PRIVATE
-            LIBRAGEPHOTO_LIBRARY
-            LIBRAGEPHOTO_WASM
-            ${LIBRAGEPHOTO_DEFINES}
-        )
-        target_link_options(ragephoto-wasm PRIVATE
-            "SHELL:-O3"
-            "SHELL:--no-entry"
-            "SHELL:-s ALLOW_MEMORY_GROWTH=1"
-            "SHELL:-s MODULARIZE=1"
-            "SHELL:-s WASM=1"
-            "SHELL:-s EXPORT_NAME=libragephotoModule"
-            "SHELL:-s EXPORTED_FUNCTIONS=_free,_malloc"
-            "SHELL:-s EXPORTED_RUNTIME_METHODS=ccall,cwrap"
-        )
-        target_include_directories(ragephoto-wasm PUBLIC
-            "${ragephoto_BINARY_DIR}/include"
-            "${ragephoto_SOURCE_DIR}/src"
-        )
-    else()
-        message(WARNING "A useable WebAssembly build needs at least CMake 3.13.0 or newer")
-    endif()
+    include(cmake/wasm.cmake)
 endif()
 
 # RagePhoto Documentation

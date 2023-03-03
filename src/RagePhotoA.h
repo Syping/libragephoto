@@ -147,8 +147,22 @@ public:
     }
     /** Returns the Photo JPEG data. */
     const std::string jpeg() const {
-        return std::string(ragephoto_getphotojpeg(instance), ragephoto_getphotosize(instance));
+        const char *jpegData = ragephoto_getphotojpeg(instance);
+        if (jpegData)
+            return std::string(jpegData, ragephoto_getphotosize(instance));
+        else
+            return std::string();
     }
+#if (__cplusplus >= 201703L)
+    /** Returns the Photo JPEG data. */
+    const std::string_view jpeg_view() const {
+        const char *jpegData = ragephoto_getphotojpeg(instance);
+        if (jpegData)
+            return std::string_view(jpegData, ragephoto_getphotosize(instance));
+        else
+            return std::string_view();
+    }
+#endif
     /** Returns the Photo JPEG data. */
     const char* jpegData() const {
         return ragephoto_getphotojpeg(instance);
@@ -308,6 +322,8 @@ public:
 private:
     ragephoto_t instance;
 };
+#else
+#include "RagePhotoC.h"
 #endif // __cplusplus
 
 #endif // RAGEPHOTOA_H

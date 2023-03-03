@@ -1,4 +1,4 @@
-/*****************************************************************************
+#[[**************************************************************************
 * libragephoto RAGE Photo Parser
 * Copyright (C) 2023 Syping
 *
@@ -14,19 +14,8 @@
 *
 * This software is provided as-is, no warranties are given to you, we are not
 * responsible for anything with use of the software, you are self responsible.
-*****************************************************************************/
+****************************************************************************]]
 
-#ifndef RAGEPHOTOCONFIG_H
-#define RAGEPHOTOCONFIG_H
-
-/* CMAKE CONFIG BEGIN */
-#define @LIBRAGEPHOTO_API@
-#define @LIBRAGEPHOTO_LIBTYPE@
-#define RAGEPHOTO_CXX_STD @CMAKE_CXX_STANDARD@
-#define RAGEPHOTO_VERSION "@ragephoto_VERSION@"
-#define RAGEPHOTO_VERSION_MAJOR @ragephoto_VERSION_MAJOR@
-#define RAGEPHOTO_VERSION_MINOR @ragephoto_VERSION_MINOR@
-#define RAGEPHOTO_VERSION_PATCH @ragephoto_VERSION_PATCH@
-/* CMAKE CONFIG END */
-
-#endif // RAGEPHOTOCONFIG_H
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_CXX_STANDARD 11 CACHE STRING "libragephoto C++ standard")
+set(CMAKE_CXX_STANDARD_REQUIRED ON)

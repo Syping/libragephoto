@@ -602,6 +602,16 @@ const std::string RagePhoto::jpeg() const
         return std::string();
 }
 
+#if (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
+const std::string_view RagePhoto::jpeg_view() const
+{
+    if (m_data->jpeg)
+        return std::string_view(m_data->jpeg, m_data->jpegSize);
+    else
+        return std::string_view();
+}
+#endif
+
 const char* RagePhoto::jpegData() const
 {
     return m_data->jpeg;

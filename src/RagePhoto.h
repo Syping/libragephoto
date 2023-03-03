@@ -115,6 +115,9 @@ public:
     int32_t error() const; /**< Returns the last error occurred. */
     uint32_t format() const; /**< Returns the Photo Format (GTA V or RDR 2). */
     const std::string jpeg() const; /**< Returns the Photo JPEG data. */
+#if (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
+    const std::string_view jpeg_view() const; /**< Returns the Photo JPEG data. */
+#endif
     const char* jpegData() const; /**< Returns the Photo JPEG data. */
     uint32_t jpegSize() const; /**< Returns the Photo JPEG data size. */
     const char* description() const; /**< Returns the Photo description. */
