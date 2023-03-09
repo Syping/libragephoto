@@ -92,12 +92,16 @@ else()
     set_target_properties(ragephoto PROPERTIES
         PREFIX "lib"
         VERSION "${ragephoto_VERSION}"
+        SOVERSION "${ragephoto_VERSION}"
     )
 endif()
 target_compile_definitions(ragephoto PRIVATE
     LIBRAGEPHOTO_LIBRARY
     ${LIBRAGEPHOTO_DEFINES}
 )
+if (MSVC)
+    target_compile_options(ragephoto PRIVATE "/Zc:__cplusplus")
+endif()
 target_include_directories(ragephoto PUBLIC
     "${ragephoto_BINARY_DIR}/include"
     "${ragephoto_SOURCE_DIR}/src"
@@ -157,6 +161,9 @@ if (RAGEPHOTO_EXTRACT)
     set_target_properties(ragephoto-extract PROPERTIES
         INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
     )
+    if (MSVC AND NOT RAGEPHOTO_C_API)
+        target_compile_options(ragephoto-extract PRIVATE "/Zc:__cplusplus")
+    endif()
     target_link_libraries(ragephoto-extract PRIVATE ragephoto)
     install(TARGETS ragephoto-extract DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endif()
