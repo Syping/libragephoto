@@ -120,6 +120,20 @@ inline void uInt32ToCharLE(uint32_t x, char *y)
     y[2] = x >> 16;
     y[3] = x >> 24;
 }
+
+inline uint32_t joaatFromInitial(const char *data, size_t size, uint32_t init_val)
+{
+    uint32_t val = init_val;
+    for (size_t i = 0; i != size; i++) {
+        val += data[i];
+        val += (val << 10);
+        val ^= (val >> 6);
+    }
+    val += (val << 3);
+    val ^= (val >> 11);
+    val += (val << 15);
+    return val;
+}
 /* END OF STATIC LIBRARY FUNCTIONS */
 
 /* BEGIN OF RAGEPHOTO CLASS */
@@ -526,6 +540,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
         std::cout << "jsonBuffer: " << rp_data->jsonBuffer << std::endl;
         std::cout << "jsonOffset: " << rp_data->jsonOffset << std::endl;
         std::cout << "json: " << rp_data->json << std::endl;
+        std::cout << "sign: " << jpegSign(rp_data) << std::endl;
         std::cout << "titlBuffer: " << rp_data->titlBuffer << std::endl;
         std::cout << "titlOffset: " << rp_data->titlOffset << std::endl;
         std::cout << "title: " << rp_data->title << std::endl;
@@ -615,6 +630,29 @@ const std::string_view RagePhoto::jpeg_view() const
 const char* RagePhoto::jpegData() const
 {
     return m_data->jpeg;
+}
+
+uint64_t RagePhoto::jpegSign(uint32_t photoFormat, RagePhotoData *rp_data)
+{
+    if (photoFormat == PhotoFormat::GTA5)
+        return (0x100000000000000ULL | joaatFromInitial(rp_data->jpeg, rp_data->jpegSize, SignInitials::SIGTA5));
+    else
+        return 0;
+}
+
+uint64_t RagePhoto::jpegSign(RagePhotoData *rp_data)
+{
+    return jpegSign(rp_data->photoFormat, rp_data);
+}
+
+uint64_t RagePhoto::jpegSign(uint32_t photoFormat) const
+{
+    return jpegSign(photoFormat, m_data);
+}
+
+uint64_t RagePhoto::jpegSign() const
+{
+    return jpegSign(m_data->photoFormat, m_data);
 }
 
 uint32_t RagePhoto::jpegSize() const
@@ -1271,6 +1309,28 @@ const char* ragephoto_getphotoheader(ragephoto_t instance)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->header();
+}
+
+uint64_t ragephoto_getphotosign(ragephoto_t instance)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->jpegSign();
+}
+
+uint64_t ragephoto_getphotosignf(ragephoto_t instance, uint32_t photoFormat)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    return ragePhoto->jpegSign(photoFormat);
+}
+
+uint64_t ragephotodata_getphotosign(RagePhotoData *rp_data)
+{
+    return RagePhoto::jpegSign(rp_data);
+}
+
+uint64_t ragephotodata_getphotosignf(RagePhotoData *rp_data, uint32_t photoFormat)
+{
+    return RagePhoto::jpegSign(photoFormat, rp_data);
 }
 
 uint32_t ragephoto_getphotosize(ragephoto_t instance)

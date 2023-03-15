@@ -92,6 +92,10 @@ public:
         GTA5 = 0x01000000UL, /**< GTA V Photo Format */
         RDR2 = 0x04000000UL, /**< RDR 2 Photo Format */
     };
+    /** Sign Initials */
+    enum SignInitials : uint32_t {
+        SIGTA5 = 0xE47AB81CUL, /**< GTA V Sign Initial */
+    };
     RagePhoto();
     ~RagePhoto();
     void addParser(RagePhotoFormatParser *rp_parser); /**< Add a custom defined RagePhotoFormatParser. */
@@ -119,6 +123,10 @@ public:
     const std::string_view jpeg_view() const; /**< Returns the Photo JPEG data. */
 #endif
     const char* jpegData() const; /**< Returns the Photo JPEG data. */
+    static uint64_t jpegSign(uint32_t photoFormat, RagePhotoData *rp_data); /**< Returns the Photo JPEG sign. */
+    static uint64_t jpegSign(RagePhotoData *rp_data); /**< Returns the Photo JPEG sign. */
+    uint64_t jpegSign(uint32_t photoFormat) const; /**< Returns the Photo JPEG sign. */
+    uint64_t jpegSign() const; /**< Returns the Photo JPEG sign. */
     uint32_t jpegSize() const; /**< Returns the Photo JPEG data size. */
     const char* description() const; /**< Returns the Photo description. */
     const char* json() const; /**< Returns the Photo JSON data. */

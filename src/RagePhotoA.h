@@ -92,6 +92,10 @@ public:
         GTA5 = 0x01000000UL, /**< GTA V Photo Format */
         RDR2 = 0x04000000UL, /**< RDR 2 Photo Format */
     };
+    /** Sign Initials */
+    enum SignInitials : uint32_t {
+        SIGTA5 = 0xE47AB81CUL, /**< GTA V Sign Initial */
+    };
     RagePhotoA() {
         instance = ragephoto_open();
     }
@@ -166,6 +170,22 @@ public:
     /** Returns the Photo JPEG data. */
     const char* jpegData() const {
         return ragephoto_getphotojpeg(instance);
+    }
+    /**< Returns the Photo JPEG sign. */
+    static uint64_t jpegSign(uint32_t photoFormat, RagePhotoData *rp_data) {
+        return ragephotodata_getphotosignf(rp_data, photoFormat);
+    }
+    /**< Returns the Photo JPEG sign. */
+    static uint64_t jpegSign(RagePhotoData *rp_data) {
+        return ragephotodata_getphotosign(rp_data);
+    }
+    /**< Returns the Photo JPEG sign. */
+    uint64_t jpegSign(uint32_t photoFormat) const {
+        return ragephoto_getphotosignf(instance, photoFormat);
+    }
+    /**< Returns the Photo JPEG sign. */
+    uint64_t jpegSign() const {
+        return ragephoto_getphotosign(instance);
     }
     /** Returns the Photo JPEG data size. */
     uint32_t jpegSize() const {

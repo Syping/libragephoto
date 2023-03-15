@@ -123,6 +123,28 @@ LIBRAGEPHOTO_C_BINDING const char* ragephoto_getphotojson(ragephoto_t instance);
 */
 LIBRAGEPHOTO_C_BINDING const char* ragephoto_getphotoheader(ragephoto_t instance);
 
+/** Returns the Photo JPEG sign.
+* \param instance \p ragephoto_t instance
+*/
+LIBRAGEPHOTO_C_BINDING uint64_t ragephoto_getphotosign(ragephoto_t instance);
+
+/** Returns the Photo JPEG sign.
+* \param instance \p ragephoto_t instance
+* \param photoFormat Photo Format (GTA V or RDR 2)
+*/
+LIBRAGEPHOTO_C_BINDING uint64_t ragephoto_getphotosignf(ragephoto_t instance, uint32_t photoFormat);
+
+/** Returns the Photo JPEG sign.
+* \param rp_data RagePhotoData object
+*/
+LIBRAGEPHOTO_C_BINDING uint64_t ragephotodata_getphotosign(RagePhotoData *rp_data);
+
+/** Returns the Photo JPEG sign.
+* \param rp_data RagePhotoData object
+* \param photoFormat Photo Format (GTA V or RDR 2)
+*/
+LIBRAGEPHOTO_C_BINDING uint64_t ragephotodata_getphotosignf(RagePhotoData *rp_data, uint32_t photoFormat);
+
 /** Returns the Photo JPEG data size.
 * \param instance \p ragephoto_t instance
 */
