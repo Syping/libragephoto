@@ -27,6 +27,10 @@
 #include <iostream>
 #include <iterator>
 
+#if (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
+#include <filesystem>
+#endif
+
 #ifdef RAGEPHOTO_BENCHMARK
 #include <chrono>
 #endif
@@ -587,7 +591,11 @@ bool RagePhoto::load(const std::string &data)
 
 bool RagePhoto::loadFile(const std::string &filename)
 {
+#if (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
+    std::ifstream ifs(std::filesystem::u8path(filename), std::ios::in | std::ios::binary);
+#else
     std::ifstream ifs(filename, std::ios::in | std::ios::binary);
+#endif
     if (ifs.is_open()) {
         std::string sdata(std::istreambuf_iterator<char>{ifs}, {});
         ifs.close();
@@ -955,7 +963,11 @@ bool RagePhoto::saveFile(const std::string &filename, uint32_t photoFormat)
     bool ok;
     const std::string &sdata = save(photoFormat, &ok);
     if (ok) {
+#if (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
+        std::ofstream ofs(std::filesystem::u8path(filename), std::ios::out | std::ios::binary | std::ios::trunc);
+#else
         std::ofstream ofs(filename, std::ios::out | std::ios::binary | std::ios::trunc);
+#endif
         if (!ofs.is_open()) {
             m_data->error = Error::Uninitialised; // 0
             return false;
