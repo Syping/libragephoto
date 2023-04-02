@@ -38,7 +38,7 @@ bool readPhotoFile(const QString &filename, QMainWindow *mainWindow, QLabel *pho
         RagePhoto ragePhoto;
         const bool loaded = ragePhoto.load(fileData.data(), static_cast<size_t>(fileData.size()));
         if (!loaded) {
-            const uint8_t error = ragePhoto.error();
+            const int32_t error = ragePhoto.error();
             if (error <= RagePhoto::PhotoReadError) {
                 QMessageBox::warning(mainWindow, "Open Photo", "Failed to read photo: " + filename);
                 return false;

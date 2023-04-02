@@ -31,7 +31,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
-/** \file RagePhotoC.h */
+
+/** C API for RagePhoto.
+* \file RagePhotoC.h
+*/
 
 /** RagePhoto C++ class typedef for C API. */
 typedef void* ragephoto_t;

@@ -1,0 +1,29 @@
+/*! \page Build Build libragephoto
+
+Keep sure you have CMake and a C++ compiler installed, then do the following or the equivalent necessary.
+
+<h4 id="build">Build libragephoto</h4>
+\code{.sh}
+cmake -B libragephoto-build libragephoto
+cmake --build libragephoto-build
+\endcode
+
+<h4 id="install">Install libragephoto</h4>
+\code{.sh}
+sudo cmake --install libragephoto-build
+\endcode
+
+To customise your libragephoto build, the following <a href="#flags">Optional CMake flags</a> can be used
+
+<h4 id="flags">Optional CMake flags</h4>
+\code{.sh}
+-DCMAKE_CXX_STANDARD=17
+-DRAGEPHOTO_BENCHMARK=ON
+-DRAGEPHOTO_C_API=OFF
+-DRAGEPHOTO_DOC=ON
+-DRAGEPHOTO_EXAMPLE_GTKVIEWER=ON
+-DRAGEPHOTO_EXAMPLE_QTVIEWER=ON
+-DRAGEPHOTO_EXTRACT=OFF
+-DRAGEPHOTO_STATIC=ON
+\endcode
+*/

@@ -1,0 +1,189 @@
+/*! \page Usage Using libragephoto
+
+<h3 id="api_cxx">C++ API</h3>
+
+<h4 id="cxx_include_usage">Including and using RagePhoto</h4>
+
+Include RagePhoto.h or RagePhotoA.h
+
+\code{.cpp}
+#include <RagePhoto.h>
+\endcode
+
+Create a RagePhoto object
+
+\code{.cpp}
+RagePhoto ragePhoto;
+\endcode
+
+<h4 id="cxx_loading">Loading a Photo</h4>
+
+From a file using RagePhoto::loadFile
+
+\code{.cpp}
+const char* filename = "PGTA5123456789";
+const bool loaded = ragePhoto.loadFile(filename);
+\endcode
+
+From a file using RagePhoto::load(const std::string&)
+
+\code{.cpp}
+// Reading file
+const char* filename = "PGTA5123456789";
+std::ifstream ifs(filename, std::ios::in | std::ios::binary);
+if (!ifs.is_open())
+    return;
+std::string sdata(std::istreambuf_iterator<char>{ifs}, {});
+ifs.close();
+
+// Loading file
+const bool loaded = ragePhoto.load(sdata);
+\endcode
+
+From a char* using RagePhoto::load(const char*, size_t)
+
+\code{.cpp}
+const bool loaded = ragePhoto.load(data, size);
+\endcode
+
+<h4 id="cxx_using">Using a Photo</h4>
+
+\code{.cpp}
+// Returns the Photo Format
+const uint32_t format = ragePhoto.format();
+
+// Returns the JPEG as std::string
+const std::string jpeg = ragePhoto.jpeg();
+
+// Returns the JPEG as const char*
+const char* jpeg = ragePhoto.jpegData();
+const uint32_t size = ragePhoto.jpegSize();
+
+// Returns the JSON 
+const char* json = ragePhoto.json();
+
+// Returns the Title 
+const char* title = ragePhoto.title();
+\endcode
+
+Detecting if Photo is from GTA V or RDR 2
+
+\code{.cpp}
+switch (ragePhoto.format()) {
+case RagePhoto::PhotoFormat::GTA5:
+    std::cout << "GTA V format detected" << std::endl;
+    break;
+case RagePhoto::PhotoFormat::RDR2:
+    std::cout << "RDR 2 format detected" << std::endl;
+    break;
+default:
+    std::cout << "Unknown format detected" << std::endl;
+}
+\endcode
+
+Saving the JPEG from a Photo
+
+\code{.cpp}
+// Example saveJpeg function
+bool saveJpeg(RagePhoto* ragePhoto, const std::string& filename) {
+    std::ofstream ofs(filename, std::ios::out | std::ios::binary | std::ios::trunc);
+    if (!ofs.is_open())
+        return false;
+    ofs << ragePhoto->jpeg();
+    const bool saved = ofs.good();
+    ofs.close();
+    return saved;
+}
+
+// Using the saveJpeg function
+const char* filename = "PGTA5123456789";
+const bool saved = saveJpeg(&ragePhoto, filename);
+\endcode
+
+Using the JPEG in GTK+ (gtkmm)
+
+\code{.cpp}
+// Writing pixbuf loader
+GdkPixbufLoader* pixbuf_loader = gdk_pixbuf_loader_new();
+gdk_pixbuf_loader_write(pixbuf_loader, reinterpret_cast<const guchar*>(ragePhoto.jpegData()), ragePhoto.jpegSize(), nullptr);
+GdkPixbuf* pixbuf = gdk_pixbuf_loader_get_pixbuf(pixbuf_loader);
+gdk_pixbuf_loader_close(pixbuf_loader, nullptr);
+
+// Set image
+Gtk::Image image;
+image.set(Glib::wrap(pixbuf));
+\endcode
+
+Using the JPEG in Qt
+
+\code{.cpp}
+// Returns the JPEG as QImage
+const QImage image = QImage::fromData(QByteArray::fromRawData(ragePhoto.jpegData(), ragePhoto.jpegSize()), "JPEG");
+
+// Loading the JPEG in QImage
+QImage image;
+const bool loaded = image.loadFromData(QByteArray::fromRawData(ragePhoto.jpegData(), ragePhoto.jpegSize()), "JPEG");
+\endcode
+
+Using the JSON in Boost.JSON
+
+\code{.cpp}
+std::error_code ec;
+const boost::json::value jv = boost::json::parse(ragePhoto.json(), ec);
+if (ec)
+    return;
+\endcode
+
+Using the JSON in Qt
+
+\code{.cpp}
+const QByteArray json = ragePhoto.json();
+const QJsonDocument jd = QJsonDocument::fromJson(json);
+if (jd.isNull())
+    return;
+\endcode
+
+<h4 id="cxx_error">Detect Photo errors</h4>
+
+\code{.cpp}
+const int32_t error = ragePhoto.error();
+switch (error) {
+case RagePhoto::Error::NoFormatIdentifier:
+    std::cout << "No format identifier" << std::endl;
+    break;
+case RagePhoto::Error::IncompatibleFormat:
+    std::cout << "Incompatible format" << std::endl;
+    break;
+// Detect for more errors here...
+case RagePhoto::Error::NoError:
+    std::cout << "No error detected" << std::endl;
+    break;
+default:
+    std::cout << "Unknown error detected" << std::endl;
+}
+\endcode
+
+Available error codes: RagePhoto::Error
+
+<h3 id="cmake">Including libragephoto in a CMake project</h3>
+
+<h4 id="cmake_pkgconfig">Using PkgConfig</h4>
+
+\code{.cmake}
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(RAGEPHOTO REQUIRED ragephoto)
+target_compile_options(your_project PRIVATE ${RAGEPHOTO_CFLAGS})
+target_link_libraries(your_project PRIVATE ${RAGEPHOTO_LIBRARIES})
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.13.0")
+    target_link_directories(your_project PRIVATE ${RAGEPHOTO_LIBRARY_DIRS})
+endif()
+target_include_directories(your_project PRIVATE ${RAGEPHOTO_INCLUDE_DIRS})
+\endcode
+
+<h4 id="cmake_add_subdirectory">Using add_subdirectory</h4>
+
+\code{.cmake}
+add_subdirectory(src/libragephoto)
+target_link_libraries(your_project PRIVATE ragephoto)
+\endcode
+*/

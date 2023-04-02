@@ -16,6 +16,8 @@ sudo cmake --install libragephoto-build
 ```
 
 ##### Optional CMake flags
+`-DCMAKE_CXX_STANDARD=17`  
+`-DRAGEPHOTO_BENCHMARK=ON`  
 `-DRAGEPHOTO_C_API=OFF`  
 `-DRAGEPHOTO_DOC=ON`  
 `-DRAGEPHOTO_EXAMPLE_GTKVIEWER=ON`  
@@ -27,6 +29,12 @@ sudo cmake --install libragephoto-build
 
 [RagePhoto C API](https://libragephoto.syping.de/doc/RagePhotoC_8h.html)  
 [RagePhoto C++ API](https://libragephoto.syping.de/doc/classRagePhoto.html)
+
+#### libragephoto Documentation
+
+[Main Page](https://libragephoto.syping.de/doc/)  
+[Build libragephoto](https://libragephoto.syping.de/doc/Build.html)  
+[Using libragephoto](https://libragephoto.syping.de/doc/Usage.html)
 
 #### How to Use ragephoto-extract
 

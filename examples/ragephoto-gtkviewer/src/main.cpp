@@ -39,7 +39,7 @@ bool readPhotoFile(const std::string &filename, Gtk::Window *win, Gtk::Image *im
         RagePhoto ragePhoto;
         const bool loaded = ragePhoto.load(data);
         if (!loaded) {
-            const uint8_t error = ragePhoto.error();
+            const int32_t error = ragePhoto.error();
             if (error <= RagePhoto::PhotoReadError) {
                 Gtk::MessageDialog msg(*win, "Failed to read photo: " + filename, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
                 msg.set_title("Open Photo");
@@ -48,9 +48,9 @@ bool readPhotoFile(const std::string &filename, Gtk::Window *win, Gtk::Image *im
             }
         }
         GdkPixbufLoader *pixbuf_loader = gdk_pixbuf_loader_new();
-        gdk_pixbuf_loader_write(pixbuf_loader, reinterpret_cast<const guchar*>(ragePhoto.jpegData()), ragePhoto.jpegSize(), NULL);
+        gdk_pixbuf_loader_write(pixbuf_loader, reinterpret_cast<const guchar*>(ragePhoto.jpegData()), ragePhoto.jpegSize(), nullptr);
         GdkPixbuf *pixbuf = gdk_pixbuf_loader_get_pixbuf(pixbuf_loader);
-        gdk_pixbuf_loader_close(pixbuf_loader, NULL);
+        gdk_pixbuf_loader_close(pixbuf_loader, nullptr);
         image->set(Glib::wrap(pixbuf));
         win->set_title("RagePhoto GTK Photo Viewer - " + std::string(ragePhoto.title()));
         return true;

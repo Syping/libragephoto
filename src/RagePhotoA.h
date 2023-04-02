@@ -142,7 +142,7 @@ public:
         return ragephoto_loadfile(instance, filename);
     }
     /** Returns the last error occurred. */
-    uint8_t error() const {
+    int32_t error() const {
         return ragephoto_error(instance);
     }
     /** Returns the Photo Format (GTA V or RDR 2). */
@@ -171,19 +171,19 @@ public:
     const char* jpegData() const {
         return ragephoto_getphotojpeg(instance);
     }
-    /**< Returns the Photo JPEG sign. */
+    /** Returns the Photo JPEG sign. */
     static uint64_t jpegSign(uint32_t photoFormat, RagePhotoData *rp_data) {
         return ragephotodata_getphotosignf(rp_data, photoFormat);
     }
-    /**< Returns the Photo JPEG sign. */
+    /** Returns the Photo JPEG sign. */
     static uint64_t jpegSign(RagePhotoData *rp_data) {
         return ragephotodata_getphotosign(rp_data);
     }
-    /**< Returns the Photo JPEG sign. */
+    /** Returns the Photo JPEG sign. */
     uint64_t jpegSign(uint32_t photoFormat) const {
         return ragephoto_getphotosignf(instance, photoFormat);
     }
-    /**< Returns the Photo JPEG sign. */
+    /** Returns the Photo JPEG sign. */
     uint64_t jpegSign() const {
         return ragephoto_getphotosign(instance);
     }

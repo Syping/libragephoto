@@ -7,12 +7,20 @@
 - Export RAGE Photos to jpeg with ragephoto-extract
 - High Efficient and Simple C/C++ API
 
-<b>Main Class:</b>
-- RagePhoto
+<b>Getting started</b>  
+\subpage Build "Build libragephoto"  
+\subpage Usage "Using libragephoto"
 
-<b>Project Pages:</b>
-- https://git.syping.de/Syping/libragephoto
-- https://gitlab.com/Syping/libragephoto
-- https://github.com/Syping/libragephoto
+<b>Reference</b>  
+RagePhoto (C++ API)  
+RagePhotoA (C++ API based on C API)  
+RagePhotoC.h (C API)  
+RagePhotoData (Data Object Struct)  
+RagePhotoFormatParser (Custom Format Parser Struct)
+
+<b>Project Pages</b>  
+https://git.syping.de/Syping/libragephoto  
+https://gitlab.com/Syping/libragephoto  
+https://github.com/Syping/libragephoto
 
 */
