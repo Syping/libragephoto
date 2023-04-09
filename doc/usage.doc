@@ -96,7 +96,7 @@ bool saveJpeg(RagePhoto* ragePhoto, const std::string& filename) {
 }
 
 // Using the saveJpeg function
-const char* filename = "PGTA5123456789";
+const char* filename = "PGTA5123456789.jpg";
 const bool saved = saveJpeg(&ragePhoto, filename);
 \endcode
 

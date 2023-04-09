@@ -30,7 +30,7 @@
 /**
 * \brief GTA V and RDR 2 Photo Parser.
 */
-class LIBRAGEPHOTO_CXX_BINDING RagePhoto
+class LIBRAGEPHOTO_CXX_PUBLIC RagePhoto
 {
 public:
     /** Default sizes */

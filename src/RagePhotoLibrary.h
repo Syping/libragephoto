@@ -25,24 +25,34 @@
 #ifdef _WIN32
 #ifndef LIBRAGEPHOTO_STATIC
 #ifdef LIBRAGEPHOTO_LIBRARY
-#define LIBRAGEPHOTO_C_BINDING __declspec(dllexport)
-#define LIBRAGEPHOTO_CXX_BINDING __declspec(dllexport)
+#define LIBRAGEPHOTO_C_PUBLIC __declspec(dllexport)
+#define LIBRAGEPHOTO_CXX_PUBLIC __declspec(dllexport)
 #else
-#define LIBRAGEPHOTO_C_BINDING __declspec(dllimport)
-#define LIBRAGEPHOTO_CXX_BINDING __declspec(dllimport)
+#define LIBRAGEPHOTO_C_PUBLIC __declspec(dllimport)
+#define LIBRAGEPHOTO_CXX_PUBLIC __declspec(dllimport)
 #endif // LIBRAGEPHOTO_LIBRARY
 #else
-#define LIBRAGEPHOTO_C_BINDING
-#define LIBRAGEPHOTO_CXX_BINDING
+#define LIBRAGEPHOTO_C_PUBLIC
+#define LIBRAGEPHOTO_CXX_PUBLIC
 #endif // LIBRAGEPHOTO_STATIC
 #else
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
-#define LIBRAGEPHOTO_C_BINDING EMSCRIPTEN_KEEPALIVE
-#define LIBRAGEPHOTO_CXX_BINDING
+#define LIBRAGEPHOTO_C_PUBLIC EMSCRIPTEN_KEEPALIVE
+#define LIBRAGEPHOTO_CXX_PUBLIC
 #else
-#define LIBRAGEPHOTO_C_BINDING
-#define LIBRAGEPHOTO_CXX_BINDING
+#ifdef __GNUC__
+#ifndef LIBRAGEPHOTO_STATIC
+#define LIBRAGEPHOTO_C_PUBLIC __attribute__((visibility("default")))
+#define LIBRAGEPHOTO_CXX_PUBLIC __attribute__((visibility("default")))
+#else
+#define LIBRAGEPHOTO_C_PUBLIC
+#define LIBRAGEPHOTO_CXX_PUBLIC
+#endif // LIBRAGEPHOTO_STATIC
+#else
+#define LIBRAGEPHOTO_C_PUBLIC
+#define LIBRAGEPHOTO_CXX_PUBLIC
+#endif // __GNUC__
 #endif // __EMSCRIPTEN__
 #endif // _WIN32
 /* RAGEPHOTO LIBRARY BINDING END */

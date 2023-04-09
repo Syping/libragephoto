@@ -12,5 +12,5 @@ EXPAND_ONLY_PREDEF     = YES
 PREDEFINED             = "__cplusplus=201703L" \
                          "RAGEPHOTO_CXX_STD=17" \
                          "@LIBRAGEPHOTO_API@" \
-                         "LIBRAGEPHOTO_C_BINDING=" \
-                         "LIBRAGEPHOTO_CXX_BINDING="
+                         "LIBRAGEPHOTO_C_PUBLIC=" \
+                         "LIBRAGEPHOTO_CXX_PUBLIC="
