@@ -73,6 +73,62 @@ typedef struct RagePhotoFormatParser {
     ragephoto_saveszfunc_t funcSaveSz; /**< Pointer to saveSize function */
 } RagePhotoFormatParser;
 
+/* RagePhoto default sizes */
+#define RAGEPHOTO_DEFAULT_GTA5_PHOTOBUFFER 524288UL /**< GTA V default Photo Buffer Size */
+#define RAGEPHOTO_DEFAULT_RDR2_PHOTOBUFFER 1048576UL /**< RDR 2 default Photo Buffer Size */
+#define RAGEPHOTO_DEFAULT_DESCBUFFER 256UL /**< Default Description Buffer Size */
+#define RAGEPHOTO_DEFAULT_JSONBUFFER 3072UL /**< Default JSON Buffer Size */
+#define RAGEPHOTO_DEFAULT_TITLBUFFER 256UL /**< Default Title Buffer Size */
+#define RAGEPHOTO_GTA5_HEADERSIZE 264UL /**< GTA V Header Size */
+#define RAGEPHOTO_RDR2_HEADERSIZE 272UL /**< RDR 2 Header Size */
+
+/* RagePhoto error codes */
+#define RAGEPHOTO_ERROR_DESCBUFFERTIGHT 39L /**< Description Buffer is too tight */
+#define RAGEPHOTO_ERROR_DESCMALLOCERROR 31L /**< Description Buffer can't be allocated */
+#define RAGEPHOTO_ERROR_DESCREADERROR 32L /**< Description can't be read successfully */
+#define RAGEPHOTO_ERROR_HEADERBUFFERTIGHT 35L /**< Header Buffer is too tight */
+#define RAGEPHOTO_ERROR_HEADERMALLOCERROR 4L /**< Header Buffer can't be allocated */
+#define RAGEPHOTO_ERROR_INCOMPATIBLEFORMAT 2L /**< Format is incompatible */
+#define RAGEPHOTO_ERROR_INCOMPLETECHECKSUM 7L /**< Header checksum is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEDESCBUFFER 30L /**< Description Buffer Size is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEDESCMARKER 28L /**< Description Marker is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEDESCOFFSET 11L /**< Description Offset is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEEOF 8L /**< End Of File Offset is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEHEADER 3L /**< Header is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEJENDMARKER 33L /**< JEND Marker is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEJPEGMARKER 12L /**< JPEG Marker is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEJSONBUFFER 20L /**< JSON Buffer Size is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEJSONMARKER 18L /**< JSON Marker incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEJSONOFFSET 9L /**< JSON Offset incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEPHOTOBUFFER 14L /**< Photo Buffer Size is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEPHOTOSIZE 15L /**< Photo Size is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETETITLEBUFFER 25L /**< Title Buffer Size is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETETITLEMARKER 23L /**< Title Marker is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETETITLEOFFSET 10L /**< Title Offset is incomplete */
+#define RAGEPHOTO_ERROR_INCORRECTDESCMARKER 29L /**< Description Marker is incorrect */
+#define RAGEPHOTO_ERROR_INCORRECTJENDMARKER 34L /**< JEND Marker is incorrect */
+#define RAGEPHOTO_ERROR_INCORRECTJPEGMARKER 13L /**< JPEG Marker is incorrect */
+#define RAGEPHOTO_ERROR_INCORRECTJSONMARKER 19L /**< JSON Marker is incorrect */
+#define RAGEPHOTO_ERROR_INCORRECTTITLEMARKER 24L /**< Title Marker is incorrect */
+#define RAGEPHOTO_ERROR_JSONBUFFERTIGHT 37L /**< JSON Buffer is too tight */
+#define RAGEPHOTO_ERROR_JSONMALLOCERROR 21L /**< JSON Buffer can't be allocated */
+#define RAGEPHOTO_ERROR_JSONREADERROR 22L /**< JSON can't be read successfully */
+#define RAGEPHOTO_ERROR_NOERROR 255L /**< Finished without errors */
+#define RAGEPHOTO_ERROR_NOFORMATIDENTIFIER 1L /**< No format detected, empty file */
+#define RAGEPHOTO_ERROR_PHOTOBUFFERTIGHT 36L /**< Photo Buffer is too tight */
+#define RAGEPHOTO_ERROR_PHOTOMALLOCERROR 16L /**< Photo Buffer can't be allocated */
+#define RAGEPHOTO_ERROR_PHOTOREADERROR 17L /**< Photo can't be read */
+#define RAGEPHOTO_ERROR_TITLEBUFFERTIGHT 38L /**< Title Buffer is too tight */
+#define RAGEPHOTO_ERROR_TITLEMALLOCERROR 26L /**< Title Buffer can't be allocated */
+#define RAGEPHOTO_ERROR_TITLEREADERROR 27L /**< Title can't be read */
+#define RAGEPHOTO_ERROR_UNICODEINITERROR 5L /**< Failed to initialise Unicode decoder */
+#define RAGEPHOTO_ERROR_UNICODEHEADERERROR 6L /**< Header can't be encoded/decoded successfully */
+#define RAGEPHOTO_ERROR_UNINITIALISED 0L /**< Uninitialised, file access failed */
+
+/* RagePhoto formats */
+#define RAGEPHOTO_FORMAT_GTA5 0x01000000UL /**< GTA V Photo Format */
+#define RAGEPHOTO_FORMAT_RDR2 0x04000000UL /**< RDR 2 Photo Format */
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus

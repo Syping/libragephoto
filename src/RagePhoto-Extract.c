@@ -33,12 +33,13 @@ int main(int argc, char *argv[])
     const int loaded = ragephoto_loadfile(ragephoto_in, argv[1]);
 
     if (loaded != 1) {
-        if (ragephoto_error(ragephoto_in) == 0) {
+        const int32_t error = ragephoto_error(ragephoto_in);
+        if (error == RAGEPHOTO_ERROR_UNINITIALISED) {
             printf("Failed to open file: %s\n", argv[1]);
             ragephoto_close(ragephoto_in);
             return 1;
         }
-        else if (ragephoto_getphotosize(ragephoto_in) <= 0) {
+        else if (error <= RAGEPHOTO_ERROR_PHOTOREADERROR) {
             printf("Failed to load photo\n");
             ragephoto_close(ragephoto_in);
             return 1;
@@ -68,9 +69,9 @@ int main(int argc, char *argv[])
     }
 
     const uint32_t photoFormat = ragephoto_getphotoformat(ragephoto_in);
-    if (photoFormat == ragephoto_format_gta5())
+    if (photoFormat == RAGEPHOTO_FORMAT_GTA5)
         printf("GTA V Photo successfully exported\n");
-    else if (photoFormat == ragephoto_format_rdr2())
+    else if (photoFormat == RAGEPHOTO_FORMAT_RDR2)
         printf("RDR 2 Photo successfully exported\n");
     else
         printf("Photo successfully exported\n");
