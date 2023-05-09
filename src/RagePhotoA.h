@@ -95,6 +95,7 @@ public:
     /** Sign Initials */
     enum SignInitials : uint32_t {
         SIGTA5 = 0xE47AB81CUL, /**< GTA V Sign Initial */
+        SIRDR2 = 0x00FEEB1EUL, /**< RDR 2 Sign Initial */
     };
     RagePhotoA() {
         instance = ragephoto_open();

@@ -644,6 +644,8 @@ uint64_t RagePhoto::jpegSign(uint32_t photoFormat, RagePhotoData *rp_data)
 {
     if (photoFormat == PhotoFormat::GTA5)
         return (0x100000000000000ULL | joaatFromInitial(rp_data->jpeg, rp_data->jpegSize, SignInitials::SIGTA5));
+    else if (photoFormat == PhotoFormat::RDR2)
+        return (0x100000000000000ULL | joaatFromInitial(rp_data->jpeg, rp_data->jpegSize, SignInitials::SIRDR2));
     else
         return 0;
 }
