@@ -297,16 +297,17 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
 #endif
 
         if (rp_data->photoFormat == PhotoFormat::RDR2) {
-            size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+            char formatCheckBuffer[4];
+            size = readBuffer(data, formatCheckBuffer, &pos, 4, length);
             if (size != 4) {
                 rp_data->error = Error::IncompleteChecksum; // 7
                 return false;
             }
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-            std::memcpy(&rp_data->unnamedSum1, uInt32Buffer, 4);
-#else
-            rp_data->unnamedSum1 = charToUInt32LE(uInt32Buffer);
-#endif
+            char n_formatCheckBuffer[4]{};
+            if (std::memcmp(formatCheckBuffer, n_formatCheckBuffer, 4)) {
+                rp_data->error = Error::IncompatibleFormat; // 2
+                return false;
+            }
 
             size = readBuffer(data, uInt32Buffer, &pos, 4, length);
             if (size != 4) {
@@ -314,9 +315,9 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
                 return false;
             }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-            std::memcpy(&rp_data->unnamedSum2, uInt32Buffer, 4);
+            std::memcpy(&rp_data->headerSum2, uInt32Buffer, 4);
 #else
-            rp_data->unnamedSum2 = charToUInt32LE(uInt32Buffer);
+            rp_data->headerSum2 = charToUInt32LE(uInt32Buffer);
 #endif
         }
         const size_t headerSize = pos;
@@ -370,7 +371,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteJpegMarker; // 12
             return false;
         }
-        if (std::memcmp(markerBuffer, "JPEG", 4) != 0) {
+        if (std::memcmp(markerBuffer, "JPEG", 4)) {
             rp_data->error = Error::IncorrectJpegMarker; // 13
             return false;
         }
@@ -416,7 +417,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteJsonMarker; // 18
             return false;
         }
-        if (std::memcmp(markerBuffer, "JSON", 4) != 0) {
+        if (std::memcmp(markerBuffer, "JSON", 4)) {
             rp_data->error = Error::IncorrectJsonMarker; // 19
             return false;
         }
@@ -451,7 +452,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteTitleMarker; // 23
             return false;
         }
-        if (std::memcmp(markerBuffer, "TITL", 4) != 0) {
+        if (std::memcmp(markerBuffer, "TITL", 4)) {
             rp_data->error = Error::IncorrectTitleMarker; // 24
             return false;
         }
@@ -486,7 +487,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteDescMarker; // 28
             return false;
         }
-        if (std::memcmp(markerBuffer, "DESC", 4) != 0) {
+        if (std::memcmp(markerBuffer, "DESC", 4)) {
             rp_data->error = Error::IncorrectDescMarker; // 29
             return false;
         }
@@ -521,7 +522,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteJendMarker; // 33
             return false;
         }
-        if (std::memcmp(markerBuffer, "JEND", 4) != 0) {
+        if (std::memcmp(markerBuffer, "JEND", 4)) {
             rp_data->error = Error::IncorrectJendMarker; // 34
             return false;
         }
@@ -535,8 +536,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
 #ifdef RAGEPHOTO_DEBUG
         std::cout << "header: " << rp_data->header << std::endl;
         std::cout << "headerSum: " << rp_data->headerSum << std::endl;
-        std::cout << "unnamedSum1: " << rp_data->unnamedSum1 << std::endl;
-        std::cout << "unnamedSum2: " << rp_data->unnamedSum2 << std::endl;
+        std::cout << "headerSum2: " << rp_data->headerSum2 << std::endl;
         std::cout << "photoBuffer: " << rp_data->jpegBuffer << std::endl;
         std::cout << "descBuffer: " << rp_data->descBuffer << std::endl;
         std::cout << "descOffset: " << rp_data->descOffset << std::endl;
@@ -790,17 +790,13 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
         if (photoFormat == PhotoFormat::RDR2) {
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-            std::memcpy(uInt32Buffer, &rp_data->unnamedSum1, 4);
-#else
-            uInt32ToCharLE(rp_data->unnamedSum1, uInt32Buffer);
-#endif
-            writeBuffer(uInt32Buffer, data, &pos, length, 4);
+            char n_formatCheckBuffer[4]{};
+            writeBuffer(n_formatCheckBuffer, data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-            std::memcpy(uInt32Buffer, &rp_data->unnamedSum2, 4);
+            std::memcpy(uInt32Buffer, &rp_data->headerSum2, 4);
 #else
-            uInt32ToCharLE(rp_data->unnamedSum2, uInt32Buffer);
+            uInt32ToCharLE(rp_data->headerSum2, uInt32Buffer);
 #endif
             writeBuffer(uInt32Buffer, data, &pos, length, 4);
         }
@@ -1062,6 +1058,7 @@ bool RagePhoto::setData(RagePhotoData *rp_data, bool takeCopy)
                 return false;
             std::memcpy(m_data->header, rp_data->header, headerSize);
             m_data->headerSum = rp_data->headerSum;
+            m_data->headerSum2 = rp_data->headerSum2;
         }
 
         if (rp_data->jpeg) {
@@ -1100,8 +1097,6 @@ bool RagePhoto::setData(RagePhotoData *rp_data, bool takeCopy)
             m_data->descBuffer = rp_data->descBuffer;
         }
 
-        m_data->unnamedSum1 = rp_data->unnamedSum1;
-        m_data->unnamedSum2 = rp_data->unnamedSum2;
         setBufferOffsets(m_data);
     }
     else {
@@ -1200,13 +1195,14 @@ void RagePhoto::setJson(const char *json, uint32_t bufferSize)
     m_data->error = Error::NoError; // 255
 }
 
-void RagePhoto::setHeader(const char *header, uint32_t headerSum)
+void RagePhoto::setHeader(const char *header, uint32_t headerSum, uint32_t headerSum2)
 {
     if (!writeDataChar(header, &m_data->header)) {
         m_data->error = Error::HeaderMallocError; // 4
         return;
     }
     m_data->headerSum = headerSum;
+    m_data->headerSum2 = headerSum2;
     m_data->error = Error::NoError; // 255
 }
 
@@ -1246,18 +1242,18 @@ void ragephotodata_clear(RagePhotoData *rp_data)
     RagePhoto::clear(rp_data);
 }
 
-ragephoto_bool_t ragephoto_load(ragephoto_t instance, const char *data, size_t size)
+bool ragephoto_load(ragephoto_t instance, const char *data, size_t size)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->load(data, size);
 }
 
-ragephoto_bool_t ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, const char *data, size_t size)
+bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, const char *data, size_t size)
 {
     return RagePhoto::load(data, size, rp_data, rp_parser);
 }
 
-ragephoto_bool_t ragephoto_loadfile(ragephoto_t instance, const char *filename)
+bool ragephoto_loadfile(ragephoto_t instance, const char *filename)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->loadFile(filename);
@@ -1381,35 +1377,35 @@ size_t ragephotodata_getsavesizef(RagePhotoData *rp_data, RagePhotoFormatParser 
     return RagePhoto::saveSize(photoFormat, rp_data, rp_parser);
 }
 
-ragephoto_bool_t ragephoto_save(ragephoto_t instance, char *data)
+bool ragephoto_save(ragephoto_t instance, char *data)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->save(data);
 }
 
-ragephoto_bool_t ragephotodata_save(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, char *data)
+bool ragephotodata_save(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, char *data)
 {
     return RagePhoto::save(data, rp_data->photoFormat, rp_data, rp_parser);
 }
 
-ragephoto_bool_t ragephoto_savef(ragephoto_t instance, char *data, uint32_t photoFormat)
+bool ragephoto_savef(ragephoto_t instance, char *data, uint32_t photoFormat)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->save(data, photoFormat);
 }
 
-ragephoto_bool_t ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, char *data, uint32_t photoFormat)
+bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, char *data, uint32_t photoFormat)
 {
     return RagePhoto::save(data, photoFormat, rp_data, rp_parser);
 }
 
-ragephoto_bool_t ragephoto_savefile(ragephoto_t instance, const char *filename)
+bool ragephoto_savefile(ragephoto_t instance, const char *filename)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->saveFile(filename);
 }
 
-ragephoto_bool_t ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t photoFormat)
+bool ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t photoFormat)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->saveFile(filename, photoFormat);
@@ -1437,13 +1433,13 @@ void ragephotodata_setbufferoffsets(RagePhotoData *rp_data)
     RagePhoto::setBufferOffsets(rp_data);
 }
 
-ragephoto_bool_t ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *rp_data)
+bool ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *rp_data)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->setData(rp_data, false);
 }
 
-ragephoto_bool_t ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *rp_data)
+bool ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *rp_data)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->setData(rp_data, true);
@@ -1461,7 +1457,7 @@ void ragephoto_setphotoformat(ragephoto_t instance, uint32_t photoFormat)
     ragePhoto->setFormat(photoFormat);
 }
 
-ragephoto_bool_t ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize)
+bool ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->setJpeg(data, size, bufferSize);
@@ -1477,6 +1473,12 @@ void ragephoto_setphotoheader(ragephoto_t instance, const char *header, uint32_t
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     ragePhoto->setHeader(header, headerSum);
+}
+
+void ragephoto_setphotoheader2(ragephoto_t instance, const char *header, uint32_t headerSum, uint32_t headerSum2)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    ragePhoto->setHeader(header, headerSum, headerSum2);
 }
 
 void ragephoto_setphototitle(ragephoto_t instance, const char *title, uint32_t bufferSize)

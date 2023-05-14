@@ -63,7 +63,7 @@ LIBRAGEPHOTO_C_PUBLIC void ragephotodata_clear(RagePhotoData *rp_data);
 * \param data Photo data
 * \param size Photo data size
 */
-LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephoto_load(ragephoto_t instance, const char *data, size_t size);
+LIBRAGEPHOTO_C_PUBLIC bool ragephoto_load(ragephoto_t instance, const char *data, size_t size);
 
 /** Loads a Photo from a const char*.
 * \param rp_data RagePhotoData object
@@ -71,13 +71,13 @@ LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephoto_load(ragephoto_t instance, cons
 * \param data Photo data
 * \param size Photo data size
 */
-LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, const char *data, size_t size);
+LIBRAGEPHOTO_C_PUBLIC bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, const char *data, size_t size);
 
 /** Loads a Photo from a file.
 * \param instance \p ragephoto_t instance
 * \param filename File to load
 */
-LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephoto_loadfile(ragephoto_t instance, const char *filename);
+LIBRAGEPHOTO_C_PUBLIC bool ragephoto_loadfile(ragephoto_t instance, const char *filename);
 
 /** Returns the last error occurred.
 * \param instance \p ragephoto_t instance
@@ -186,21 +186,21 @@ LIBRAGEPHOTO_C_PUBLIC size_t ragephotodata_getsavesizef(RagePhotoData *rp_data, 
 * \param instance \p ragephoto_t instance
 * \param data Photo data
 */
-LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephoto_save(ragephoto_t instance, char *data);
+LIBRAGEPHOTO_C_PUBLIC bool ragephoto_save(ragephoto_t instance, char *data);
 
 /** Saves a Photo to a char*.
 * \param rp_data RagePhotoData object
 * \param rp_parser RagePhotoFormatParser parser array
 * \param data Photo data
 */
-LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephotodata_save(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, char *data);
+LIBRAGEPHOTO_C_PUBLIC bool ragephotodata_save(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, char *data);
 
 /** Saves a Photo to a char*.
 * \param instance \p ragephoto_t instance
 * \param data Photo data
 * \param photoFormat Photo Format (GTA V or RDR 2)
 */
-LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephoto_savef(ragephoto_t instance, char *data, uint32_t photoFormat);
+LIBRAGEPHOTO_C_PUBLIC bool ragephoto_savef(ragephoto_t instance, char *data, uint32_t photoFormat);
 
 /** Saves a Photo to a char*.
 * \param rp_data RagePhotoData object
@@ -208,20 +208,20 @@ LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephoto_savef(ragephoto_t instance, cha
 * \param data Photo data
 * \param photoFormat Photo Format (GTA V or RDR 2)
 */
-LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, char *data, uint32_t photoFormat);
+LIBRAGEPHOTO_C_PUBLIC bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, char *data, uint32_t photoFormat);
 
 /** Saves a Photo to a file.
 * \param instance \p ragephoto_t instance
 * \param filename File to save
 */
-LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephoto_savefile(ragephoto_t instance, const char *filename);
+LIBRAGEPHOTO_C_PUBLIC bool ragephoto_savefile(ragephoto_t instance, const char *filename);
 
 /** Saves a Photo to a file.
 * \param instance \p ragephoto_t instance
 * \param filename File to save
 * \param photoFormat Photo Format (GTA V or RDR 2)
 */
-LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t photoFormat);
+LIBRAGEPHOTO_C_PUBLIC bool ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t photoFormat);
 
 /** Sets all cross-format Buffer to default size.
 * \param instance \p ragephoto_t instance
@@ -247,13 +247,13 @@ LIBRAGEPHOTO_C_PUBLIC void ragephotodata_setbufferoffsets(RagePhotoData *rp_data
 * \param instance \p ragephoto_t instance
 * \param rp_data RagePhotoData object being set
 */
-LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *rp_data);
+LIBRAGEPHOTO_C_PUBLIC bool ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *rp_data);
 
 /** Copies RagePhotoData object to internal RagePhotoData object.
 * \param instance \p ragephoto_t instance
 * \param rp_data RagePhotoData object being copied
 */
-LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *rp_data);
+LIBRAGEPHOTO_C_PUBLIC bool ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *rp_data);
 
 /** Sets the Photo description.
 * \param instance \p ragephoto_t instance
@@ -278,7 +278,7 @@ LIBRAGEPHOTO_C_PUBLIC void ragephoto_setphotoformat(ragephoto_t instance, uint32
 *
 * Default bufferSize: ragephoto_defpbuf_gta5() or ragephoto_defpbuf_rdr2()
 */
-LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize);
+LIBRAGEPHOTO_C_PUBLIC bool ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize);
 
 /** Sets the Photo JSON data.
 * \param instance \p ragephoto_t instance
@@ -289,8 +289,11 @@ LIBRAGEPHOTO_C_PUBLIC ragephoto_bool_t ragephoto_setphotojpeg(ragephoto_t instan
 */
 LIBRAGEPHOTO_C_PUBLIC void ragephoto_setphotojson(ragephoto_t instance, const char *json, uint32_t bufferSize);
 
-/** Sets the Photo header. (EXPERT ONLY) */
+/** Sets the Photo header. */
 LIBRAGEPHOTO_C_PUBLIC void ragephoto_setphotoheader(ragephoto_t instance, const char *header, uint32_t headerSum);
+
+/** Sets the Photo header. (RDR 2) */
+LIBRAGEPHOTO_C_PUBLIC void ragephoto_setphotoheader2(ragephoto_t instance, const char *header, uint32_t headerSum, uint32_t headerSum2);
 
 /** Sets the Photo title.
 * \param instance \p ragephoto_t instance

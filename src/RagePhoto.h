@@ -45,47 +45,47 @@ public:
     };
     /** Parsing and set errors */
     enum Error : int32_t {
-        DescBufferTight = 39, /**< Description Buffer is too tight */
-        DescMallocError = 31, /**< Description Buffer can't be allocated */
-        DescReadError = 32, /**< Description can't be read successfully */
-        HeaderBufferTight = 35, /**< Header Buffer is too tight */
-        HeaderMallocError = 4, /**< Header Buffer can't be allocated */
-        IncompatibleFormat = 2, /**< Format is incompatible */
-        IncompleteChecksum = 7, /**< Header checksum is incomplete */
-        IncompleteDescBuffer = 30, /**< Description Buffer Size is incomplete */
-        IncompleteDescMarker = 28, /**< Description Marker is incomplete */
-        IncompleteDescOffset = 11, /**< Description Offset is incomplete */
-        IncompleteEOF = 8, /**< End Of File Offset is incomplete */
-        IncompleteHeader = 3, /**< Header is incomplete */
-        IncompleteJendMarker = 33, /**< JEND Marker is incomplete */
-        IncompleteJpegMarker = 12, /**< JPEG Marker is incomplete */
-        IncompleteJsonBuffer = 20, /**< JSON Buffer Size is incomplete */
-        IncompleteJsonMarker = 18, /**< JSON Marker incomplete */
-        IncompleteJsonOffset = 9, /**< JSON Offset incomplete */
-        IncompletePhotoBuffer = 14, /**< Photo Buffer Size is incomplete */
-        IncompletePhotoSize = 15, /**< Photo Size is incomplete */
-        IncompleteTitleBuffer = 25, /**< Title Buffer Size is incomplete */
-        IncompleteTitleMarker = 23, /**< Title Marker is incomplete */
-        IncompleteTitleOffset = 10, /**< Title Offset is incomplete */
-        IncorrectDescMarker = 29, /**< Description Marker is incorrect */
-        IncorrectJendMarker = 34, /**< JEND Marker is incorrect */
-        IncorrectJpegMarker = 13, /**< JPEG Marker is incorrect */
-        IncorrectJsonMarker = 19, /**< JSON Marker is incorrect */
-        IncorrectTitleMarker = 24, /**< Title Marker is incorrect */
-        JsonBufferTight = 37, /**< JSON Buffer is too tight */
-        JsonMallocError = 21, /**< JSON Buffer can't be allocated */
-        JsonReadError = 22, /**< JSON can't be read successfully */
-        NoError = 255, /**< Finished without errors */
-        NoFormatIdentifier = 1, /**< No format detected, empty file */
-        PhotoBufferTight = 36, /**< Photo Buffer is too tight */
-        PhotoMallocError = 16, /**< Photo Buffer can't be allocated */
-        PhotoReadError = 17, /**< Photo can't be read */
-        TitleBufferTight = 38, /**< Title Buffer is too tight */
-        TitleMallocError = 26, /**< Title Buffer can't be allocated */
-        TitleReadError = 27, /**< Title can't be read */
-        UnicodeInitError = 5, /**< Failed to initialise Unicode decoder */
-        UnicodeHeaderError = 6, /**< Header can't be encoded/decoded successfully */
-        Uninitialised = 0, /**< Uninitialised, file access failed */
+        DescBufferTight = 39L, /**< Description Buffer is too tight */
+        DescMallocError = 31L, /**< Description Buffer can't be allocated */
+        DescReadError = 32L, /**< Description can't be read successfully */
+        HeaderBufferTight = 35L, /**< Header Buffer is too tight */
+        HeaderMallocError = 4L, /**< Header Buffer can't be allocated */
+        IncompatibleFormat = 2L, /**< Format is incompatible */
+        IncompleteChecksum = 7L, /**< Header checksum is incomplete */
+        IncompleteDescBuffer = 30L, /**< Description Buffer Size is incomplete */
+        IncompleteDescMarker = 28L, /**< Description Marker is incomplete */
+        IncompleteDescOffset = 11L, /**< Description Offset is incomplete */
+        IncompleteEOF = 8L, /**< End Of File Offset is incomplete */
+        IncompleteHeader = 3L, /**< Header is incomplete */
+        IncompleteJendMarker = 33L, /**< JEND Marker is incomplete */
+        IncompleteJpegMarker = 12L, /**< JPEG Marker is incomplete */
+        IncompleteJsonBuffer = 20L, /**< JSON Buffer Size is incomplete */
+        IncompleteJsonMarker = 18L, /**< JSON Marker incomplete */
+        IncompleteJsonOffset = 9L, /**< JSON Offset incomplete */
+        IncompletePhotoBuffer = 14L, /**< Photo Buffer Size is incomplete */
+        IncompletePhotoSize = 15L, /**< Photo Size is incomplete */
+        IncompleteTitleBuffer = 25L, /**< Title Buffer Size is incomplete */
+        IncompleteTitleMarker = 23L, /**< Title Marker is incomplete */
+        IncompleteTitleOffset = 10L, /**< Title Offset is incomplete */
+        IncorrectDescMarker = 29L, /**< Description Marker is incorrect */
+        IncorrectJendMarker = 34L, /**< JEND Marker is incorrect */
+        IncorrectJpegMarker = 13L, /**< JPEG Marker is incorrect */
+        IncorrectJsonMarker = 19L, /**< JSON Marker is incorrect */
+        IncorrectTitleMarker = 24L, /**< Title Marker is incorrect */
+        JsonBufferTight = 37L, /**< JSON Buffer is too tight */
+        JsonMallocError = 21L, /**< JSON Buffer can't be allocated */
+        JsonReadError = 22L, /**< JSON can't be read successfully */
+        NoError = 255L, /**< Finished without errors */
+        NoFormatIdentifier = 1L, /**< No format detected, empty file */
+        PhotoBufferTight = 36L, /**< Photo Buffer is too tight */
+        PhotoMallocError = 16L, /**< Photo Buffer can't be allocated */
+        PhotoReadError = 17L, /**< Photo can't be read */
+        TitleBufferTight = 38L, /**< Title Buffer is too tight */
+        TitleMallocError = 26L, /**< Title Buffer can't be allocated */
+        TitleReadError = 27L, /**< Title can't be read */
+        UnicodeInitError = 5L, /**< Failed to initialise Unicode decoder */
+        UnicodeHeaderError = 6L, /**< Header can't be encoded/decoded successfully */
+        Uninitialised = 0L, /**< Uninitialised, file access failed */
     };
     /** Photo Formats */
     enum PhotoFormat : uint32_t {
@@ -179,7 +179,7 @@ public:
     */
     bool setJpeg(const std::string &data, uint32_t bufferSize = 0);
     void setJson(const char *json, uint32_t bufferSize = 0); /**< Sets the Photo JSON data. */
-    void setHeader(const char *header, uint32_t headerSum); /**< Sets the Photo header. (EXPERT ONLY) */
+    void setHeader(const char *header, uint32_t headerSum, uint32_t headerSum2 = 0); /**< Sets the Photo header. */
     void setTitle(const char *title, uint32_t bufferSize = 0); /**< Sets the Photo title. */
 
 private:

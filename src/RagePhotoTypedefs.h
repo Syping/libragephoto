@@ -19,6 +19,7 @@
 #ifndef RAGEPHOTOTYPEDEFS_H
 #define RAGEPHOTOTYPEDEFS_H
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -34,32 +35,28 @@ typedef struct RagePhotoData {
     char* header; /**< Pointer for internal Header buffer */
     char* title; /**< Pointer for internal Title buffer */
     int32_t error; /**< RagePhoto error code */
-    uint32_t descBuffer; /**< Photo Description buffer length */
-    uint32_t descOffset; /**< Photo Description buffer offset */
-    uint32_t endOfFile; /**< Photo End Of File offset */
-    uint32_t headerSum; /**< Photo Checksum of the header */
-    uint32_t jpegBuffer; /**< Photo JPEG buffer length */
+    uint32_t descBuffer; /**< Description buffer length */
+    uint32_t descOffset; /**< Description buffer offset */
+    uint32_t endOfFile; /**< End Of File offset */
+    uint32_t headerSum; /**< Checksum of the header 1 */
+    uint32_t headerSum2; /**< Checksum of the header 2 (RDR 2 only) */
+    uint32_t jpegBuffer; /**< JPEG buffer length */
     uint32_t jpegSize; /**< Internal JPEG buffer length and size of JPEG */
-    uint32_t jsonBuffer; /**< Photo JSON buffer length */
-    uint32_t jsonOffset; /**< Photo JSON buffer offset */
+    uint32_t jsonBuffer; /**< JSON buffer length */
+    uint32_t jsonOffset; /**< JSON buffer offset */
     uint32_t photoFormat; /**< Photo file format magic */
-    uint32_t titlBuffer; /**< Photo Title buffer length */
-    uint32_t titlOffset; /**< Photo Title buffer offset */
-    uint32_t unnamedSum1; /**< 1st unnamed checksum for Red Dead Redemption 2 */
-    uint32_t unnamedSum2; /**< 2nd unnamed checksum for Red Dead Redemption 2 */
+    uint32_t titlBuffer; /**< Title buffer length */
+    uint32_t titlOffset; /**< Title buffer offset */
 } RagePhotoData;
 
-/** RagePhoto bool typedef. */
-typedef int32_t ragephoto_bool_t;
-
 /** RagePhoto load function typedef. */
-typedef ragephoto_bool_t (*ragephoto_loadfunc_t)(RagePhotoData*, const char*, size_t);
+typedef bool (*ragephoto_loadfunc_t)(RagePhotoData*, const char*, size_t);
 
 /** RagePhoto save function typedef (char* allocated by caller). */
-typedef ragephoto_bool_t (*ragephoto_savefunc_t)(RagePhotoData*, char*, uint32_t);
+typedef bool (*ragephoto_savefunc_t)(RagePhotoData*, char*, uint32_t);
 
 /** RagePhoto save function typedef (char* allocated by function). */
-typedef ragephoto_bool_t (*ragephoto_savepfunc_t)(RagePhotoData*, char**, uint32_t);
+typedef bool (*ragephoto_savepfunc_t)(RagePhotoData*, char**, uint32_t);
 
 /** RagePhoto saveSize function typedef. */
 typedef size_t (*ragephoto_saveszfunc_t)(RagePhotoData*, uint32_t);
