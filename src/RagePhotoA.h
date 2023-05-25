@@ -302,7 +302,7 @@ public:
         if (takeCopy)
             return ragephoto_setphotodatac(instance, ragePhotoData);
         else
-            return ragephoto_setphotodata(&instance, ragePhotoData);
+            return ragephoto_setphotodata(instance, ragePhotoData);
     }
     /** Sets the Photo description. */
     void setDescription(const char *description, uint32_t bufferSize = 0) {
