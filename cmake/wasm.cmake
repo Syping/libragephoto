@@ -33,6 +33,7 @@ if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.13.0")
         "SHELL:-s ALLOW_MEMORY_GROWTH=1"
         "SHELL:-s MODULARIZE=1"
         "SHELL:-s WASM=1"
+        "SHELL:-s WASM_BIGINT=1"
         "SHELL:-s EXPORT_NAME=libragephotoModule"
         "SHELL:-s EXPORTED_FUNCTIONS=_free,_malloc"
         "SHELL:-s EXPORTED_RUNTIME_METHODS=ccall,cwrap"
