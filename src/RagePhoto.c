@@ -504,29 +504,29 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
         }
 
 #ifdef RAGEPHOTO_DEBUG
-        std::cout << "header: " << rp_data->header << std::endl;
-        std::cout << "headerSum: " << rp_data->headerSum << std::endl;
-        std::cout << "headerSum2: " << rp_data->headerSum2 << std::endl;
-        std::cout << "photoBuffer: " << rp_data->jpegBuffer << std::endl;
-        std::cout << "descBuffer: " << rp_data->descBuffer << std::endl;
-        std::cout << "descOffset: " << rp_data->descOffset << std::endl;
-        std::cout << "description: " << rp_data->description << std::endl;
-        std::cout << "jsonBuffer: " << rp_data->jsonBuffer << std::endl;
-        std::cout << "jsonOffset: " << rp_data->jsonOffset << std::endl;
-        std::cout << "json: " << rp_data->json << std::endl;
-        std::cout << "sign: " << jpegSign(rp_data) << std::endl;
-        std::cout << "titlBuffer: " << rp_data->titlBuffer << std::endl;
-        std::cout << "titlOffset: " << rp_data->titlOffset << std::endl;
-        std::cout << "title: " << rp_data->title << std::endl;
-        std::cout << "eofOffset: " << rp_data->endOfFile << std::endl;
-        std::cout << "setBufferOffsets()" << std::endl;
-        setBufferOffsets(rp_data);
-        std::cout << "descOffset: " << rp_data->descOffset << std::endl;
-        std::cout << "jsonOffset: " << rp_data->jsonOffset << std::endl;
-        std::cout << "titlOffset: " << rp_data->titlOffset << std::endl;
-        std::cout << "eofOffset: " << rp_data->endOfFile << std::endl;
-        std::cout << "calc size: " << saveSize(rp_data, rp_parser) << std::endl;
-        std::cout << "real size: " << length << std::endl;
+        printf("header: %s\n", rp_data->header);
+        printf("headerSum: %lu\n", rp_data->headerSum);
+        printf("headerSum2: %lu\n", rp_data->headerSum2);
+        printf("photoBuffer: %lu\n", rp_data->jpegBuffer);
+        printf("descBuffer: %lu\n", rp_data->descBuffer);
+        printf("descOffset: %lu\n", rp_data->descOffset);
+        printf("description: %s\n", rp_data->description);
+        printf("jsonBuffer: %lu\n", rp_data->jsonBuffer);
+        printf("jsonOffset: %lu\n", rp_data->jsonOffset);
+        printf("json: %s\n", rp_data->json);
+        printf("sign: %llu\n", ragephotodata_getphotosign(rp_data));
+        printf("titlBuffer: %lu\n", rp_data->titlBuffer);
+        printf("titlOffset: %lu\n", rp_data->titlOffset);
+        printf("title: %s\n", rp_data->title);
+        printf("eofOffset: %lu\n", rp_data->endOfFile);
+        printf("ragephotodata_setbufferoffsets()\n");
+        ragephotodata_setbufferoffsets(rp_data);
+        printf("descOffset: %lu\n", rp_data->descOffset);
+        printf("jsonOffset: %lu\n", rp_data->jsonOffset);
+        printf("titlOffset: %lu\n", rp_data->titlOffset);
+        printf("eofOffset: %lu\n", rp_data->endOfFile);
+        printf("calc size: %lu\n", ragephotodata_getsavesize(rp_data, rp_parser));
+        printf("real size: %lu\n", length);
 #endif
 
         rp_data->error = RAGEPHOTO_ERROR_NOERROR; // 255
@@ -912,6 +912,8 @@ bool ragephoto_savefilef(ragephoto_t instance_t, const char *filename, uint32_t 
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     const size_t fileSize = ragephotodata_getsavesizef(instance->data, instance->parser, photoFormat);
     char *data = (char*)(malloc(fileSize));
+    if (!data)
+        return false;
     if (!ragephotodata_savef(instance->data, instance->parser, data, photoFormat)) {
         free(data);
         return false;
