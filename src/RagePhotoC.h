@@ -36,7 +36,7 @@ extern "C" {
 * \file RagePhotoC.h
 */
 
-/** RagePhoto C++ class typedef for C API. */
+/** RagePhoto C instance/C++ class typedef. */
 typedef void* ragephoto_t;
 
 /** Opens a \p ragephoto_t instance. */

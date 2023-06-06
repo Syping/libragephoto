@@ -70,6 +70,12 @@ typedef struct RagePhotoFormatParser {
     ragephoto_saveszfunc_t funcSaveSz; /**< Pointer to saveSize function */
 } RagePhotoFormatParser;
 
+/** RagePhoto instance struct for storing data and format parser pointer. */
+typedef struct RagePhotoInstance {
+    RagePhotoData *data; /**< Pointer for data */
+    RagePhotoFormatParser *parser; /**< Pointer for format parser */
+} RagePhotoInstance;
+
 /* RagePhoto default sizes */
 #define RAGEPHOTO_DEFAULT_GTA5_PHOTOBUFFER 524288UL /**< GTA V default Photo Buffer Size */
 #define RAGEPHOTO_DEFAULT_RDR2_PHOTOBUFFER 1048576UL /**< RDR 2 default Photo Buffer Size */
@@ -125,6 +131,10 @@ typedef struct RagePhotoFormatParser {
 /* RagePhoto formats */
 #define RAGEPHOTO_FORMAT_GTA5 0x01000000UL /**< GTA V Photo Format */
 #define RAGEPHOTO_FORMAT_RDR2 0x04000000UL /**< RDR 2 Photo Format */
+
+/* RagePhoto sign initials */
+#define RAGEPHOTO_SIGNINITIAL_GTA5 0xE47AB81CUL /**< GTA V Sign Initial */
+#define RAGEPHOTO_SIGNINITIAL_RDR2 0x00FEEB1EUL /**< RDR 2 Sign Initial */
 
 #ifdef __cplusplus
 }

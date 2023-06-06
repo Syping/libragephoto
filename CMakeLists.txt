@@ -17,7 +17,7 @@
 ****************************************************************************]]
 
 cmake_minimum_required(VERSION 3.8)
-project(ragephoto VERSION 0.4.1 LANGUAGES CXX)
+project(ragephoto VERSION 0.5.0 LANGUAGES C CXX)
 include(GNUInstallDirs)
 
 # RagePhoto CMake includes
@@ -32,14 +32,26 @@ else()
 endif()
 
 # RagePhoto Source files
-set(RAGEPHOTO_HEADERS
-    src/RagePhoto.h
-    src/RagePhotoLibrary.h
-    src/RagePhotoTypedefs.h
-)
-set(RAGEPHOTO_SOURCES
-    src/RagePhoto.cpp
-)
+option(RAGEPHOTO_C_LIBRARY "Build libragephoto as C library" OFF)
+if (RAGEPHOTO_C_LIBRARY)
+    set(RAGEPHOTO_HEADERS
+        src/RagePhotoC.h
+        src/RagePhotoLibrary.h
+        src/RagePhotoTypedefs.h
+    )
+    set(RAGEPHOTO_SOURCES
+        src/RagePhoto.c
+    )
+else()
+    set(RAGEPHOTO_HEADERS
+        src/RagePhoto.h
+        src/RagePhotoLibrary.h
+        src/RagePhotoTypedefs.h
+    )
+    set(RAGEPHOTO_SOURCES
+        src/RagePhoto.cpp
+    )
+endif()
 
 # RagePhoto Library Type
 option(RAGEPHOTO_STATIC "Build libragephoto as static library" OFF)
@@ -60,14 +72,21 @@ if (RAGEPHOTO_BENCHMARK)
 endif()
 
 # RagePhoto C API
-if (RAGEPHOTO_C_API)
+if (RAGEPHOTO_C_LIBRARY)
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_API)
     list(APPEND RAGEPHOTO_HEADERS
         src/RagePhotoA.h
-        src/RagePhotoC.h
     )
 else()
-    set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_NOAPI)
+    if (RAGEPHOTO_C_API)
+        set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_API)
+        list(APPEND RAGEPHOTO_HEADERS
+            src/RagePhotoA.h
+            src/RagePhotoC.h
+        )
+    else()
+        set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_NOAPI)
+    endif()
 endif()
 
 # RagePhoto Win32 Shared Resources
@@ -99,7 +118,7 @@ target_compile_definitions(ragephoto PRIVATE
     LIBRAGEPHOTO_LIBRARY
     ${LIBRAGEPHOTO_DEFINES}
 )
-if (MSVC)
+if (MSVC AND MSVC_VERSION GREATER_EQUAL 1914 AND NOT RAGEPHOTO_C_LIBRARY)
     target_compile_options(ragephoto PRIVATE "/Zc:__cplusplus")
 endif()
 target_include_directories(ragephoto PUBLIC
@@ -143,7 +162,6 @@ option(RAGEPHOTO_EXTRACT "Build libragephoto with ragephoto-extract" ${RPTL_ON})
 if (RAGEPHOTO_EXTRACT)
     # RagePhoto-Extract Source files
     if (RAGEPHOTO_C_API)
-        enable_language(C)
         set(EXTRACT_SOURCES src/RagePhoto-Extract.c)
     else()
         set(EXTRACT_SOURCES src/RagePhoto-Extract.cpp)
@@ -161,7 +179,7 @@ if (RAGEPHOTO_EXTRACT)
     set_target_properties(ragephoto-extract PROPERTIES
         INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
     )
-    if (MSVC AND NOT RAGEPHOTO_C_API)
+    if (MSVC AND MSVC_VERSION GREATER_EQUAL 1914 AND NOT RAGEPHOTO_C_API)
         target_compile_options(ragephoto-extract PRIVATE "/Zc:__cplusplus")
     endif()
     target_link_libraries(ragephoto-extract PRIVATE ragephoto)
