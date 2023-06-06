@@ -684,10 +684,11 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 #if defined(UNICODE_ICONV)
         iconv_t iconv_in = iconv_open("UTF-16LE", "UTF-8");
         if (iconv_in == (iconv_t)-1) {
-            rp_data->error = Error::UnicodeInitError; // 4
+            rp_data->error = RAGEPHOTO_ERROR_UNICODEINITERROR; // 4
             return false;
         }
-        char photoHeader[256]{};
+        char photoHeader[256];
+        memset(&photoHeader, 0, 256);
         size_t src_s = strlen(rp_data->header);
         size_t dst_s = sizeof(photoHeader);
         char *src = rp_data->header;
@@ -695,7 +696,7 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
         const size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
         iconv_close(iconv_in);
         if (ret == (size_t)(-1)) {
-            rp_data->error = Error::UnicodeHeaderError; // 6
+            rp_data->error = RAGEPHOTO_ERROR_UNICODEHEADERERROR; // 6
             return false;
         }
         const size_t photoHeader_size = 256;
