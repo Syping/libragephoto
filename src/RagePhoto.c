@@ -926,6 +926,10 @@ bool ragephoto_savefilef(ragephoto_t instance_t, const char *filename, uint32_t 
 #else
     FILE *file = fopen(filename, "wb");
 #endif
+    if (!file) {
+        free(data);
+        return false;
+    }
     const size_t fileWsize = fwrite(data, sizeof(char), fileSize, file);
     fclose(file);
     free(data);
