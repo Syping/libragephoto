@@ -16,7 +16,7 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include <RagePhoto.h>
+#include <RagePhoto>
 #include <gtkmm/application.h>
 #include <gtkmm/box.h>
 #include <gtkmm/button.h>

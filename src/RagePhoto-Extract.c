@@ -16,7 +16,7 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include "RagePhotoC.h"
+#include "RagePhoto.h"
 #include <stdio.h>
 
 int main(int argc, char *argv[])

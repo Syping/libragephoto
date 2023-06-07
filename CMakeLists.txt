@@ -35,7 +35,7 @@ endif()
 option(RAGEPHOTO_C_LIBRARY "Build libragephoto as C library" OFF)
 if (RAGEPHOTO_C_LIBRARY)
     set(RAGEPHOTO_HEADERS
-        src/RagePhotoC.h
+        src/RagePhoto.h
         src/RagePhotoLibrary.h
         src/RagePhotoTypedefs.h
     )
@@ -44,7 +44,8 @@ if (RAGEPHOTO_C_LIBRARY)
     )
 else()
     set(RAGEPHOTO_HEADERS
-        src/RagePhoto.h
+        src/RagePhoto
+        src/RagePhoto.hpp
         src/RagePhotoLibrary.h
         src/RagePhotoTypedefs.h
     )
@@ -75,17 +76,19 @@ endif()
 if (RAGEPHOTO_C_LIBRARY)
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_API)
     list(APPEND RAGEPHOTO_HEADERS
-        src/RagePhotoA.h
+        src/RagePhotoA
+        src/RagePhotoA.hpp
     )
 else()
     if (RAGEPHOTO_C_API)
         set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_API)
         list(APPEND RAGEPHOTO_HEADERS
-            src/RagePhotoA.h
-            src/RagePhotoC.h
+            src/RagePhoto.h
+            src/RagePhotoA
+            src/RagePhotoA.hpp
         )
     else()
-        set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_NOAPI)
+        set(LIBRAGEPHOTO_API LIBRAGEPHOTO_CXX_ONLY)
     endif()
 endif()
 

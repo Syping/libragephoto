@@ -16,7 +16,7 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include "RagePhotoC.h"
+#include "RagePhoto.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

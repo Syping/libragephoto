@@ -16,9 +16,9 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include "RagePhoto.h"
+#include "RagePhoto.hpp"
 #ifdef LIBRAGEPHOTO_C_API
-#include "RagePhotoC.h"
+#include "RagePhoto.h"
 #endif
 
 #include <cstdlib>

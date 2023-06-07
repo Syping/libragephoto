@@ -60,7 +60,7 @@ else()
             "UNICODE_WINCVT"
         )
         message("-- UnicodeCvt - wincvt")
-    elseif (CODECVT_COMPAT)
+    elseif (CODECVT_COMPAT AND NOT RAGEPHOTO_C_LIBRARY)
         list(APPEND LIBRAGEPHOTO_DEFINES
             "UNICODE_CODECVT"
         )
@@ -70,5 +70,7 @@ else()
             "UNICODE_ICONV"
         )
         message("-- UnicodeCvt - iconv")
+    else()
+        message("-- UnicodeCvt - none")
     endif()
 endif()

@@ -1,0 +1,30 @@
+name: WebAssembly CXX
+
+on: push
+
+jobs:
+  Release:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_TYPE: Release
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Setup emsdk
+      uses: mymindstorm/setup-emsdk@v11
+    - name: Install packages
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install cmake ninja-build -qq
+    - name: Configure CMake
+      run: emcmake cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: WebAssembly
+        path: |
+          ${{github.workspace}}/build/libragephoto.js
+          ${{github.workspace}}/build/libragephoto.wasm

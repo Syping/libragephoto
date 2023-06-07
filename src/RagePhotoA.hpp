@@ -16,11 +16,11 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#ifndef RAGEPHOTOA_H
-#define RAGEPHOTOA_H
+#ifndef RAGEPHOTOA_HPP
+#define RAGEPHOTOA_HPP
 
 #ifdef __cplusplus
-#include "RagePhotoC.h"
+#include "RagePhoto.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -343,8 +343,6 @@ public:
 private:
     ragephoto_t instance;
 };
-#else
-#include "RagePhotoC.h"
 #endif // __cplusplus
 
-#endif // RAGEPHOTOA_H
+#endif // RAGEPHOTOA_HPP
