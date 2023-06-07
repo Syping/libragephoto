@@ -583,6 +583,8 @@ bool ragephoto_loadfile(ragephoto_t instance_t, const char *filename)
         return false;
     }
     char *data = (char*)(malloc(fileSize));
+    if (!data)
+        return false;
     const size_t fileRsize = fread(data, 1, fileSize, file);
     fclose(file);
     if (fileSize != fileRsize) {
