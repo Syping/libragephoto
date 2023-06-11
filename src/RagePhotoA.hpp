@@ -25,10 +25,7 @@
 #include <iostream>
 
 /**
-* \brief ABI Stable Wrapper for RagePhoto.
-*
-* Using RagePhotoA instead of RagePhoto allows your library or application to survive more changes in the RagePhoto class,
-* disadvantages include that it doesn't always include the newest features, performance is about the same.
+* \brief GTA V and RDR 2 Photo Parser (C API wrapper).
 */
 class RagePhotoA
 {

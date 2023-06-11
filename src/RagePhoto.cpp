@@ -17,7 +17,7 @@
 *****************************************************************************/
 
 #include "RagePhoto.hpp"
-#ifdef LIBRAGEPHOTO_C_API
+#ifdef LIBRAGEPHOTO_CXX_C
 #include "RagePhoto.h"
 #endif
 
@@ -1223,7 +1223,7 @@ void RagePhoto::setTitle(const char *title, uint32_t bufferSize)
     m_data->error = Error::NoError; // 255
 }
 
-#ifdef LIBRAGEPHOTO_C_API
+#ifdef LIBRAGEPHOTO_CXX_C
 ragephoto_t ragephoto_open()
 {
     return static_cast<ragephoto_t>(new RagePhoto);

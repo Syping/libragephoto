@@ -14,7 +14,7 @@
 <b>Reference</b>  
 RagePhoto (C++ API)  
 RagePhotoA (C++ API based on C API)  
-RagePhotoC.h (C API)  
+RagePhoto.h (C API)  
 RagePhotoData (Data Object Struct)  
 RagePhotoFormatParser (Custom Format Parser Struct)
 

@@ -4,10 +4,10 @@
 
 <h4 id="cxx_include_usage">Including and using RagePhoto</h4>
 
-Include RagePhoto.h or RagePhotoA.h
+Include RagePhoto (C++ native), RagePhotoA (C API wrapper) or \link RagePhotoB.hpp RagePhotoB \endlink (best implementation)
 
 \code{.cpp}
-#include <RagePhoto.h>
+#include <RagePhoto>
 \endcode
 
 Create a RagePhoto object
@@ -128,7 +128,7 @@ const bool loaded = image.loadFromData(QByteArray::fromRawData(ragePhoto.jpegDat
 Using the JSON in Boost.JSON
 
 \code{.cpp}
-std::error_code ec;
+boost::json::error_code ec;
 const boost::json::value jv = boost::json::parse(ragePhoto.json(), ec);
 if (ec)
     return;
@@ -137,8 +137,7 @@ if (ec)
 Using the JSON in Qt
 
 \code{.cpp}
-const QByteArray json = ragePhoto.json();
-const QJsonDocument jd = QJsonDocument::fromJson(json);
+const QJsonDocument jd = QJsonDocument::fromJson(ragePhoto.json());
 if (jd.isNull())
     return;
 \endcode

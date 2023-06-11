@@ -36,6 +36,10 @@ option(RAGEPHOTO_C_LIBRARY "Build libragephoto as C library" OFF)
 if (RAGEPHOTO_C_LIBRARY)
     set(RAGEPHOTO_HEADERS
         src/RagePhoto.h
+        src/RagePhotoA
+        src/RagePhotoA.hpp
+        src/RagePhotoB
+        src/RagePhotoB.hpp
         src/RagePhotoLibrary.h
         src/RagePhotoTypedefs.h
     )
@@ -46,6 +50,8 @@ else()
     set(RAGEPHOTO_HEADERS
         src/RagePhoto
         src/RagePhoto.hpp
+        src/RagePhotoB
+        src/RagePhotoB.hpp
         src/RagePhotoLibrary.h
         src/RagePhotoTypedefs.h
     )
@@ -65,7 +71,7 @@ else()
 endif()
 
 # RagePhoto Benchmark
-option(RAGEPHOTO_BENCHMARK "Build with libragephoto benchmark" OFF)
+option(RAGEPHOTO_BENCHMARK "Build with libragephoto benchmark (C++ only)" OFF)
 if (RAGEPHOTO_BENCHMARK)
     list(APPEND LIBRAGEPHOTO_DEFINES
         RAGEPHOTO_BENCHMARK
@@ -74,18 +80,12 @@ endif()
 
 # RagePhoto C API
 if (RAGEPHOTO_C_LIBRARY)
-    set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_API)
-    list(APPEND RAGEPHOTO_HEADERS
-        src/RagePhotoA
-        src/RagePhotoA.hpp
-    )
+    set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_ONLY)
 else()
     if (RAGEPHOTO_C_API)
-        set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_API)
+        set(LIBRAGEPHOTO_API LIBRAGEPHOTO_CXX_C)
         list(APPEND RAGEPHOTO_HEADERS
             src/RagePhoto.h
-            src/RagePhotoA
-            src/RagePhotoA.hpp
         )
     else()
         set(LIBRAGEPHOTO_API LIBRAGEPHOTO_CXX_ONLY)
