@@ -86,6 +86,8 @@ else()
         set(LIBRAGEPHOTO_API LIBRAGEPHOTO_CXX_C)
         list(APPEND RAGEPHOTO_HEADERS
             src/RagePhoto.h
+            src/RagePhotoA
+            src/RagePhotoA.hpp
         )
     else()
         set(LIBRAGEPHOTO_API LIBRAGEPHOTO_CXX_ONLY)
