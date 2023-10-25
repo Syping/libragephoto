@@ -54,7 +54,7 @@ inline size_t readBuffer(const char *input, void *output, size_t *pos, size_t ou
     readLen = inputLen - *pos;
     if (readLen > outputLen)
         readLen = outputLen;
-    std::memcpy(output, &input[*pos], readLen);
+    memcpy(output, &input[*pos], readLen);
     *pos = *pos + readLen;
     return readLen;
 }
@@ -67,7 +67,7 @@ inline size_t writeBuffer(const void *input, char *output, size_t *pos, size_t o
         return 0;
     if (inputLen > maxLen)
         writeLen = maxLen;
-    std::memcpy(&output[*pos], input, writeLen);
+    memcpy(&output[*pos], input, writeLen);
     *pos = *pos + writeLen;
     return writeLen;
 }
@@ -78,33 +78,33 @@ inline bool writeDataChar(const char *input, char **output)
     if (*output) {
         const size_t dst_s = strlen(*output) + 1;
         if (dst_s > src_s) {
-            char *t_output = static_cast<char*>(std::realloc(*output, src_s));
+            char *t_output = static_cast<char*>(realloc(*output, src_s));
             if (!t_output) {
                 return false;
             }
             *output = t_output;
-            std::memcpy(*output, input, src_s);
+            memcpy(*output, input, src_s);
         }
         else if (dst_s < src_s) {
-            char *t_output = static_cast<char*>(std::malloc(src_s));
+            char *t_output = static_cast<char*>(malloc(src_s));
             if (!t_output) {
                 return false;
             }
-            std::free(*output);
+            free(*output);
             *output = t_output;
-            std::memcpy(*output, input, src_s);
+            memcpy(*output, input, src_s);
         }
         else {
-            std::memcpy(*output, input, src_s);
+            memcpy(*output, input, src_s);
         }
     }
     else {
-        char *t_output = static_cast<char*>(std::malloc(src_s));
+        char *t_output = static_cast<char*>(malloc(src_s));
         if (!t_output) {
             return false;
         }
         *output = t_output;
-        std::memcpy(*output, input, src_s);
+        memcpy(*output, input, src_s);
     }
     return true;
 }
@@ -143,53 +143,53 @@ inline uint32_t joaatFromInitial(const char *data, size_t size, uint32_t init_va
 /* BEGIN OF RAGEPHOTO CLASS */
 RagePhoto::RagePhoto()
 {
-    m_data = static_cast<RagePhotoData*>(std::malloc(sizeof(RagePhotoData)));
+    m_data = static_cast<RagePhotoData*>(malloc(sizeof(RagePhotoData)));
     if (!m_data)
         throw std::runtime_error("RagePhotoData data struct can't be allocated");
-    std::memset(m_data, 0, sizeof(RagePhotoData));
-    m_parser = static_cast<RagePhotoFormatParser*>(std::malloc(sizeof(RagePhotoFormatParser)));
+    memset(m_data, 0, sizeof(RagePhotoData));
+    m_parser = static_cast<RagePhotoFormatParser*>(malloc(sizeof(RagePhotoFormatParser)));
     if (!m_parser)
         throw std::runtime_error("RagePhotoFormatParser parser struct can't be allocated");
-    std::memset(m_parser, 0, sizeof(RagePhotoFormatParser));
+    memset(m_parser, 0, sizeof(RagePhotoFormatParser));
     setBufferDefault(m_data);
 }
 
 RagePhoto::~RagePhoto()
 {
-    std::free(m_data->jpeg);
-    std::free(m_data->description);
-    std::free(m_data->json);
-    std::free(m_data->header);
-    std::free(m_data->title);
-    std::free(m_data);
-    std::free(m_parser);
+    free(m_data->jpeg);
+    free(m_data->description);
+    free(m_data->json);
+    free(m_data->header);
+    free(m_data->title);
+    free(m_data);
+    free(m_parser);
 }
 
 void RagePhoto::addParser(RagePhotoFormatParser *rp_parser)
 {
     if (rp_parser) {
         RagePhotoFormatParser n_parser[1]{};
-        if (!std::memcmp(&n_parser[0], rp_parser, sizeof(RagePhotoFormatParser)))
+        if (!memcmp(&n_parser[0], rp_parser, sizeof(RagePhotoFormatParser)))
             return;
         size_t length;
-        for (length = 0; std::memcmp(&n_parser[0], &m_parser[length], sizeof(RagePhotoFormatParser)); length++);
-        RagePhotoFormatParser *t_parser = static_cast<RagePhotoFormatParser*>(std::realloc(m_parser, (length + 2 * sizeof(RagePhotoFormatParser))));
+        for (length = 0; memcmp(&n_parser[0], &m_parser[length], sizeof(RagePhotoFormatParser)); length++);
+        RagePhotoFormatParser *t_parser = static_cast<RagePhotoFormatParser*>(realloc(m_parser, (length + 2 * sizeof(RagePhotoFormatParser))));
         if (!t_parser)
             throw std::runtime_error("RagePhotoFormatParser array can't be expanded");
         m_parser = t_parser;
-        std::memcpy(&m_parser[length], rp_parser, sizeof(RagePhotoFormatParser));
-        std::memset(&m_parser[length+1], 0, sizeof(RagePhotoFormatParser));
+        memcpy(&m_parser[length], rp_parser, sizeof(RagePhotoFormatParser));
+        memset(&m_parser[length+1], 0, sizeof(RagePhotoFormatParser));
     }
 }
 
 void RagePhoto::clear(RagePhotoData *rp_data)
 {
-    std::free(rp_data->jpeg);
-    std::free(rp_data->description);
-    std::free(rp_data->json);
-    std::free(rp_data->header);
-    std::free(rp_data->title);
-    std::memset(rp_data, 0, sizeof(RagePhotoData));
+    free(rp_data->jpeg);
+    free(rp_data->description);
+    free(rp_data->json);
+    free(rp_data->header);
+    free(rp_data->title);
+    memset(rp_data, 0, sizeof(RagePhotoData));
     setBufferDefault(rp_data);
 }
 
@@ -221,7 +221,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
     }
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-    std::memcpy(&rp_data->photoFormat, uInt32Buffer, 4);
+    memcpy(&rp_data->photoFormat, uInt32Buffer, 4);
 #else
     rp_data->photoFormat = charToUInt32LE(uInt32Buffer);
 #endif
@@ -242,19 +242,19 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             return false;
         }
         const size_t photoHeader_size = photoHeader_string.size() + 1;
-        rp_data->header = static_cast<char*>(std::malloc(photoHeader_size));
+        rp_data->header = static_cast<char*>(malloc(photoHeader_size));
         if (!rp_data->header) {
             rp_data->error = Error::HeaderMallocError; // 4
             return false;
         }
-        std::memcpy(rp_data->header, photoHeader_string.c_str(), photoHeader_size);
+        memcpy(rp_data->header, photoHeader_string.c_str(), photoHeader_size);
 #elif defined UNICODE_ICONV
         iconv_t iconv_in = iconv_open("UTF-8", "UTF-16LE");
         if (iconv_in == (iconv_t)-1) {
             rp_data->error = Error::UnicodeInitError; // 4
             return false;
         }
-        rp_data->header = static_cast<char*>(std::malloc(256));
+        rp_data->header = static_cast<char*>(malloc(256));
         if (!rp_data->header) {
             rp_data->error = Error::HeaderMallocError; // 4
             iconv_close(iconv_in);
@@ -271,14 +271,14 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             return false;
         }
 #elif defined UNICODE_WINCVT
-        rp_data->header = static_cast<char*>(std::malloc(256));
+        rp_data->header = static_cast<char*>(malloc(256));
         if (!rp_data->header) {
             rp_data->error = Error::HeaderMallocError; // 4
             return false;
         }
         const int converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<wchar_t*>(photoHeader), -1, rp_data->header, 256, NULL, NULL);
         if (converted == 0) {
-            std::free(rp_data->header);
+            free(rp_data->header);
             rp_data->header = nullptr;
             rp_data->error = Error::UnicodeHeaderError; // 6
             return false;
@@ -291,7 +291,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&rp_data->headerSum, uInt32Buffer, 4);
+        memcpy(&rp_data->headerSum, uInt32Buffer, 4);
 #else
         rp_data->headerSum = charToUInt32LE(uInt32Buffer);
 #endif
@@ -304,7 +304,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
                 return false;
             }
             char n_formatCheckBuffer[4]{};
-            if (std::memcmp(formatCheckBuffer, n_formatCheckBuffer, 4)) {
+            if (memcmp(formatCheckBuffer, n_formatCheckBuffer, 4)) {
                 rp_data->error = Error::IncompatibleFormat; // 2
                 return false;
             }
@@ -315,7 +315,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
                 return false;
             }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-            std::memcpy(&rp_data->headerSum2, uInt32Buffer, 4);
+            memcpy(&rp_data->headerSum2, uInt32Buffer, 4);
 #else
             rp_data->headerSum2 = charToUInt32LE(uInt32Buffer);
 #endif
@@ -328,7 +328,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&rp_data->endOfFile, uInt32Buffer, 4);
+        memcpy(&rp_data->endOfFile, uInt32Buffer, 4);
 #else
         rp_data->endOfFile = charToUInt32LE(uInt32Buffer);
 #endif
@@ -339,7 +339,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&rp_data->jsonOffset, uInt32Buffer, 4);
+        memcpy(&rp_data->jsonOffset, uInt32Buffer, 4);
 #else
         rp_data->jsonOffset = charToUInt32LE(uInt32Buffer);
 #endif
@@ -349,7 +349,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&rp_data->titlOffset, uInt32Buffer, 4);
+        memcpy(&rp_data->titlOffset, uInt32Buffer, 4);
 #else
         rp_data->titlOffset = charToUInt32LE(uInt32Buffer);
 #endif
@@ -360,7 +360,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&rp_data->descOffset, uInt32Buffer, 4);
+        memcpy(&rp_data->descOffset, uInt32Buffer, 4);
 #else
         rp_data->descOffset = charToUInt32LE(uInt32Buffer);
 #endif
@@ -371,7 +371,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteJpegMarker; // 12
             return false;
         }
-        if (std::memcmp(markerBuffer, "JPEG", 4)) {
+        if (memcmp(markerBuffer, "JPEG", 4)) {
             rp_data->error = Error::IncorrectJpegMarker; // 13
             return false;
         }
@@ -382,7 +382,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&rp_data->jpegBuffer, uInt32Buffer, 4);
+        memcpy(&rp_data->jpegBuffer, uInt32Buffer, 4);
 #else
         rp_data->jpegBuffer = charToUInt32LE(uInt32Buffer);
 #endif
@@ -393,19 +393,19 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&rp_data->jpegSize, uInt32Buffer, 4);
+        memcpy(&rp_data->jpegSize, uInt32Buffer, 4);
 #else
         rp_data->jpegSize = charToUInt32LE(uInt32Buffer);
 #endif
 
-        rp_data->jpeg = static_cast<char*>(std::malloc(rp_data->jpegSize));
+        rp_data->jpeg = static_cast<char*>(malloc(rp_data->jpegSize));
         if (!rp_data->jpeg) {
             rp_data->error = Error::PhotoMallocError; // 16
             return false;
         }
         size = readBuffer(data, rp_data->jpeg, &pos, rp_data->jpegSize, length);
         if (size != rp_data->jpegSize) {
-            std::free(rp_data->jpeg);
+            free(rp_data->jpeg);
             rp_data->jpeg = nullptr;
             rp_data->error = Error::PhotoReadError; // 17
             return false;
@@ -417,7 +417,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteJsonMarker; // 18
             return false;
         }
-        if (std::memcmp(markerBuffer, "JSON", 4)) {
+        if (memcmp(markerBuffer, "JSON", 4)) {
             rp_data->error = Error::IncorrectJsonMarker; // 19
             return false;
         }
@@ -428,19 +428,19 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&rp_data->jsonBuffer, uInt32Buffer, 4);
+        memcpy(&rp_data->jsonBuffer, uInt32Buffer, 4);
 #else
         rp_data->jsonBuffer = charToUInt32LE(uInt32Buffer);
 #endif
 
-        rp_data->json = static_cast<char*>(std::malloc(rp_data->jsonBuffer));
+        rp_data->json = static_cast<char*>(malloc(rp_data->jsonBuffer));
         if (!rp_data->json) {
             rp_data->error = Error::JsonMallocError; // 21
             return false;
         }
         size = readBuffer(data, rp_data->json, &pos, rp_data->jsonBuffer, length);
         if (size != rp_data->jsonBuffer) {
-            std::free(rp_data->json);
+            free(rp_data->json);
             rp_data->json = nullptr;
             rp_data->error = Error::JsonReadError; // 22
             return false;
@@ -452,7 +452,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteTitleMarker; // 23
             return false;
         }
-        if (std::memcmp(markerBuffer, "TITL", 4)) {
+        if (memcmp(markerBuffer, "TITL", 4)) {
             rp_data->error = Error::IncorrectTitleMarker; // 24
             return false;
         }
@@ -463,19 +463,19 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&rp_data->titlBuffer, uInt32Buffer, 4);
+        memcpy(&rp_data->titlBuffer, uInt32Buffer, 4);
 #else
         rp_data->titlBuffer = charToUInt32LE(uInt32Buffer);
 #endif
 
-        rp_data->title = static_cast<char*>(std::malloc(rp_data->titlBuffer));
+        rp_data->title = static_cast<char*>(malloc(rp_data->titlBuffer));
         if (!rp_data->title) {
             rp_data->error = Error::TitleMallocError; // 26
             return false;
         }
         size = readBuffer(data, rp_data->title, &pos, rp_data->titlBuffer, length);
         if (size != rp_data->titlBuffer) {
-            std::free(rp_data->title);
+            free(rp_data->title);
             rp_data->title = nullptr;
             rp_data->error = Error::TitleReadError; // 27
             return false;
@@ -487,7 +487,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteDescMarker; // 28
             return false;
         }
-        if (std::memcmp(markerBuffer, "DESC", 4)) {
+        if (memcmp(markerBuffer, "DESC", 4)) {
             rp_data->error = Error::IncorrectDescMarker; // 29
             return false;
         }
@@ -498,19 +498,19 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             return false;
         }
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(&rp_data->descBuffer, uInt32Buffer, 4);
+        memcpy(&rp_data->descBuffer, uInt32Buffer, 4);
 #else
         rp_data->descBuffer = charToUInt32LE(uInt32Buffer);
 #endif
 
-        rp_data->description = static_cast<char*>(std::malloc(rp_data->descBuffer));
+        rp_data->description = static_cast<char*>(malloc(rp_data->descBuffer));
         if (!rp_data->description) {
             rp_data->error = Error::DescMallocError; // 31
             return false;
         }
         size = readBuffer(data, rp_data->description, &pos, rp_data->descBuffer, length);
         if (size != rp_data->descBuffer) {
-            std::free(rp_data->description);
+            free(rp_data->description);
             rp_data->description = nullptr;
             rp_data->error = Error::DescReadError; // 32
             return false;
@@ -522,7 +522,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::IncompleteJendMarker; // 33
             return false;
         }
-        if (std::memcmp(markerBuffer, "JEND", 4)) {
+        if (memcmp(markerBuffer, "JEND", 4)) {
             rp_data->error = Error::IncorrectJendMarker; // 34
             return false;
         }
@@ -569,7 +569,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
     }
     else if (rp_parser) {
         RagePhotoFormatParser n_parser[1]{};
-        for (size_t i = 0; std::memcmp(&n_parser[0], &rp_parser[i], sizeof(RagePhotoFormatParser)); i++) {
+        for (size_t i = 0; memcmp(&n_parser[0], &rp_parser[i], sizeof(RagePhotoFormatParser)); i++) {
             if (rp_data->photoFormat == rp_parser[i].photoFormat)
                 if (rp_parser[i].funcLoad)
                     return (rp_parser[i].funcLoad)(rp_data, data, length);
@@ -771,7 +771,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         char uInt32Buffer[4];
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(uInt32Buffer, &photoFormat, 4);
+        memcpy(uInt32Buffer, &photoFormat, 4);
 #else
         uInt32ToCharLE(static_cast<uint32_t>(photoFormat), uInt32Buffer);
 #endif
@@ -783,7 +783,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         }
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(uInt32Buffer, &rp_data->headerSum, 4);
+        memcpy(uInt32Buffer, &rp_data->headerSum, 4);
 #else
         uInt32ToCharLE(rp_data->headerSum, uInt32Buffer);
 #endif
@@ -794,7 +794,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
             writeBuffer(n_formatCheckBuffer, data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-            std::memcpy(uInt32Buffer, &rp_data->headerSum2, 4);
+            memcpy(uInt32Buffer, &rp_data->headerSum2, 4);
 #else
             uInt32ToCharLE(rp_data->headerSum2, uInt32Buffer);
 #endif
@@ -803,28 +803,28 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         const size_t headerSize = pos;
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(uInt32Buffer, &rp_data->endOfFile, 4);
+        memcpy(uInt32Buffer, &rp_data->endOfFile, 4);
 #else
         uInt32ToCharLE(rp_data->endOfFile, uInt32Buffer);
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(uInt32Buffer, &rp_data->jsonOffset, 4);
+        memcpy(uInt32Buffer, &rp_data->jsonOffset, 4);
 #else
         uInt32ToCharLE(rp_data->jsonOffset, uInt32Buffer);
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(uInt32Buffer, &rp_data->titlOffset, 4);
+        memcpy(uInt32Buffer, &rp_data->titlOffset, 4);
 #else
         uInt32ToCharLE(rp_data->titlOffset, uInt32Buffer);
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(uInt32Buffer, &rp_data->descOffset, 4);
+        memcpy(uInt32Buffer, &rp_data->descOffset, 4);
 #else
         uInt32ToCharLE(rp_data->descOffset, uInt32Buffer);
 #endif
@@ -833,14 +833,14 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         writeBuffer("JPEG", data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(uInt32Buffer, &rp_data->jpegBuffer, 4);
+        memcpy(uInt32Buffer, &rp_data->jpegBuffer, 4);
 #else
         uInt32ToCharLE(rp_data->jpegBuffer, uInt32Buffer);
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(uInt32Buffer, &rp_data->jpegSize, 4);
+        memcpy(uInt32Buffer, &rp_data->jpegSize, 4);
 #else
         uInt32ToCharLE(rp_data->jpegSize, uInt32Buffer);
 #endif
@@ -855,7 +855,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         writeBuffer("JSON", data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(uInt32Buffer, &rp_data->jsonBuffer, 4);
+        memcpy(uInt32Buffer, &rp_data->jsonBuffer, 4);
 #else
         uInt32ToCharLE(rp_data->jsonBuffer, uInt32Buffer);
 #endif
@@ -870,7 +870,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         writeBuffer("TITL", data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(uInt32Buffer, &rp_data->titlBuffer, 4);
+        memcpy(uInt32Buffer, &rp_data->titlBuffer, 4);
 #else
         uInt32ToCharLE(rp_data->titlBuffer, uInt32Buffer);
 #endif
@@ -885,7 +885,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         writeBuffer("DESC", data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        std::memcpy(uInt32Buffer, &rp_data->descBuffer, 4);
+        memcpy(uInt32Buffer, &rp_data->descBuffer, 4);
 #else
         uInt32ToCharLE(rp_data->descBuffer, uInt32Buffer);
 #endif
@@ -909,7 +909,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
     }
     else if (rp_parser) {
         RagePhotoFormatParser n_parser[1]{};
-        for (size_t i = 0; std::memcmp(&n_parser[0], &rp_parser[i], sizeof(RagePhotoFormatParser)); i++) {
+        for (size_t i = 0; memcmp(&n_parser[0], &rp_parser[i], sizeof(RagePhotoFormatParser)); i++) {
             if (photoFormat == rp_parser[i].photoFormat)
                 if (rp_parser[i].funcSave)
                     return (rp_parser[i].funcSave)(rp_data, data, photoFormat);
@@ -996,7 +996,7 @@ size_t RagePhoto::saveSize(uint32_t photoFormat, RagePhotoData *rp_data, RagePho
         return (rp_data->jpegBuffer + rp_data->jsonBuffer + rp_data->titlBuffer + rp_data->descBuffer + RDR2_HEADERSIZE + 56UL);
     else if (rp_parser) {
         RagePhotoFormatParser n_parser[1]{};
-        for (size_t i = 0; std::memcmp(&n_parser[0], &rp_parser[i], sizeof(RagePhotoFormatParser)); i++) {
+        for (size_t i = 0; memcmp(&n_parser[0], &rp_parser[i], sizeof(RagePhotoFormatParser)); i++) {
             if (photoFormat == rp_parser[i].photoFormat)
                 if (rp_parser[i].funcSaveSz)
                     return (rp_parser[i].funcSaveSz)(rp_data, photoFormat);
@@ -1057,59 +1057,59 @@ bool RagePhoto::setData(RagePhotoData *rp_data, bool takeCopy)
 
         if (rp_data->header) {
             const size_t headerSize = strlen(rp_data->header) + 1;
-            m_data->header = static_cast<char*>(std::malloc(headerSize));
+            m_data->header = static_cast<char*>(malloc(headerSize));
             if (!m_data->header)
                 return false;
-            std::memcpy(m_data->header, rp_data->header, headerSize);
+            memcpy(m_data->header, rp_data->header, headerSize);
             m_data->headerSum = rp_data->headerSum;
             m_data->headerSum2 = rp_data->headerSum2;
         }
 
         if (rp_data->jpeg) {
-            m_data->jpeg = static_cast<char*>(std::malloc(rp_data->jpegSize));
+            m_data->jpeg = static_cast<char*>(malloc(rp_data->jpegSize));
             if (!m_data->jpeg)
                 return false;
-            std::memcpy(m_data->jpeg, rp_data->jpeg, rp_data->jpegSize);
+            memcpy(m_data->jpeg, rp_data->jpeg, rp_data->jpegSize);
             m_data->jpegSize = rp_data->jpegSize;
             m_data->jpegBuffer = rp_data->jpegBuffer;
         }
 
         if (rp_data->json) {
             const size_t jsonSize = strlen(rp_data->json) + 1;
-            m_data->json = static_cast<char*>(std::malloc(jsonSize));
+            m_data->json = static_cast<char*>(malloc(jsonSize));
             if (!m_data->json)
                 return false;
-            std::memcpy(m_data->json, rp_data->json, jsonSize);
+            memcpy(m_data->json, rp_data->json, jsonSize);
             m_data->jsonBuffer = rp_data->jsonBuffer;
         }
 
         if (rp_data->title) {
             const size_t titleSize = strlen(rp_data->title) + 1;
-            m_data->title = static_cast<char*>(std::malloc(titleSize));
+            m_data->title = static_cast<char*>(malloc(titleSize));
             if (!m_data->title)
                 return false;
-            std::memcpy(m_data->title, rp_data->title, titleSize);
+            memcpy(m_data->title, rp_data->title, titleSize);
             m_data->titlBuffer = rp_data->titlBuffer;
         }
 
         if (rp_data->description) {
             const size_t descriptionSize = strlen(rp_data->description) + 1;
-            m_data->description = static_cast<char*>(std::malloc(descriptionSize));
+            m_data->description = static_cast<char*>(malloc(descriptionSize));
             if (!m_data->description)
                 return false;
-            std::memcpy(m_data->description, rp_data->description, descriptionSize);
+            memcpy(m_data->description, rp_data->description, descriptionSize);
             m_data->descBuffer = rp_data->descBuffer;
         }
 
         setBufferOffsets(m_data);
     }
     else {
-        std::free(m_data->jpeg);
-        std::free(m_data->description);
-        std::free(m_data->json);
-        std::free(m_data->header);
-        std::free(m_data->title);
-        std::free(m_data);
+        free(m_data->jpeg);
+        free(m_data->description);
+        free(m_data->json);
+        free(m_data->header);
+        free(m_data->title);
+        free(m_data);
 
         m_data = rp_data;
     }
@@ -1139,36 +1139,36 @@ bool RagePhoto::setJpeg(const char *data, uint32_t size, uint32_t bufferSize)
 {
     if (m_data->jpeg) {
         if (m_data->jpegSize > size) {
-            char *t_photoData = static_cast<char*>(std::realloc(m_data->jpeg, size));
+            char *t_photoData = static_cast<char*>(realloc(m_data->jpeg, size));
             if (!t_photoData) {
                 m_data->error = Error::PhotoMallocError; // 16
                 return false;
             }
             m_data->jpeg = t_photoData;
-            std::memcpy(m_data->jpeg, data, size);
+            memcpy(m_data->jpeg, data, size);
             m_data->jpegSize = size;
         }
         else if (m_data->jpegSize < size) {
-            std::free(m_data->jpeg);
-            m_data->jpeg = static_cast<char*>(std::malloc(size));
+            free(m_data->jpeg);
+            m_data->jpeg = static_cast<char*>(malloc(size));
             if (!m_data->jpeg) {
                 m_data->error = Error::PhotoMallocError; // 16
                 return false;
             }
-            std::memcpy(m_data->jpeg, data, size);
+            memcpy(m_data->jpeg, data, size);
             m_data->jpegSize = size;
         }
         else {
-            std::memcpy(m_data->jpeg, data, size);
+            memcpy(m_data->jpeg, data, size);
         }
     }
     else {
-        m_data->jpeg = static_cast<char*>(std::malloc(size));
+        m_data->jpeg = static_cast<char*>(malloc(size));
         if (!m_data->jpeg) {
             m_data->error = Error::PhotoMallocError; // 16
             return false;
         }
-        std::memcpy(m_data->jpeg, data, size);
+        memcpy(m_data->jpeg, data, size);
         m_data->jpegSize = size;
     }
 

@@ -17,6 +17,7 @@
 *****************************************************************************/
 
 #include "RagePhoto.h"
+#include <inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -130,12 +131,17 @@ ragephoto_t ragephoto_open()
     if (!instance)
         return NULL;
     instance->data = (RagePhotoData*)(malloc(sizeof(RagePhotoData)));
-    if (!instance->data)
+    if (!instance->data) {
+        free(instance);
         return NULL;
+    }
     memset(instance->data, 0, sizeof(RagePhotoData));
     instance->parser = (RagePhotoFormatParser*)(malloc(sizeof(RagePhotoFormatParser)));
-    if (!instance->parser)
+    if (!instance->parser) {
+        free(instance->data);
+        free(instance);
         return NULL;
+    }
     memset(instance->parser, 0, sizeof(RagePhotoFormatParser));
     ragephotodata_setbufferdefault(instance->data);
     return (ragephoto_t)instance;
@@ -505,28 +511,28 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
 
 #ifdef RAGEPHOTO_DEBUG
         printf("header: %s\n", rp_data->header);
-        printf("headerSum: %lu\n", rp_data->headerSum);
-        printf("headerSum2: %lu\n", rp_data->headerSum2);
-        printf("photoBuffer: %lu\n", rp_data->jpegBuffer);
-        printf("descBuffer: %lu\n", rp_data->descBuffer);
-        printf("descOffset: %lu\n", rp_data->descOffset);
+        printf("headerSum: %" PRIu32 "\n", rp_data->headerSum);
+        printf("headerSum2: %" PRIu32 "\n", rp_data->headerSum2);
+        printf("photoBuffer: %" PRIu32 "\n", rp_data->jpegBuffer);
+        printf("descBuffer: %" PRIu32 "\n", rp_data->descBuffer);
+        printf("descOffset: %" PRIu32 "\n", rp_data->descOffset);
         printf("description: %s\n", rp_data->description);
-        printf("jsonBuffer: %lu\n", rp_data->jsonBuffer);
-        printf("jsonOffset: %lu\n", rp_data->jsonOffset);
+        printf("jsonBuffer: %" PRIu32 "\n", rp_data->jsonBuffer);
+        printf("jsonOffset: %" PRIu32 "\n", rp_data->jsonOffset);
         printf("json: %s\n", rp_data->json);
-        printf("sign: %llu\n", ragephotodata_getphotosign(rp_data));
-        printf("titlBuffer: %lu\n", rp_data->titlBuffer);
-        printf("titlOffset: %lu\n", rp_data->titlOffset);
+        printf("sign: %" PRIu64 "\n", ragephotodata_getphotosign(rp_data));
+        printf("titlBuffer: %" PRIu32 "\n", rp_data->titlBuffer);
+        printf("titlOffset: %" PRIu32 "\n", rp_data->titlOffset);
         printf("title: %s\n", rp_data->title);
-        printf("eofOffset: %lu\n", rp_data->endOfFile);
+        printf("eofOffset: %" PRIu32 "\n", rp_data->endOfFile);
         printf("ragephotodata_setbufferoffsets()\n");
         ragephotodata_setbufferoffsets(rp_data);
-        printf("descOffset: %lu\n", rp_data->descOffset);
-        printf("jsonOffset: %lu\n", rp_data->jsonOffset);
-        printf("titlOffset: %lu\n", rp_data->titlOffset);
-        printf("eofOffset: %lu\n", rp_data->endOfFile);
-        printf("calc size: %lu\n", ragephotodata_getsavesize(rp_data, rp_parser));
-        printf("real size: %lu\n", length);
+        printf("descOffset: %" PRIu32 "\n", rp_data->descOffset);
+        printf("jsonOffset: %" PRIu32 "\n", rp_data->jsonOffset);
+        printf("titlOffset: %" PRIu32 "\n", rp_data->titlOffset);
+        printf("eofOffset: %" PRIu32 "\n", rp_data->endOfFile);
+        printf("calc size: %zu\n", ragephotodata_getsavesize(rp_data, rp_parser));
+        printf("real size: %zu\n", length);
 #endif
 
         rp_data->error = RAGEPHOTO_ERROR_NOERROR; // 255
@@ -583,8 +589,10 @@ bool ragephoto_loadfile(ragephoto_t instance_t, const char *filename)
         return false;
     }
     char *data = (char*)(malloc(fileSize));
-    if (!data)
+    if (!data) {
+        fclose(file);
         return false;
+    }
     const size_t fileRsize = fread(data, 1, fileSize, file);
     fclose(file);
     if (fileSize != fileRsize) {
