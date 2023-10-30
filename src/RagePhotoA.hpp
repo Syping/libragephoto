@@ -96,6 +96,8 @@ public:
     };
     RagePhotoA() {
         instance = ragephoto_open();
+        if (!instance)
+            throw std::runtime_error("ragephoto_t instance can't be allocated");
     }
     ~RagePhotoA() {
         ragephoto_close(instance);

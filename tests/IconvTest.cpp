@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
     // English
     src_s = sizeof(photoHeader_english);
     dst_s = sizeof(photoString);
-    char *src_english = (char*)photoHeader_english;
+    char *src_english = reinterpret_cast<char*>(photoHeader_english);
     char *dst_english = photoString;
     ret = iconv(iconv_in, &src_english, &src_s, &dst_english, &dst_s);
     if (ret == static_cast<size_t>(-1))
@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
     // Japanese
     src_s = sizeof(photoHeader_japanese);
     dst_s = sizeof(photoString);
-    char *src_japanese = (char*)photoHeader_japanese;
+    char *src_japanese = reinterpret_cast<char*>(photoHeader_japanese);
     char *dst_japanese = photoString;
     ret = iconv(iconv_in, &src_japanese, &src_s, &dst_japanese, &dst_s);
     if (ret == static_cast<size_t>(-1))
@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
     // Korean
     src_s = sizeof(photoHeader_korean);
     dst_s = sizeof(photoString);
-    char *src_korean = (char*)photoHeader_korean;
+    char *src_korean = reinterpret_cast<char*>(photoHeader_korean);
     char *dst_korean = photoString;
     ret = iconv(iconv_in, &src_korean, &src_s, &dst_korean, &dst_s);
     if (ret == static_cast<size_t>(-1))
@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
     // Russian
     src_s = sizeof(photoHeader_russian);
     dst_s = sizeof(photoString);
-    char *src_russian = (char*)photoHeader_russian;
+    char *src_russian = reinterpret_cast<char*>(photoHeader_russian);
     char *dst_russian = photoString;
     ret = iconv(iconv_in, &src_russian, &src_s, &dst_russian, &dst_s);
     if (ret == static_cast<size_t>(-1))
@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
     // Taiwanese
     src_s = sizeof(photoHeader_taiwanese);
     dst_s = sizeof(photoString);
-    char *src_taiwanese = (char*)photoHeader_taiwanese;
+    char *src_taiwanese = reinterpret_cast<char*>(photoHeader_taiwanese);
     char *dst_taiwanese = photoString;
     ret = iconv(iconv_in, &src_taiwanese, &src_s, &dst_taiwanese, &dst_s);
     if (ret == static_cast<size_t>(-1))

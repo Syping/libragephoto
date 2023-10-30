@@ -56,6 +56,19 @@ inline size_t writeBuffer(const void *input, char *output, size_t *pos, size_t o
     return writeLen;
 }
 
+inline size_t zeroBuffer(char *output, size_t *pos, size_t outputLen, size_t inputLen)
+{
+    const size_t maxLen = outputLen - *pos;
+    size_t zeroLen = inputLen;
+    if (*pos >= outputLen)
+        return 0;
+    if (inputLen > maxLen)
+        zeroLen = maxLen;
+    memset(&output[*pos], 0, zeroLen);
+    *pos = *pos + zeroLen;
+    return zeroLen;
+}
+
 inline bool writeDataChar(const char *input, char **output)
 {
     const size_t src_s = strlen(input) + 1;
@@ -247,7 +260,7 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
         char *dst = rp_data->header;
         const size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
         iconv_close(iconv_in);
-        if (ret == (size_t)(-1)) {
+        if (ret == (size_t)-1) {
             rp_data->error = RAGEPHOTO_ERROR_UNICODEHEADERERROR; // 6
             return false;
         }
@@ -257,7 +270,7 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
             rp_data->error = RAGEPHOTO_ERROR_HEADERMALLOCERROR; // 4
             return false;
         }
-        const int converted = WideCharToMultiByte(CP_UTF8, 0, (wchar_t*)(photoHeader), -1, rp_data->header, 256, NULL, NULL);
+        const int converted = WideCharToMultiByte(CP_UTF8, 0, (wchar_t*)photoHeader, -1, rp_data->header, 256, NULL, NULL);
         if (converted == 0) {
             free(rp_data->header);
             rp_data->header = NULL;
@@ -619,17 +632,20 @@ uint32_t ragephoto_getphotoformat(ragephoto_t instance_t)
 const char* ragephoto_getphotojpeg(ragephoto_t instance_t)
 {
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
-    return instance->data->jpeg;
+    if (instance->data->jpeg)
+        return instance->data->jpeg;
+    return "";
 }
 
 uint64_t ragephotodata_getphotosignf(RagePhotoData *rp_data, uint32_t photoFormat)
 {
-    if (photoFormat == RAGEPHOTO_FORMAT_GTA5)
-        return (0x100000000000000ULL | joaatFromInitial(rp_data->jpeg, rp_data->jpegSize, RAGEPHOTO_SIGNINITIAL_GTA5));
-    else if (photoFormat == RAGEPHOTO_FORMAT_RDR2)
-        return (0x100000000000000ULL | joaatFromInitial(rp_data->jpeg, rp_data->jpegSize, RAGEPHOTO_SIGNINITIAL_RDR2));
-    else
-        return 0;
+    if (rp_data->jpeg) {
+        if (photoFormat == RAGEPHOTO_FORMAT_GTA5)
+            return (0x100000000000000ULL | joaatFromInitial(rp_data->jpeg, rp_data->jpegSize, RAGEPHOTO_SIGNINITIAL_GTA5));
+        else if (photoFormat == RAGEPHOTO_FORMAT_RDR2)
+            return (0x100000000000000ULL | joaatFromInitial(rp_data->jpeg, rp_data->jpegSize, RAGEPHOTO_SIGNINITIAL_RDR2));
+    }
+    return 0;
 }
 
 uint64_t ragephotodata_getphotosign(RagePhotoData *rp_data)
@@ -654,32 +670,39 @@ uint32_t ragephoto_getphotosize(ragephoto_t instance_t)
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->jpeg)
         return instance->data->jpegSize;
-    else
-        return 0;
+    return 0;
 }
 
 const char* ragephoto_getphotodesc(ragephoto_t instance_t)
 {
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
-    return instance->data->description;
+    if (instance->data->description)
+        return instance->data->description;
+    return "";
 }
 
 const char* ragephoto_getphotojson(ragephoto_t instance_t)
 {
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
-    return instance->data->json;
+    if (instance->data->json)
+        return instance->data->json;
+    return "";
 }
 
 const char* ragephoto_getphotoheader(ragephoto_t instance_t)
 {
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
-    return instance->data->header;
+    if (instance->data->header)
+        return instance->data->header;
+    return "";
 }
 
 const char* ragephoto_getphototitle(ragephoto_t instance_t)
 {
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
-    return instance->data->title;
+    if (instance->data->title)
+        return instance->data->title;
+    return "";
 }
 
 const char* ragephoto_version()
@@ -690,6 +713,10 @@ const char* ragephoto_version()
 bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, char *data, uint32_t photoFormat)
 {
     if (photoFormat == RAGEPHOTO_FORMAT_GTA5 || photoFormat == RAGEPHOTO_FORMAT_RDR2) {
+        if (!rp_data->header) {
+            rp_data->error = RAGEPHOTO_ERROR_INCOMPLETEHEADER; // 3
+            return false;
+        }
 #if defined(UNICODE_ICONV) || defined(UNICODE_WINCVT)
 #if defined(UNICODE_ICONV)
         iconv_t iconv_in = iconv_open("UTF-16LE", "UTF-8");
@@ -705,7 +732,7 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
         char *dst = photoHeader;
         const size_t ret = iconv(iconv_in, &src, &src_s, &dst, &dst_s);
         iconv_close(iconv_in);
-        if (ret == (size_t)(-1)) {
+        if (ret == (size_t)-1) {
             rp_data->error = RAGEPHOTO_ERROR_UNICODEHEADERERROR; // 6
             return false;
         }
@@ -713,36 +740,13 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 #elif defined(UNICODE_WINCVT)
         char photoHeader[256];
         memset(&photoHeader, 0, 256);
-        const int converted = MultiByteToWideChar(CP_UTF8, 0, rp_data->header, (int)(strlen(rp_data->header)), (wchar_t*)(photoHeader), 256 / sizeof(wchar_t));
+        const int converted = MultiByteToWideChar(CP_UTF8, 0, rp_data->header, (int)strlen(rp_data->header), (wchar_t*)photoHeader, 256 / sizeof(wchar_t));
         if (converted == 0) {
             rp_data->error = RAGEPHOTO_ERROR_UNICODEHEADERERROR; // 6
             return false;
         }
         const size_t photoHeader_size = 256;
 #endif
-
-        if (rp_data->jpegSize > rp_data->jpegBuffer) {
-            rp_data->error = RAGEPHOTO_ERROR_PHOTOBUFFERTIGHT; // 36
-            return false;
-        }
-
-        const size_t jsonString_size = strlen(rp_data->json) + 1;
-        if (jsonString_size > rp_data->jsonBuffer) {
-            rp_data->error = RAGEPHOTO_ERROR_JSONBUFFERTIGHT; // 37
-            return false;
-        }
-
-        const size_t titlString_size = strlen(rp_data->title) + 1;
-        if (titlString_size > rp_data->titlBuffer) {
-            rp_data->error = RAGEPHOTO_ERROR_TITLEBUFFERTIGHT; // 38
-            return false;
-        }
-
-        const size_t descString_size = strlen(rp_data->description) + 1;
-        if (descString_size > rp_data->descBuffer) {
-            rp_data->error = RAGEPHOTO_ERROR_DESCBUFFERTIGHT; // 39
-            return false;
-        }
 
         const size_t length = ragephotodata_getsavesizef(rp_data, rp_parser, photoFormat);
         size_t pos = 0;
@@ -751,7 +755,7 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 #if __BYTE_ORDER == __LITTLE_ENDIAN
         memcpy(uInt32Buffer, &photoFormat, 4);
 #else
-        uInt32ToCharLE((uint32_t)(photoFormat), uInt32Buffer);
+        uInt32ToCharLE(photoFormat, uInt32Buffer);
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
@@ -825,9 +829,20 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
-        writeBuffer(rp_data->jpeg, data, &pos, length, rp_data->jpegSize);
-        for (size_t i = rp_data->jpegSize; i < rp_data->jpegBuffer; i++) {
-            writeBuffer("\0", data, &pos, length, 1);
+        if (rp_data->jpeg) {
+            if (rp_data->jpegSize > rp_data->jpegBuffer) {
+                rp_data->error = RAGEPHOTO_ERROR_PHOTOBUFFERTIGHT; // 36
+                return false;
+            }
+            writeBuffer(rp_data->jpeg, data, &pos, length, rp_data->jpegSize);
+            for (size_t i = rp_data->jpegSize; i < rp_data->jpegBuffer; i++) {
+                writeBuffer("\0", data, &pos, length, 1);
+            }
+        }
+        else {
+            for (size_t i = 0; i < rp_data->jpegBuffer; i++) {
+                writeBuffer("\0", data, &pos, length, 1);
+            }
         }
 
         pos = rp_data->jsonOffset + headerSize;
@@ -840,9 +855,21 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
-        writeBuffer(rp_data->json, data, &pos, length, jsonString_size);
-        for (size_t i = jsonString_size; i < rp_data->jsonBuffer; i++) {
-            writeBuffer("\0", data, &pos, length, 1);
+        if (rp_data->json) {
+            const size_t jsonString_size = strlen(rp_data->json) + 1;
+            if (jsonString_size > rp_data->jsonBuffer) {
+                rp_data->error = RAGEPHOTO_ERROR_JSONBUFFERTIGHT; // 37
+                return false;
+            }
+            writeBuffer(rp_data->json, data, &pos, length, jsonString_size);
+            for (size_t i = jsonString_size; i < rp_data->jsonBuffer; i++) {
+                writeBuffer("\0", data, &pos, length, 1);
+            }
+        }
+        else {
+            for (size_t i = 0; i < rp_data->jsonBuffer; i++) {
+                writeBuffer("\0", data, &pos, length, 1);
+            }
         }
 
         pos = rp_data->titlOffset + headerSize;
@@ -855,9 +882,21 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
-        writeBuffer(rp_data->title, data, &pos, length, titlString_size);
-        for (size_t i = titlString_size; i < rp_data->titlBuffer; i++) {
-            writeBuffer("\0", data, &pos, length, 1);
+        if (rp_data->title) {
+            const size_t titlString_size = strlen(rp_data->title) + 1;
+            if (titlString_size > rp_data->titlBuffer) {
+                rp_data->error = RAGEPHOTO_ERROR_TITLEBUFFERTIGHT; // 38
+                return false;
+            }
+            writeBuffer(rp_data->title, data, &pos, length, titlString_size);
+            for (size_t i = titlString_size; i < rp_data->titlBuffer; i++) {
+                writeBuffer("\0", data, &pos, length, 1);
+            }
+        }
+        else {
+            for (size_t i = 0; i < rp_data->titlBuffer; i++) {
+                writeBuffer("\0", data, &pos, length, 1);
+            }
         }
 
         pos = rp_data->descOffset + headerSize;
@@ -870,9 +909,21 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 #endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
-        writeBuffer(rp_data->description, data, &pos, length, descString_size);
-        for (size_t i = descString_size; i < rp_data->descBuffer; i++) {
-            writeBuffer("\0", data, &pos, length, 1);
+        if (rp_data->description) {
+            const size_t descString_size = strlen(rp_data->description) + 1;
+            if (descString_size > rp_data->descBuffer) {
+                rp_data->error = RAGEPHOTO_ERROR_DESCBUFFERTIGHT; // 39
+                return false;
+            }
+            writeBuffer(rp_data->description, data, &pos, length, descString_size);
+            for (size_t i = descString_size; i < rp_data->descBuffer; i++) {
+                writeBuffer("\0", data, &pos, length, 1);
+            }
+        }
+        else {
+            for (size_t i = 0; i < rp_data->descBuffer; i++) {
+                writeBuffer("\0", data, &pos, length, 1);
+            }
         }
 
         pos = rp_data->endOfFile + headerSize - 4;
