@@ -114,11 +114,11 @@ class RagePhoto:
     else:
       return b""
 
-  def jpegSign(self, format = None):
-    if format is None:
+  def jpegSign(self, photoFormat = None):
+    if photoFormat is None:
       return libragephoto.ragephoto_getphotosign(self.__instance)
     else:
-      return libragephoto.ragephoto_getphotosignf(self.__instance, format)
+      return libragephoto.ragephoto_getphotosignf(self.__instance, photoFormat)
 
   def jpegSize(self):
     return libragephoto.ragephoto_getphotosize(self.__instance)
@@ -137,33 +137,33 @@ class RagePhoto:
     else:
       return b""
 
-  def save(self, format = None):
-    _data = bytearray(self.saveSize(format))
+  def save(self, photoFormat = None):
+    _data = bytearray(self.saveSize(photoFormat))
     _ptr = (c_char * len(_data)).from_buffer(_data)
-    if format is None:
+    if photoFormat is None:
       _ret = libragephoto.ragephoto_save(self.__instance, _ptr)
     else:
-      _ret = libragephoto.ragephoto_savef(self.__instance, _ptr, format)
+      _ret = libragephoto.ragephoto_savef(self.__instance, _ptr, photoFormat)
     if _ret:
       return _data
     else:
       return None
 
-  def saveFile(self, file, format = None):
+  def saveFile(self, file, photoFormat = None):
     if isinstance(file, str):
       _file = file.encode()
     else:
       _file = file
-    if format is None:
+    if photoFormat is None:
       return libragephoto.ragephoto_savefile(self.__instance, _file)
     else:
-      return libragephoto.ragephoto_savefilef(self.__instance, _file, format)
+      return libragephoto.ragephoto_savefilef(self.__instance, _file, photoFormat)
 
-  def saveSize(self, format = None):
-    if format is None:
+  def saveSize(self, photoFormat = None):
+    if photoFormat is None:
       return libragephoto.ragephoto_getsavesize(self.__instance)
     else:
-      return libragephoto.ragephoto_getsavesizef(self.__instance, format)
+      return libragephoto.ragephoto_getsavesizef(self.__instance, photoFormat)
 
   def setBufferDefault(self):
     return libragephoto.ragephoto_setbufferdefault(self.__instance)
@@ -181,8 +181,8 @@ class RagePhoto:
     else:
       libragephoto.ragephoto_setphotodesc(self.__instance, _desc, buffer)
 
-  def setFormat(self, format):
-    libragephoto.ragephoto_setphotoformat(self.__instance, format)
+  def setFormat(self, photoFormat):
+    libragephoto.ragephoto_setphotoformat(self.__instance, photoFormat)
 
   def setJpeg(self, jpeg, buffer = None):
     _buffer = 0
