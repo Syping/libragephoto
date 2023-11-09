@@ -3,7 +3,7 @@ PROJECT_NUMBER         = "Version: @ragephoto_VERSION@"
 INPUT                  = "@CMAKE_CURRENT_SOURCE_DIR@/index.doc" \
                          "@CMAKE_CURRENT_SOURCE_DIR@/build.doc" \
                          "@CMAKE_CURRENT_SOURCE_DIR@/usage.doc" \
-                         "src"
+                         "src/core"
 OUTPUT_DIRECTORY       = "@CMAKE_CURRENT_BINARY_DIR@"
 EXTRACT_PRIVATE        = NO
 ENABLE_PREPROCESSING   = YES

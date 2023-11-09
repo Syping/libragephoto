@@ -157,16 +157,12 @@ inline uint32_t joaatFromInitial(const char *data, size_t size, uint32_t init_va
 RagePhoto::RagePhoto()
 {
     m_data = static_cast<RagePhotoData*>(malloc(sizeof(RagePhotoData)));
-    if (!m_data) {
+    if (!m_data)
         throw std::runtime_error("RagePhotoData data struct can't be allocated");
-        return;
-    }
     memset(m_data, 0, sizeof(RagePhotoData));
     m_parser = static_cast<RagePhotoFormatParser*>(malloc(sizeof(RagePhotoFormatParser)));
-    if (!m_parser) {
+    if (!m_parser)
         throw std::runtime_error("RagePhotoFormatParser parser struct can't be allocated");
-        return;
-    }
     memset(m_parser, 0, sizeof(RagePhotoFormatParser));
     setBufferDefault(m_data);
 }

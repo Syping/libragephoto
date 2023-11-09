@@ -1,0 +1,18 @@
+[project]
+name = "ragephoto"
+version = "@ragephoto_VERSION@"
+authors = [
+  { name = "Syping" },
+]
+description = "libragephoto for Python"
+requires-python = ">=3.6"
+classifiers = [
+  "License :: OSI Approved :: BSD-2-Clause",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+"Homepage" = "https://libragephoto.syping.de/"

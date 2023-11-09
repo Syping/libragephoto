@@ -24,7 +24,7 @@ include(GNUInstallDirs)
 include(cmake/cxxstd.cmake)
 include(cmake/unicode.cmake)
 
-# RagePhoto Top Level ON
+# RagePhoto Top Level
 if (${CMAKE_PROJECT_NAME} STREQUAL "ragephoto")
     set(RPTL_ON ON)
 else()
@@ -35,59 +35,53 @@ endif()
 option(RAGEPHOTO_C_LIBRARY "Build libragephoto as C library" OFF)
 if (RAGEPHOTO_C_LIBRARY)
     set(RAGEPHOTO_HEADERS
-        src/RagePhoto.h
-        src/RagePhotoA
-        src/RagePhotoA.hpp
-        src/RagePhotoB
-        src/RagePhotoB.hpp
-        src/RagePhotoLibrary.h
-        src/RagePhotoTypedefs.h
+        src/core/RagePhoto.h
+        src/core/RagePhotoA
+        src/core/RagePhotoA.hpp
+        src/core/RagePhotoB
+        src/core/RagePhotoB.hpp
+        src/core/RagePhotoLibrary.h
+        src/core/RagePhotoTypedefs.h
     )
     set(RAGEPHOTO_SOURCES
-        src/RagePhoto.c
+        src/core/RagePhoto.c
     )
 else()
     set(RAGEPHOTO_HEADERS
-        src/RagePhoto
-        src/RagePhoto.hpp
-        src/RagePhotoB
-        src/RagePhotoB.hpp
-        src/RagePhotoLibrary.h
-        src/RagePhotoTypedefs.h
+        src/core/RagePhoto
+        src/core/RagePhoto.hpp
+        src/core/RagePhotoB
+        src/core/RagePhotoB.hpp
+        src/core/RagePhotoLibrary.h
+        src/core/RagePhotoTypedefs.h
     )
     set(RAGEPHOTO_SOURCES
-        src/RagePhoto.cpp
+        src/core/RagePhoto.cpp
     )
 endif()
 
 # RagePhoto Library Type
 option(RAGEPHOTO_STATIC "Build libragephoto as static library" OFF)
 if (RAGEPHOTO_STATIC)
-    option(RAGEPHOTO_C_API "Build libragephoto with C API support" OFF)
     set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_STATIC)
 else()
-    option(RAGEPHOTO_C_API "Build libragephoto with C API support" ON)
     set(LIBRAGEPHOTO_LIBTYPE LIBRAGEPHOTO_SHARED)
 endif()
 
 # RagePhoto Benchmark
 option(RAGEPHOTO_BENCHMARK "Build with libragephoto benchmark (C++ only)" OFF)
-if (RAGEPHOTO_BENCHMARK)
-    list(APPEND LIBRAGEPHOTO_DEFINES
-        RAGEPHOTO_BENCHMARK
-    )
-endif()
 
-# RagePhoto C API
+# RagePhoto API
+option(RAGEPHOTO_C_API "Build libragephoto with C API support" ON)
 if (RAGEPHOTO_C_LIBRARY)
     set(LIBRAGEPHOTO_API LIBRAGEPHOTO_C_ONLY)
 else()
     if (RAGEPHOTO_C_API)
         set(LIBRAGEPHOTO_API LIBRAGEPHOTO_CXX_C)
         list(APPEND RAGEPHOTO_HEADERS
-            src/RagePhoto.h
-            src/RagePhotoA
-            src/RagePhotoA.hpp
+            src/core/RagePhoto.h
+            src/core/RagePhotoA
+            src/core/RagePhotoA.hpp
         )
     else()
         set(LIBRAGEPHOTO_API LIBRAGEPHOTO_CXX_ONLY)
@@ -97,15 +91,15 @@ endif()
 # RagePhoto Win32 Shared Resources
 if (WIN32)
     string(TIMESTAMP ragephoto_BUILD_YEAR "%Y" UTC)
-    configure_file(src/ragephoto.rc.in "${ragephoto_BINARY_DIR}/resources/ragephoto.rc" @ONLY)
+    configure_file(src/core/ragephoto.rc.in "${ragephoto_BINARY_DIR}/resources/ragephoto.rc" @ONLY)
     list(APPEND RAGEPHOTO_SHARED_RESOURCES
         "${ragephoto_BINARY_DIR}/resources/ragephoto.rc"
     )
 endif()
 
 # RagePhoto Configures + Target + Installs
-configure_file(src/ragephoto.pc.in "${ragephoto_BINARY_DIR}/pkgconfig/ragephoto.pc" @ONLY)
-configure_file(src/RagePhotoConfig.h.in "${ragephoto_BINARY_DIR}/include/RagePhotoConfig.h" @ONLY)
+configure_file(src/core/ragephoto.pc.in "${ragephoto_BINARY_DIR}/pkgconfig/ragephoto.pc" @ONLY)
+configure_file(src/core/RagePhotoConfig.h.in "${ragephoto_BINARY_DIR}/include/RagePhotoConfig.h" @ONLY)
 list(APPEND RAGEPHOTO_HEADERS
     "${ragephoto_BINARY_DIR}/include/RagePhotoConfig.h"
 )
@@ -122,13 +116,14 @@ endif()
 target_compile_definitions(ragephoto PRIVATE
     LIBRAGEPHOTO_LIBRARY
     ${LIBRAGEPHOTO_DEFINES}
+    $<$<BOOL:${RAGEPHOTO_BENCHMARK}>:RAGEPHOTO_BENCHMARK>
 )
-if (MSVC AND MSVC_VERSION GREATER_EQUAL 1914 AND NOT RAGEPHOTO_C_LIBRARY)
-    target_compile_options(ragephoto PRIVATE "/Zc:__cplusplus")
+if (MSVC AND MSVC_VERSION GREATER_EQUAL 1914)
+    target_compile_options(ragephoto PRIVATE $<$<COMPILE_LANGUAGE:CXX>:/Zc:__cplusplus>)
 endif()
 target_include_directories(ragephoto PUBLIC
     "${ragephoto_BINARY_DIR}/include"
-    "${ragephoto_SOURCE_DIR}/src"
+    "${ragephoto_SOURCE_DIR}/src/core"
 )
 install(TARGETS ragephoto
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
@@ -167,14 +162,14 @@ option(RAGEPHOTO_EXTRACT "Build libragephoto with ragephoto-extract" ${RPTL_ON})
 if (RAGEPHOTO_EXTRACT)
     # RagePhoto-Extract Source files
     if (RAGEPHOTO_C_API)
-        set(EXTRACT_SOURCES src/RagePhoto-Extract.c)
+        set(EXTRACT_SOURCES src/extract/RagePhoto-Extract.c)
     else()
-        set(EXTRACT_SOURCES src/RagePhoto-Extract.cpp)
+        set(EXTRACT_SOURCES src/extract/RagePhoto-Extract.cpp)
     endif()
     # RagePhoto-Extract Win32 Shared Resources
     if (WIN32)
         string(TIMESTAMP ragephoto_BUILD_YEAR "%Y" UTC)
-        configure_file(src/ragephoto-extract.rc.in "${ragephoto_BINARY_DIR}/resources/ragephoto-extract.rc" @ONLY)
+        configure_file(src/extract/ragephoto-extract.rc.in "${ragephoto_BINARY_DIR}/resources/ragephoto-extract.rc" @ONLY)
         list(APPEND EXTRACT_RESOURCES
             "${ragephoto_BINARY_DIR}/resources/ragephoto-extract.rc"
         )
@@ -184,11 +179,46 @@ if (RAGEPHOTO_EXTRACT)
     set_target_properties(ragephoto-extract PROPERTIES
         INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
     )
-    if (MSVC AND MSVC_VERSION GREATER_EQUAL 1914 AND NOT RAGEPHOTO_C_API)
-        target_compile_options(ragephoto-extract PRIVATE "/Zc:__cplusplus")
+    if (MSVC AND MSVC_VERSION GREATER_EQUAL 1914)
+        target_compile_options(ragephoto-extract PRIVATE $<$<COMPILE_LANGUAGE:CXX>:/Zc:__cplusplus>)
     endif()
     target_link_libraries(ragephoto-extract PRIVATE ragephoto)
     install(TARGETS ragephoto-extract DESTINATION "${CMAKE_INSTALL_BINDIR}")
+endif()
+
+# RagePhoto Python Package
+option(RAGEPHOTO_PYTHON "Create ragephoto Python Package" OFF)
+if (RAGEPHOTO_PYTHON)
+    # Python Package Library file
+    if (WIN32)
+        set(PYRAGEPHOTO_LIBRARY "libragephoto.dll")
+    else()
+        set(PYRAGEPHOTO_LIBRARY "libragephoto.so")
+    endif()
+    # Generate Python Package Project files
+    configure_file(src/python/setup.py.in "${ragephoto_BINARY_DIR}/pyragephoto/setup.py" @ONLY)
+    configure_file(src/python/pyproject.toml.in "${ragephoto_BINARY_DIR}/pyragephoto/pyproject.toml" @ONLY)
+    configure_file(src/python/__version__.py.in "${ragephoto_BINARY_DIR}/pyragephoto/ragephoto/__version__.py" @ONLY)
+    # Python Package Source files + Target
+    set(PYRAGEPHOTO_SOURCES
+        "src/python/__init__.py"
+        "src/python/libragephoto.py"
+        "src/python/ragephoto.py"
+    )
+    add_custom_target(pyragephoto SOURCES ${PYRAGEPHOTO_SOURCES})
+    # Copy Python Package to build directory
+    file(COPY ${PYRAGEPHOTO_SOURCES} DESTINATION "${ragephoto_BINARY_DIR}/pyragephoto/ragephoto")
+    # Python Package Bundle Settings
+    option(RAGEPHOTO_PYTHON_BUNDLE_LIBRARY "Bundle libragephoto with ragephoto Python Package" OFF)
+    if (RAGEPHOTO_PYTHON_BUNDLE_LIBRARY)
+        add_custom_command(
+            TARGET ragephoto
+            POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE:ragephoto>" "${ragephoto_BINARY_DIR}/pyragephoto/ragephoto/${PYRAGEPHOTO_LIBRARY}"
+            BYPRODUCTS "${ragephoto_BINARY_DIR}/pyragephoto/ragephoto/${PYRAGEPHOTO_LIBRARY}"
+            VERBATIM
+        )
+    endif()
 endif()
 
 # CPack Package Generation

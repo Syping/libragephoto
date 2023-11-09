@@ -40,7 +40,7 @@ if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.13.0")
     )
     target_include_directories(ragephoto-wasm PUBLIC
         "${ragephoto_BINARY_DIR}/include"
-        "${ragephoto_SOURCE_DIR}/src"
+        "${ragephoto_SOURCE_DIR}/src/core"
     )
 else()
     message(WARNING "A useable WebAssembly build needs at least CMake 3.13.0 or newer")
