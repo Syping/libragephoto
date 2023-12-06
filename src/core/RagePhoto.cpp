@@ -780,9 +780,7 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 
         writeBuffer(photoHeader, data, &pos, length, photoHeader_size);
-        for (size_t i = photoHeader_size; i < 256; i++) {
-            writeBuffer("\0", data, &pos, length, 1);
-        }
+        zeroBuffer(data, &pos, length, 256 - photoHeader_size);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
         memcpy(uInt32Buffer, &rp_data->headerSum, 4);
@@ -854,14 +852,10 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
                 return false;
             }
             writeBuffer(rp_data->jpeg, data, &pos, length, rp_data->jpegSize);
-            for (size_t i = rp_data->jpegSize; i < rp_data->jpegBuffer; i++) {
-                writeBuffer("\0", data, &pos, length, 1);
-            }
+            zeroBuffer(data, &pos, length, rp_data->jpegBuffer - rp_data->jpegSize);
         }
         else {
-            for (size_t i = 0; i < rp_data->jpegBuffer; i++) {
-                writeBuffer("\0", data, &pos, length, 1);
-            }
+            zeroBuffer(data, &pos, length, rp_data->jpegBuffer - rp_data->jpegSize);
         }
 
         pos = rp_data->jsonOffset + headerSize;
@@ -881,14 +875,10 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
                 return false;
             }
             writeBuffer(rp_data->json, data, &pos, length, jsonString_size);
-            for (size_t i = jsonString_size; i < rp_data->jsonBuffer; i++) {
-                writeBuffer("\0", data, &pos, length, 1);
-            }
+            zeroBuffer(data, &pos, length, rp_data->jsonBuffer - jsonString_size);
         }
         else {
-            for (size_t i = 0; i < rp_data->jsonBuffer; i++) {
-                writeBuffer("\0", data, &pos, length, 1);
-            }
+            zeroBuffer(data, &pos, length, rp_data->jsonBuffer);
         }
 
         pos = rp_data->titlOffset + headerSize;
@@ -908,14 +898,10 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
                 return false;
             }
             writeBuffer(rp_data->title, data, &pos, length, titlString_size);
-            for (size_t i = titlString_size; i < rp_data->titlBuffer; i++) {
-                writeBuffer("\0", data, &pos, length, 1);
-            }
+            zeroBuffer(data, &pos, length, rp_data->titlBuffer - titlString_size);
         }
         else {
-            for (size_t i = 0; i < rp_data->titlBuffer; i++) {
-                writeBuffer("\0", data, &pos, length, 1);
-            }
+            zeroBuffer(data, &pos, length, rp_data->titlBuffer);
         }
 
         pos = rp_data->descOffset + headerSize;
@@ -935,14 +921,10 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
                 return false;
             }
             writeBuffer(rp_data->description, data, &pos, length, descString_size);
-            for (size_t i = descString_size; i < rp_data->descBuffer; i++) {
-                writeBuffer("\0", data, &pos, length, 1);
-            }
+            zeroBuffer(data, &pos, length, rp_data->descBuffer - descString_size);
         }
         else {
-            for (size_t i = 0; i < rp_data->descBuffer; i++) {
-                writeBuffer("\0", data, &pos, length, 1);
-            }
+            zeroBuffer(data, &pos, length, rp_data->descBuffer);
         }
 
         pos = rp_data->endOfFile + headerSize - 4;
