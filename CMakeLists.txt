@@ -69,7 +69,7 @@ else()
 endif()
 
 # RagePhoto Benchmark
-option(RAGEPHOTO_BENCHMARK "Build with libragephoto benchmark (C++ only)" OFF)
+option(RAGEPHOTO_BENCHMARK "Build with libragephoto benchmark" OFF)
 
 # RagePhoto API
 option(RAGEPHOTO_C_API "Build libragephoto with C API support" ON)

@@ -219,7 +219,7 @@ RagePhotoData* RagePhoto::data()
 bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser)
 {
 #ifdef RAGEPHOTO_BENCHMARK
-    auto benchmark_parse_start = std::chrono::high_resolution_clock::now();
+    auto benchmark_parse_start = std::chrono::steady_clock::now();
 #endif
 
     // Avoid data conflicts
@@ -541,7 +541,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
         }
 
 #ifdef RAGEPHOTO_BENCHMARK
-        auto benchmark_parse_end = std::chrono::high_resolution_clock::now();
+        auto benchmark_parse_end = std::chrono::steady_clock::now();
         auto benchmark_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(benchmark_parse_end - benchmark_parse_start);
         std::cout << "Benchmark: " << benchmark_ns.count() << "ns" << std::endl;
 #endif

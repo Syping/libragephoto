@@ -22,6 +22,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef RAGEPHOTO_BENCHMARK
+#include <time.h>
+#endif
+
 #if defined(UNICODE_ICONV)
 #include <iconv.h>
 #elif defined(UNICODE_WINCVT)
@@ -217,6 +221,11 @@ RagePhotoData* ragephoto_getphotodata(ragephoto_t instance_t)
 
 bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, const char *data, size_t length)
 {
+#ifdef RAGEPHOTO_BENCHMARK
+    struct timespec benchmark_parse_start;
+    clock_gettime(CLOCK_MONOTONIC, &benchmark_parse_start);
+#endif
+
     // Avoid data conflicts
     ragephotodata_clear(rp_data);
 
@@ -521,6 +530,14 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
             rp_data->error = RAGEPHOTO_ERROR_INCORRECTJENDMARKER; // 34
             return false;
         }
+
+#ifdef RAGEPHOTO_BENCHMARK
+        struct timespec benchmark_parse_end;
+        clock_gettime(CLOCK_MONOTONIC, &benchmark_parse_end);
+        const uint64_t benchmark_ns = (UINT64_C(1000000000) * benchmark_parse_end.tv_sec + benchmark_parse_end.tv_nsec) -
+                                      (UINT64_C(1000000000) * benchmark_parse_start.tv_sec + benchmark_parse_start.tv_nsec);
+        printf("Benchmark: %" PRIu64 "ns\n", benchmark_ns);
+#endif
 
 #ifdef RAGEPHOTO_DEBUG
         printf("header: %s\n", rp_data->header);
