@@ -23,7 +23,11 @@
 #include <string.h>
 
 #ifdef RAGEPHOTO_BENCHMARK
+#ifdef _WIN32
+#include <profileapi.h>
+#else
 #include <time.h>
+#endif
 #endif
 
 #if defined(UNICODE_ICONV)
@@ -222,8 +226,14 @@ RagePhotoData* ragephoto_getphotodata(ragephoto_t instance_t)
 bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, const char *data, size_t length)
 {
 #ifdef RAGEPHOTO_BENCHMARK
-    struct timespec benchmark_parse_start;
+#ifdef _WIN32
+    LARGE_INTEGER freq, benchmark_parse_start, benchmark_parse_end;
+    QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&benchmark_parse_start);
+#else
+    struct timespec benchmark_parse_start, benchmark_parse_end;
     clock_gettime(CLOCK_MONOTONIC, &benchmark_parse_start);
+#endif
 #endif
 
     // Avoid data conflicts
@@ -532,10 +542,14 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
         }
 
 #ifdef RAGEPHOTO_BENCHMARK
-        struct timespec benchmark_parse_end;
+#ifdef _WIN32
+        QueryPerformanceCounter(&benchmark_parse_end);
+        const uint64_t benchmark_ns = (benchmark_parse_end.QuadPart - benchmark_parse_start.QuadPart) * INT64_C(1000000000) / freq.QuadPart;
+#else
         clock_gettime(CLOCK_MONOTONIC, &benchmark_parse_end);
         const uint64_t benchmark_ns = (UINT64_C(1000000000) * benchmark_parse_end.tv_sec + benchmark_parse_end.tv_nsec) -
                                       (UINT64_C(1000000000) * benchmark_parse_start.tv_sec + benchmark_parse_start.tv_nsec);
+#endif
         printf("Benchmark: %" PRIu64 "ns\n", benchmark_ns);
 #endif
 
