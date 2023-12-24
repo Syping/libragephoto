@@ -24,6 +24,7 @@
 
 #ifdef RAGEPHOTO_BENCHMARK
 #ifdef _WIN32
+#include <windows.h>
 #include <profileapi.h>
 #else
 #include <time.h>
