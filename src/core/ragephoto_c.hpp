@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2023 Syping
+* Copyright (C) 2021-2024 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -16,18 +16,21 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#ifndef RAGEPHOTOA_HPP
-#define RAGEPHOTOA_HPP
+#ifndef RAGEPHOTO_C_HPP
+#define RAGEPHOTO_C_HPP
 
 #ifdef __cplusplus
 #include "RagePhoto.h"
 #include <cstdlib>
 #include <iostream>
 
+namespace ragephoto {
+namespace c_abi {
+
 /**
 * \brief GTA V and RDR 2 Photo Parser (C API wrapper).
 */
-class RagePhotoA
+class photo
 {
 public:
     /** Default sizes */
@@ -94,12 +97,12 @@ public:
         SIGTA5 = 0xE47AB81CUL, /**< GTA V Sign Initial */
         SIRDR2 = 0x00FEEB1EUL, /**< RDR 2 Sign Initial */
     };
-    RagePhotoA() {
+    photo() {
         instance = ragephoto_open();
         if (!instance)
             throw std::runtime_error("ragephoto_t instance can't be allocated");
     }
-    ~RagePhotoA() {
+    ~photo() {
         ragephoto_close(instance);
     }
     /** Add a custom defined RagePhotoFormatParser. */
@@ -342,6 +345,9 @@ public:
 private:
     ragephoto_t instance;
 };
+
+} // c_abi
+} // ragephoto
 #endif // __cplusplus
 
-#endif // RAGEPHOTOA_HPP
+#endif // RAGEPHOTO_C_HPP

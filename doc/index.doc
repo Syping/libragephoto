@@ -12,8 +12,8 @@
 \subpage Usage "Using libragephoto"
 
 <b>Reference</b>  
-RagePhoto (C++ API)  
-RagePhotoA (C++ API based on C API)  
+ragephoto::cxx_abi::photo (C++ API)  
+ragephoto::c_abi::photo (C++ API based on C API)  
 RagePhoto.h (C API)  
 RagePhotoData (Data Object Struct)  
 RagePhotoFormatParser (Custom Format Parser Struct)

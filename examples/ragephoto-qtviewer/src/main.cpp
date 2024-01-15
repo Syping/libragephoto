@@ -16,7 +16,7 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include <RagePhotoB>
+#include <RagePhoto>
 #include <QApplication>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -35,11 +35,11 @@ bool readPhotoFile(const QString &filename, QMainWindow *mainWindow, QLabel *pho
     if (file.open(QIODevice::ReadOnly)) {
         const QByteArray fileData = file.readAll();
         file.close();
-        RagePhotoB ragePhoto;
+        RagePhoto ragePhoto;
         const bool loaded = ragePhoto.load(fileData.data(), static_cast<size_t>(fileData.size()));
         if (!loaded) {
             const int32_t error = ragePhoto.error();
-            if (error <= RagePhotoB::PhotoReadError) {
+            if (error <= RagePhoto::PhotoReadError) {
                 QMessageBox::warning(mainWindow, "Open Photo", "Failed to read photo: " + filename);
                 return false;
             }

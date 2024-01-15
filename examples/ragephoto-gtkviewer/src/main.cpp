@@ -16,7 +16,7 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include <RagePhotoB>
+#include <RagePhoto>
 #include <gtkmm/application.h>
 #include <gtkmm/box.h>
 #include <gtkmm/button.h>
@@ -36,11 +36,11 @@ bool readPhotoFile(const std::string &filename, Gtk::Window *win, Gtk::Image *im
     if (ifs.is_open()) {
         std::string data(std::istreambuf_iterator<char>{ifs}, {});
         ifs.close();
-        RagePhotoB ragePhoto;
+        RagePhoto ragePhoto;
         const bool loaded = ragePhoto.load(data);
         if (!loaded) {
             const int32_t error = ragePhoto.error();
-            if (error <= RagePhotoB::PhotoReadError) {
+            if (error <= RagePhoto::PhotoReadError) {
                 Gtk::MessageDialog msg(*win, "Failed to read photo: " + filename, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
                 msg.set_title("Open Photo");
                 msg.run();

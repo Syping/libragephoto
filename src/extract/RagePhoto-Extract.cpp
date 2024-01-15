@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2023 Syping
+* Copyright (C) 2021-2024 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -16,7 +16,7 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include <RagePhotoB>
+#include <RagePhoto>
 #include <fstream>
 
 int main(int argc, char *argv[])
@@ -27,18 +27,18 @@ int main(int argc, char *argv[])
     }
 
     // Initialise RagePhoto
-    RagePhotoB ragePhoto;
+    RagePhoto ragePhoto;
 
     // Load Photo
     const bool loaded = ragePhoto.loadFile(argv[1]);
 
     if (!loaded) {
         const int32_t error = ragePhoto.error();
-        if (error == RagePhotoB::Uninitialised) {
+        if (error == RagePhoto::Uninitialised) {
             std::cout << "Failed to open file: " << argv[1] << std::endl;
             return 1;
         }
-        else if (error <= RagePhotoB::PhotoReadError) {
+        else if (error <= RagePhoto::PhotoReadError) {
             std::cout << "Failed to load photo" << std::endl;
             return 1;
         }
@@ -60,9 +60,9 @@ int main(int argc, char *argv[])
     }
 
     const uint32_t photoFormat = ragePhoto.format();
-    if (photoFormat == RagePhotoB::GTA5)
+    if (photoFormat == RagePhoto::GTA5)
         std::cout << "GTA V Photo successfully exported" << std::endl;
-    else if (photoFormat == RagePhotoB::RDR2)
+    else if (photoFormat == RagePhoto::RDR2)
         std::cout << "RDR 2 Photo successfully exported" << std::endl;
     else
         std::cout << "Photo successfully exported" << std::endl;

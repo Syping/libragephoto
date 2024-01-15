@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2023 Syping
+* Copyright (C) 2021-2024 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -16,7 +16,7 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include "RagePhoto.hpp"
+#include "ragephoto_cxx.hpp"
 #ifdef LIBRAGEPHOTO_CXX_C
 #include "RagePhoto.h"
 #endif
@@ -44,6 +44,9 @@
 #include <windows.h>
 #include <stringapiset.h>
 #endif
+
+/* CLASSIC RAGEPHOTO TYPEDEF */
+typedef ragephoto::cxx_abi::photo RagePhoto;
 
 /* BEGIN OF STATIC LIBRARY FUNCTIONS */
 inline size_t readBuffer(const char *input, void *output, size_t *pos, size_t outputLen, size_t inputLen)
@@ -154,7 +157,7 @@ inline uint32_t joaatFromInitial(const char *data, size_t size, uint32_t init_va
 /* END OF STATIC LIBRARY FUNCTIONS */
 
 /* BEGIN OF RAGEPHOTO CLASS */
-RagePhoto::RagePhoto()
+RagePhoto::photo()
 {
     m_data = static_cast<RagePhotoData*>(malloc(sizeof(RagePhotoData)));
     if (!m_data)
@@ -167,7 +170,7 @@ RagePhoto::RagePhoto()
     setBufferDefault(m_data);
 }
 
-RagePhoto::~RagePhoto()
+RagePhoto::~photo()
 {
     free(m_data->jpeg);
     free(m_data->description);
@@ -987,7 +990,7 @@ const std::string RagePhoto::save(bool *ok)
     return save(m_data->photoFormat, ok);
 }
 
-bool RagePhoto::saveFile(const std::string &filename, uint32_t photoFormat)
+bool RagePhoto::saveFile(const char *filename, uint32_t photoFormat)
 {
     bool ok;
     const std::string &sdata = save(photoFormat, &ok);
@@ -1014,7 +1017,7 @@ bool RagePhoto::saveFile(const std::string &filename, uint32_t photoFormat)
         return false;
 }
 
-bool RagePhoto::saveFile(const std::string &filename)
+bool RagePhoto::saveFile(const char *filename)
 {
     return saveFile(filename, m_data->photoFormat);
 }
@@ -1257,13 +1260,24 @@ void RagePhoto::setTitle(const char *title, uint32_t bufferSize)
 #ifdef LIBRAGEPHOTO_CXX_C
 ragephoto_t ragephoto_open()
 {
-    return static_cast<ragephoto_t>(new RagePhoto);
+    try {
+        return static_cast<ragephoto_t>(new RagePhoto);
+    }
+    catch (const std::exception &exception) {
+        std::cerr << "[libragephoto] Exception thrown at ragephoto_open: " << exception.what() << std::endl;
+        return nullptr;
+    }
 }
 
 void ragephoto_addparser(ragephoto_t instance, RagePhotoFormatParser *rp_parser)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
-    ragePhoto->addParser(rp_parser);
+    try {
+        ragePhoto->addParser(rp_parser);
+    }
+    catch (const std::exception &exception) {
+        std::cerr << "[libragephoto] Exception thrown at ragephoto_addparser: " << exception.what() << std::endl;
+    }
 }
 
 void ragephoto_clear(ragephoto_t instance)

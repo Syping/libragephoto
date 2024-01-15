@@ -4,7 +4,7 @@
 
 <h4 id="cxx_include_usage">Including and using RagePhoto</h4>
 
-Include RagePhoto (C++ native), RagePhotoA (C API wrapper) or \link RagePhotoB.hpp RagePhotoB \endlink (best implementation)
+Include RagePhoto
 
 \code{.cpp}
 #include <RagePhoto>
