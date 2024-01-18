@@ -618,29 +618,29 @@ bool ragephoto_loadfile(ragephoto_t instance_t, const char *filename)
 #endif
     if (!file)
         return false;
-    const int64_t fseek_end = fseek(file, 0, SEEK_END);
-    if (fseek_end == -1) {
+    int fseek_ret = fseek(file, 0, SEEK_END);
+    if (!fseek_ret) {
         fclose(file);
         return false;
     }
-    const int64_t fileSize = ftell(file);
-    if (fileSize == -1) {
+    const long fileSize = ftell(file);
+    if (fileSize == -1L) {
         fclose(file);
         return false;
     }
-    const int64_t fseek_set = fseek(file, 0, SEEK_SET);
-    if (fseek_set == -1) {
+    fseek_ret = fseek(file, 0, SEEK_SET);
+    if (!fseek_ret) {
         fclose(file);
         return false;
     }
-    char *data = (char*)(malloc(fileSize));
+    char *data = (char*)malloc(fileSize);
     if (!data) {
         fclose(file);
         return false;
     }
-    const size_t fileRsize = fread(data, 1, fileSize, file);
+    const size_t readSize = fread(data, 1, fileSize, file);
     fclose(file);
-    if (fileSize != fileRsize) {
+    if (fileSize != readSize) {
         free(data);
         return false;
     }
@@ -986,7 +986,7 @@ bool ragephoto_savefilef(ragephoto_t instance_t, const char *filename, uint32_t 
 {
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     const size_t fileSize = ragephotodata_getsavesizef(instance->data, instance->parser, photoFormat);
-    char *data = (char*)(malloc(fileSize));
+    char *data = (char*)malloc(fileSize);
     if (!data)
         return false;
     if (!ragephotodata_savef(instance->data, instance->parser, data, photoFormat)) {
@@ -1003,10 +1003,10 @@ bool ragephoto_savefilef(ragephoto_t instance_t, const char *filename, uint32_t 
         free(data);
         return false;
     }
-    const size_t fileWsize = fwrite(data, sizeof(char), fileSize, file);
+    const size_t writeSize = fwrite(data, sizeof(char), fileSize, file);
     fclose(file);
     free(data);
-    return (fileSize == fileWsize);
+    return (fileSize == writeSize);
 }
 
 bool ragephoto_savefile(ragephoto_t instance_t, const char *filename)

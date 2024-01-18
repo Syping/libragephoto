@@ -1,6 +1,6 @@
 #[[**************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2023 Syping
+* Copyright (C) 2021-2024 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -21,7 +21,6 @@ project(ragephoto VERSION 0.6.0 LANGUAGES C CXX)
 include(GNUInstallDirs)
 
 # RagePhoto CMake includes
-include(cmake/cxxstd.cmake)
 include(cmake/unicode.cmake)
 
 # RagePhoto Top Level
@@ -88,6 +87,9 @@ else()
     endif()
 endif()
 
+# RagePhoto C++ Standard
+set(RAGEPHOTO_CXX_STANDARD "11" CACHE STRING "libragephoto C++ standard")
+
 # RagePhoto Win32 Shared Resources
 if (WIN32)
     string(TIMESTAMP ragephoto_BUILD_YEAR "%Y" UTC)
@@ -113,6 +115,10 @@ else()
         SOVERSION "${ragephoto_VERSION}"
     )
 endif()
+set_target_properties(ragephoto PROPERTIES
+    CXX_STANDARD ${RAGEPHOTO_CXX_STANDARD}
+    CXX_STANDARD_REQUIRED ON
+)
 target_compile_definitions(ragephoto PRIVATE
     LIBRAGEPHOTO_LIBRARY
     ${LIBRAGEPHOTO_DEFINES}
@@ -178,6 +184,8 @@ if (RAGEPHOTO_EXTRACT)
     add_executable(ragephoto-extract ${RAGEPHOTO_HEADERS} ${EXTRACT_SOURCES} ${EXTRACT_RESOURCES})
     set_target_properties(ragephoto-extract PROPERTIES
         INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
+        CXX_STANDARD ${RAGEPHOTO_CXX_STANDARD}
+        CXX_STANDARD_REQUIRED ON
     )
     if (MSVC AND MSVC_VERSION GREATER_EQUAL 1914)
         target_compile_options(ragephoto-extract PRIVATE $<$<COMPILE_LANGUAGE:CXX>:/Zc:__cplusplus>)

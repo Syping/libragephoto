@@ -17,7 +17,7 @@ To customise your libragephoto build, the following <a href="#flags">Optional CM
 
 <h4 id="flags">Optional CMake flags</h4>
 \code{.sh}
--DCMAKE_CXX_STANDARD=17
+-DRAGEPHOTO_CXX_STANDARD=17
 -DRAGEPHOTO_BENCHMARK=ON
 -DRAGEPHOTO_C_API=OFF
 -DRAGEPHOTO_C_LIBRARY=ON

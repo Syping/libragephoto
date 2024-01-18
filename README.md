@@ -16,7 +16,7 @@ sudo cmake --install libragephoto-build
 ```
 
 ##### Optional CMake flags
-`-DCMAKE_CXX_STANDARD=17`  
+`-DRAGEPHOTO_CXX_STANDARD=17`  
 `-DRAGEPHOTO_BENCHMARK=ON`  
 `-DRAGEPHOTO_C_API=OFF`  
 `-DRAGEPHOTO_C_LIBRARY=ON`  
