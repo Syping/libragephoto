@@ -16,7 +16,7 @@ jobs:
         sudo apt-get update -qq
         sudo apt-get install cmake gcc g++ ninja-build -qq
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_STANDARD=17 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
+      run: cmake -B ${{github.workspace}}/build -DRAGEPHOTO_CXX_STANDARD=17 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Install
