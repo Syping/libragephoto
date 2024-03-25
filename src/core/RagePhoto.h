@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2023 Syping
+* Copyright (C) 2021-2024 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -132,6 +132,21 @@ LIBRAGEPHOTO_C_PUBLIC uint64_t ragephoto_getphotosign(ragephoto_t instance);
 * \param photoFormat Photo Format (GTA V or RDR 2)
 */
 LIBRAGEPHOTO_C_PUBLIC uint64_t ragephoto_getphotosignf(ragephoto_t instance, uint32_t photoFormat);
+
+/** Returns the Photo JPEG sign as string.
+* \param instance \p ragephoto_t instance
+* \param data String data
+* \param size String size
+*/
+LIBRAGEPHOTO_C_PUBLIC void ragephoto_getphotosigns(ragephoto_t instance, char *data, size_t size);
+
+/** Returns the Photo JPEG sign as string.
+* \param instance \p ragephoto_t instance
+* \param data String data
+* \param size String size
+* \param photoFormat Photo Format (GTA V or RDR 2)
+*/
+LIBRAGEPHOTO_C_PUBLIC void ragephoto_getphotosignsf(ragephoto_t instance, char *data, size_t size, uint32_t photoFormat);
 
 /** Returns the Photo JPEG sign.
 * \param rp_data RagePhotoData object

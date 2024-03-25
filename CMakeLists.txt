@@ -210,7 +210,7 @@ if (RAGEPHOTO_PYTHON)
     # Python Package Source files + Target
     set(PYRAGEPHOTO_SOURCES
         "src/python/__init__.py"
-        "src/python/libragephoto.py"
+        "src/python/libragephoto_loader.py"
         "src/python/ragephoto.py"
     )
     add_custom_target(pyragephoto SOURCES ${PYRAGEPHOTO_SOURCES})

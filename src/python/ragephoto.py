@@ -1,6 +1,6 @@
 ##############################################################################
 # libragephoto for Python
-# Copyright (C) 2023 Syping
+# Copyright (C) 2023-2024 Syping
 #
 # Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
@@ -16,7 +16,7 @@
 # responsible for anything with use of the software, you are self responsible.
 ##############################################################################
 
-from .libragephoto import *
+from .libragephoto_loader import *
 from enum import IntEnum
 from json import loads as parseJson
 from json import dumps as serializeJson

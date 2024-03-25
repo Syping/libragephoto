@@ -19,6 +19,7 @@
 #include "ragephoto_cxx.hpp"
 #ifdef LIBRAGEPHOTO_CXX_C
 #include "RagePhoto.h"
+#include <cinttypes>
 #endif
 
 #include <cstdlib>
@@ -26,10 +27,6 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
-
-#if (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
-#include <filesystem>
-#endif
 
 #ifdef RAGEPHOTO_BENCHMARK
 #include <chrono>
@@ -607,11 +604,7 @@ bool RagePhoto::load(const std::string &data)
 
 bool RagePhoto::loadFile(const std::string &filename)
 {
-#if (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
-    std::ifstream ifs(std::filesystem::u8path(filename), std::ios::in | std::ios::binary);
-#else
     std::ifstream ifs(filename, std::ios::in | std::ios::binary);
-#endif
     if (ifs.is_open()) {
         std::string sdata(std::istreambuf_iterator<char>{ifs}, {});
         ifs.close();
@@ -1380,6 +1373,18 @@ uint64_t ragephoto_getphotosignf(ragephoto_t instance, uint32_t photoFormat)
 {
     RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
     return ragePhoto->jpegSign(photoFormat);
+}
+
+void ragephoto_getphotosigns(ragephoto_t instance, char *data, size_t size)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    snprintf(data, size, "%" PRIu64, ragePhoto->jpegSign());
+}
+
+void ragephoto_getphotosignsf(ragephoto_t instance, char *data, size_t size, uint32_t photoFormat)
+{
+    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    snprintf(data, size, "%" PRIu64, ragePhoto->jpegSign(photoFormat));
 }
 
 uint64_t ragephotodata_getphotosign(RagePhotoData *rp_data)

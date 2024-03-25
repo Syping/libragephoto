@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2023 Syping
+* Copyright (C) 2021-2024 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -695,6 +695,16 @@ uint64_t ragephoto_getphotosign(ragephoto_t instance_t)
 {
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     return ragephotodata_getphotosignf(instance->data, instance->data->photoFormat);
+}
+
+void ragephoto_getphotosigns(ragephoto_t instance, char *data, size_t size)
+{
+    snprintf(data, size, "%" PRIu64, ragephoto_getphotosign(instance));
+}
+
+void ragephoto_getphotosignsf(ragephoto_t instance, char *data, size_t size, uint32_t photoFormat)
+{
+    snprintf(data, size, "%" PRIu64, ragephoto_getphotosignf(instance, photoFormat));
 }
 
 uint32_t ragephoto_getphotosize(ragephoto_t instance_t)
