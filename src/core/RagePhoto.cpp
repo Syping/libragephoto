@@ -988,11 +988,7 @@ bool RagePhoto::saveFile(const char *filename, uint32_t photoFormat)
     bool ok;
     const std::string &sdata = save(photoFormat, &ok);
     if (ok) {
-#if (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
-        std::ofstream ofs(std::filesystem::u8path(filename), std::ios::out | std::ios::binary | std::ios::trunc);
-#else
         std::ofstream ofs(filename, std::ios::out | std::ios::binary | std::ios::trunc);
-#endif
         if (!ofs.is_open()) {
             m_data->error = Error::Uninitialised; // 0
             return false;
