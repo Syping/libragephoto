@@ -986,7 +986,7 @@ const std::string RagePhoto::save(bool *ok)
 bool RagePhoto::saveFile(const char *filename, uint32_t photoFormat)
 {
     bool ok;
-    const std::string &sdata = save(photoFormat, &ok);
+    const std::string sdata = save(photoFormat, &ok);
     if (ok) {
         std::ofstream ofs(filename, std::ios::out | std::ios::binary | std::ios::trunc);
         if (!ofs.is_open()) {
