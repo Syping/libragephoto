@@ -79,8 +79,16 @@ class RagePhoto:
   def __init__(self):
     self.__instance = libragephoto.ragephoto_open()
 
-  def __del__(self):
+  def __enter__(self):
+    return self
+
+  def __exit__(self, type, value, traceback):
     libragephoto.ragephoto_close(self.__instance)
+    self.__instance = None
+
+  def __del__(self):
+    if self.__instance is not None:
+      libragephoto.ragephoto_close(self.__instance)
 
   def clear(self):
     libragephoto.ragephoto_clear(self.__instance)
