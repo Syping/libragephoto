@@ -12,7 +12,9 @@ jobs:
       with:
         submodules: recursive
     - name: Setup emsdk
-      uses: mymindstorm/setup-emsdk@v11
+      uses: mymindstorm/setup-emsdk@v14
+      with:
+        version: 3.1.47
     - name: Install packages
       run: |
         sudo apt-get update -qq

@@ -12,13 +12,15 @@ jobs:
       with:
         submodules: recursive
     - name: Setup emsdk
-      uses: mymindstorm/setup-emsdk@v11
+      uses: mymindstorm/setup-emsdk@v14
+      with:
+        version: 3.1.47
     - name: Install packages
       run: |
         sudo apt-get update -qq
         sudo apt-get install cmake ninja-build -qq
     - name: Configure CMake
-      run: emcmake cmake -B ${{github.workspace}}/build -DCMAKE_CXX_STANDARD=11 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
+      run: emcmake cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DRAGEPHOTO_CXX_STANDARD=11 -GNinja
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Upload
