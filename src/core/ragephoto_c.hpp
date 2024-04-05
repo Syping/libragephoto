@@ -24,8 +24,7 @@
 #include <cstdlib>
 #include <iostream>
 
-namespace ragephoto {
-namespace c_wrapper {
+namespace ragephoto_c {
 
 /**
 * \brief GTA V and RDR 2 Photo Parser (C API wrapper).
@@ -346,8 +345,7 @@ private:
     ragephoto_t instance;
 };
 
-} // c_wrapper
-} // ragephoto
+} // ragephoto_c
 #endif // __cplusplus
 
 #endif // RAGEPHOTO_C_HPP

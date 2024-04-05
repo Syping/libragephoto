@@ -34,12 +34,12 @@ typedef ragephoto::photo RagePhoto;
 typedef ragephoto::photo RagePhoto;
 #else
 #include "ragephoto_c.hpp"
-typedef ragephoto::c_wrapper::photo RagePhoto;
+typedef ragephoto_c::photo RagePhoto;
 #endif // LIBRAGEPHOTO_PREFER_NATIVE
 #endif // LIBRAGEPHOTO_STATIC
 #elif defined LIBRAGEPHOTO_C_ONLY
 #include "ragephoto_c.hpp"
-typedef ragephoto::c_wrapper::photo RagePhoto;
+typedef ragephoto_c::photo RagePhoto;
 #else
 #error "Could not determine best RagePhoto implementation, libragephoto installation might be corrupt!"
 #endif // LIBRAGEPHOTO_CXX_ONLY
