@@ -626,7 +626,7 @@ bool ragephoto_loadfile(ragephoto_t instance_t, const char *filename)
 #if defined(_WIN64)
     const long long fileSize = _ftelli64(file);
 #elif (defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64) || (defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 200112L)
-    const _off_t fileSize = ftello(file);
+    const off_t fileSize = ftello(file);
 #else
     const long fileSize = ftell(file);
 #endif
