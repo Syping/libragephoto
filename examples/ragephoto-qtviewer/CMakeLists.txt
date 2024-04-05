@@ -41,7 +41,7 @@ if (TARGET ragephoto)
     set(RAGEPHOTO_LIBRARY_DIRS ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 else()
     find_package(PkgConfig REQUIRED)
-    pkg_check_modules(RAGEPHOTO REQUIRED ragephoto)
+    pkg_check_modules(RAGEPHOTO REQUIRED ragephoto>=0.6)
 endif()
 
 add_executable(ragephoto-qtviewer WIN32 ${QTVIEWER_SOURCES})

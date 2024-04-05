@@ -77,64 +77,64 @@ typedef struct RagePhotoInstance {
 } RagePhotoInstance;
 
 /* RagePhoto default sizes */
-#define RAGEPHOTO_DEFAULT_GTA5_PHOTOBUFFER 524288UL /**< GTA V default Photo Buffer Size */
-#define RAGEPHOTO_DEFAULT_RDR2_PHOTOBUFFER 1048576UL /**< RDR 2 default Photo Buffer Size */
-#define RAGEPHOTO_DEFAULT_DESCBUFFER 256UL /**< Default Description Buffer Size */
-#define RAGEPHOTO_DEFAULT_JSONBUFFER 3072UL /**< Default JSON Buffer Size */
-#define RAGEPHOTO_DEFAULT_TITLBUFFER 256UL /**< Default Title Buffer Size */
-#define RAGEPHOTO_GTA5_HEADERSIZE 264UL /**< GTA V Header Size */
-#define RAGEPHOTO_RDR2_HEADERSIZE 272UL /**< RDR 2 Header Size */
+#define RAGEPHOTO_DEFAULT_GTA5_PHOTOBUFFER UINT32_C(524288) /**< GTA V default Photo Buffer Size */
+#define RAGEPHOTO_DEFAULT_RDR2_PHOTOBUFFER UINT32_C(1048576) /**< RDR 2 default Photo Buffer Size */
+#define RAGEPHOTO_DEFAULT_DESCBUFFER UINT32_C(256) /**< Default Description Buffer Size */
+#define RAGEPHOTO_DEFAULT_JSONBUFFER UINT32_C(3072) /**< Default JSON Buffer Size */
+#define RAGEPHOTO_DEFAULT_TITLBUFFER UINT32_C(256) /**< Default Title Buffer Size */
+#define RAGEPHOTO_GTA5_HEADERSIZE UINT32_C(264) /**< GTA V Header Size */
+#define RAGEPHOTO_RDR2_HEADERSIZE UINT32_C(272) /**< RDR 2 Header Size */
 
 /* RagePhoto error codes */
-#define RAGEPHOTO_ERROR_DESCBUFFERTIGHT 39L /**< Description Buffer is too tight */
-#define RAGEPHOTO_ERROR_DESCMALLOCERROR 31L /**< Description Buffer can't be allocated */
-#define RAGEPHOTO_ERROR_DESCREADERROR 32L /**< Description can't be read successfully */
-#define RAGEPHOTO_ERROR_HEADERBUFFERTIGHT 35L /**< Header Buffer is too tight */
-#define RAGEPHOTO_ERROR_HEADERMALLOCERROR 4L /**< Header Buffer can't be allocated */
-#define RAGEPHOTO_ERROR_INCOMPATIBLEFORMAT 2L /**< Format is incompatible */
-#define RAGEPHOTO_ERROR_INCOMPLETECHECKSUM 7L /**< Header checksum is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETEDESCBUFFER 30L /**< Description Buffer Size is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETEDESCMARKER 28L /**< Description Marker is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETEDESCOFFSET 11L /**< Description Offset is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETEEOF 8L /**< End Of File Offset is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETEHEADER 3L /**< Header is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETEJENDMARKER 33L /**< JEND Marker is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETEJPEGMARKER 12L /**< JPEG Marker is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETEJSONBUFFER 20L /**< JSON Buffer Size is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETEJSONMARKER 18L /**< JSON Marker incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETEJSONOFFSET 9L /**< JSON Offset incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETEPHOTOBUFFER 14L /**< Photo Buffer Size is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETEPHOTOSIZE 15L /**< Photo Size is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETETITLEBUFFER 25L /**< Title Buffer Size is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETETITLEMARKER 23L /**< Title Marker is incomplete */
-#define RAGEPHOTO_ERROR_INCOMPLETETITLEOFFSET 10L /**< Title Offset is incomplete */
-#define RAGEPHOTO_ERROR_INCORRECTDESCMARKER 29L /**< Description Marker is incorrect */
-#define RAGEPHOTO_ERROR_INCORRECTJENDMARKER 34L /**< JEND Marker is incorrect */
-#define RAGEPHOTO_ERROR_INCORRECTJPEGMARKER 13L /**< JPEG Marker is incorrect */
-#define RAGEPHOTO_ERROR_INCORRECTJSONMARKER 19L /**< JSON Marker is incorrect */
-#define RAGEPHOTO_ERROR_INCORRECTTITLEMARKER 24L /**< Title Marker is incorrect */
-#define RAGEPHOTO_ERROR_JSONBUFFERTIGHT 37L /**< JSON Buffer is too tight */
-#define RAGEPHOTO_ERROR_JSONMALLOCERROR 21L /**< JSON Buffer can't be allocated */
-#define RAGEPHOTO_ERROR_JSONREADERROR 22L /**< JSON can't be read successfully */
-#define RAGEPHOTO_ERROR_NOERROR 255L /**< Finished without errors */
-#define RAGEPHOTO_ERROR_NOFORMATIDENTIFIER 1L /**< No format detected, empty file */
-#define RAGEPHOTO_ERROR_PHOTOBUFFERTIGHT 36L /**< Photo Buffer is too tight */
-#define RAGEPHOTO_ERROR_PHOTOMALLOCERROR 16L /**< Photo Buffer can't be allocated */
-#define RAGEPHOTO_ERROR_PHOTOREADERROR 17L /**< Photo can't be read */
-#define RAGEPHOTO_ERROR_TITLEBUFFERTIGHT 38L /**< Title Buffer is too tight */
-#define RAGEPHOTO_ERROR_TITLEMALLOCERROR 26L /**< Title Buffer can't be allocated */
-#define RAGEPHOTO_ERROR_TITLEREADERROR 27L /**< Title can't be read */
-#define RAGEPHOTO_ERROR_UNICODEINITERROR 5L /**< Failed to initialise Unicode decoder */
-#define RAGEPHOTO_ERROR_UNICODEHEADERERROR 6L /**< Header can't be encoded/decoded successfully */
-#define RAGEPHOTO_ERROR_UNINITIALISED 0L /**< Uninitialised, file access failed */
+#define RAGEPHOTO_ERROR_DESCBUFFERTIGHT INT32_C(39) /**< Description Buffer is too tight */
+#define RAGEPHOTO_ERROR_DESCMALLOCERROR INT32_C(31) /**< Description Buffer can't be allocated */
+#define RAGEPHOTO_ERROR_DESCREADERROR INT32_C(32) /**< Description can't be read successfully */
+#define RAGEPHOTO_ERROR_HEADERBUFFERTIGHT INT32_C(35) /**< Header Buffer is too tight */
+#define RAGEPHOTO_ERROR_HEADERMALLOCERROR INT32_C(4) /**< Header Buffer can't be allocated */
+#define RAGEPHOTO_ERROR_INCOMPATIBLEFORMAT INT32_C(2) /**< Format is incompatible */
+#define RAGEPHOTO_ERROR_INCOMPLETECHECKSUM INT32_C(7) /**< Header checksum is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEDESCBUFFER INT32_C(30) /**< Description Buffer Size is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEDESCMARKER INT32_C(28) /**< Description Marker is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEDESCOFFSET INT32_C(11) /**< Description Offset is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEEOF INT32_C(8) /**< End Of File Offset is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEHEADER INT32_C(3) /**< Header is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEJENDMARKER INT32_C(33) /**< JEND Marker is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEJPEGMARKER INT32_C(12) /**< JPEG Marker is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEJSONBUFFER INT32_C(20) /**< JSON Buffer Size is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEJSONMARKER INT32_C(18) /**< JSON Marker incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEJSONOFFSET INT32_C(9) /**< JSON Offset incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEPHOTOBUFFER INT32_C(14) /**< Photo Buffer Size is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETEPHOTOSIZE INT32_C(15) /**< Photo Size is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETETITLEBUFFER INT32_C(25) /**< Title Buffer Size is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETETITLEMARKER INT32_C(23) /**< Title Marker is incomplete */
+#define RAGEPHOTO_ERROR_INCOMPLETETITLEOFFSET INT32_C(10) /**< Title Offset is incomplete */
+#define RAGEPHOTO_ERROR_INCORRECTDESCMARKER INT32_C(29) /**< Description Marker is incorrect */
+#define RAGEPHOTO_ERROR_INCORRECTJENDMARKER INT32_C(34) /**< JEND Marker is incorrect */
+#define RAGEPHOTO_ERROR_INCORRECTJPEGMARKER INT32_C(13) /**< JPEG Marker is incorrect */
+#define RAGEPHOTO_ERROR_INCORRECTJSONMARKER INT32_C(19) /**< JSON Marker is incorrect */
+#define RAGEPHOTO_ERROR_INCORRECTTITLEMARKER INT32_C(24) /**< Title Marker is incorrect */
+#define RAGEPHOTO_ERROR_JSONBUFFERTIGHT INT32_C(37) /**< JSON Buffer is too tight */
+#define RAGEPHOTO_ERROR_JSONMALLOCERROR INT32_C(21) /**< JSON Buffer can't be allocated */
+#define RAGEPHOTO_ERROR_JSONREADERROR INT32_C(22) /**< JSON can't be read successfully */
+#define RAGEPHOTO_ERROR_NOERROR INT32_C(255) /**< Finished without errors */
+#define RAGEPHOTO_ERROR_NOFORMATIDENTIFIER INT32_C(1) /**< No format detected, empty file */
+#define RAGEPHOTO_ERROR_PHOTOBUFFERTIGHT INT32_C(36) /**< Photo Buffer is too tight */
+#define RAGEPHOTO_ERROR_PHOTOMALLOCERROR INT32_C(16) /**< Photo Buffer can't be allocated */
+#define RAGEPHOTO_ERROR_PHOTOREADERROR INT32_C(17) /**< Photo can't be read */
+#define RAGEPHOTO_ERROR_TITLEBUFFERTIGHT INT32_C(38) /**< Title Buffer is too tight */
+#define RAGEPHOTO_ERROR_TITLEMALLOCERROR INT32_C(26) /**< Title Buffer can't be allocated */
+#define RAGEPHOTO_ERROR_TITLEREADERROR INT32_C(27) /**< Title can't be read */
+#define RAGEPHOTO_ERROR_UNICODEINITERROR INT32_C(5) /**< Failed to initialise Unicode decoder */
+#define RAGEPHOTO_ERROR_UNICODEHEADERERROR INT32_C(6) /**< Header can't be encoded/decoded successfully */
+#define RAGEPHOTO_ERROR_UNINITIALISED INT32_C(0) /**< Uninitialised, file access failed */
 
 /* RagePhoto formats */
-#define RAGEPHOTO_FORMAT_GTA5 0x01000000UL /**< GTA V Photo Format */
-#define RAGEPHOTO_FORMAT_RDR2 0x04000000UL /**< RDR 2 Photo Format */
+#define RAGEPHOTO_FORMAT_GTA5 UINT32_C(0x01000000) /**< GTA V Photo Format */
+#define RAGEPHOTO_FORMAT_RDR2 UINT32_C(0x04000000) /**< RDR 2 Photo Format */
 
 /* RagePhoto sign initials */
-#define RAGEPHOTO_SIGNINITIAL_GTA5 0xE47AB81CUL /**< GTA V Sign Initial */
-#define RAGEPHOTO_SIGNINITIAL_RDR2 0x00FEEB1EUL /**< RDR 2 Sign Initial */
+#define RAGEPHOTO_SIGNINITIAL_GTA5 UINT32_C(0xE47AB81C) /**< GTA V Sign Initial */
+#define RAGEPHOTO_SIGNINITIAL_RDR2 UINT32_C(0x00FEEB1E) /**< RDR 2 Sign Initial */
 
 #ifdef __cplusplus
 }

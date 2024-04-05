@@ -35,7 +35,7 @@ if (TARGET ragephoto)
     set(RAGEPHOTO_LIBRARIES ragephoto)
     set(RAGEPHOTO_LIBRARY_DIRS ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 else()
-    pkg_check_modules(RAGEPHOTO REQUIRED ragephoto)
+    pkg_check_modules(RAGEPHOTO REQUIRED ragephoto>=0.6)
 endif()
 
 add_executable(ragephoto-gtkviewer WIN32 ${GTKVIEWER_SOURCES})

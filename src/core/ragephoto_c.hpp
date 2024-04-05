@@ -25,7 +25,7 @@
 #include <iostream>
 
 namespace ragephoto {
-namespace c_abi {
+namespace c_wrapper {
 
 /**
 * \brief GTA V and RDR 2 Photo Parser (C API wrapper).
@@ -35,67 +35,67 @@ class photo
 public:
     /** Default sizes */
     enum DefaultSize : uint32_t {
-        DEFAULT_GTA5_PHOTOBUFFER = 524288UL, /**< GTA V default Photo Buffer Size */
-        DEFAULT_RDR2_PHOTOBUFFER = 1048576UL, /**< RDR 2 default Photo Buffer Size */
-        DEFAULT_DESCBUFFER = 256UL, /**< Default Description Buffer Size */
-        DEFAULT_JSONBUFFER = 3072UL, /**< Default JSON Buffer Size */
-        DEFAULT_TITLBUFFER = 256UL, /**< Default Title Buffer Size */
-        GTA5_HEADERSIZE = 264UL, /**< GTA V Header Size */
-        RDR2_HEADERSIZE = 272UL, /**< RDR 2 Header Size */
+        DEFAULT_GTA5_PHOTOBUFFER = RAGEPHOTO_DEFAULT_GTA5_PHOTOBUFFER, /**< GTA V default Photo Buffer Size */
+        DEFAULT_RDR2_PHOTOBUFFER = RAGEPHOTO_DEFAULT_RDR2_PHOTOBUFFER, /**< RDR 2 default Photo Buffer Size */
+        DEFAULT_DESCBUFFER = RAGEPHOTO_DEFAULT_DESCBUFFER, /**< Default Description Buffer Size */
+        DEFAULT_JSONBUFFER = RAGEPHOTO_DEFAULT_JSONBUFFER, /**< Default JSON Buffer Size */
+        DEFAULT_TITLBUFFER = RAGEPHOTO_DEFAULT_TITLBUFFER, /**< Default Title Buffer Size */
+        GTA5_HEADERSIZE = RAGEPHOTO_GTA5_HEADERSIZE, /**< GTA V Header Size */
+        RDR2_HEADERSIZE = RAGEPHOTO_RDR2_HEADERSIZE, /**< RDR 2 Header Size */
     };
     /** Parsing and set errors */
     enum Error : int32_t {
-        DescBufferTight = 39L, /**< Description Buffer is too tight */
-        DescMallocError = 31L, /**< Description Buffer can't be allocated */
-        DescReadError = 32L, /**< Description can't be read successfully */
-        HeaderBufferTight = 35L, /**< Header Buffer is too tight */
-        HeaderMallocError = 4L, /**< Header Buffer can't be allocated */
-        IncompatibleFormat = 2L, /**< Format is incompatible */
-        IncompleteChecksum = 7L, /**< Header checksum is incomplete */
-        IncompleteDescBuffer = 30L, /**< Description Buffer Size is incomplete */
-        IncompleteDescMarker = 28L, /**< Description Marker is incomplete */
-        IncompleteDescOffset = 11L, /**< Description Offset is incomplete */
-        IncompleteEOF = 8L, /**< End Of File Offset is incomplete */
-        IncompleteHeader = 3L, /**< Header is incomplete */
-        IncompleteJendMarker = 33L, /**< JEND Marker is incomplete */
-        IncompleteJpegMarker = 12L, /**< JPEG Marker is incomplete */
-        IncompleteJsonBuffer = 20L, /**< JSON Buffer Size is incomplete */
-        IncompleteJsonMarker = 18L, /**< JSON Marker incomplete */
-        IncompleteJsonOffset = 9L, /**< JSON Offset incomplete */
-        IncompletePhotoBuffer = 14L, /**< Photo Buffer Size is incomplete */
-        IncompletePhotoSize = 15L, /**< Photo Size is incomplete */
-        IncompleteTitleBuffer = 25L, /**< Title Buffer Size is incomplete */
-        IncompleteTitleMarker = 23L, /**< Title Marker is incomplete */
-        IncompleteTitleOffset = 10L, /**< Title Offset is incomplete */
-        IncorrectDescMarker = 29L, /**< Description Marker is incorrect */
-        IncorrectJendMarker = 34L, /**< JEND Marker is incorrect */
-        IncorrectJpegMarker = 13L, /**< JPEG Marker is incorrect */
-        IncorrectJsonMarker = 19L, /**< JSON Marker is incorrect */
-        IncorrectTitleMarker = 24L, /**< Title Marker is incorrect */
-        JsonBufferTight = 37L, /**< JSON Buffer is too tight */
-        JsonMallocError = 21L, /**< JSON Buffer can't be allocated */
-        JsonReadError = 22L, /**< JSON can't be read successfully */
-        NoError = 255L, /**< Finished without errors */
-        NoFormatIdentifier = 1L, /**< No format detected, empty file */
-        PhotoBufferTight = 36L, /**< Photo Buffer is too tight */
-        PhotoMallocError = 16L, /**< Photo Buffer can't be allocated */
-        PhotoReadError = 17L, /**< Photo can't be read */
-        TitleBufferTight = 38L, /**< Title Buffer is too tight */
-        TitleMallocError = 26L, /**< Title Buffer can't be allocated */
-        TitleReadError = 27L, /**< Title can't be read */
-        UnicodeInitError = 5L, /**< Failed to initialise Unicode decoder */
-        UnicodeHeaderError = 6L, /**< Header can't be encoded/decoded successfully */
-        Uninitialised = 0L, /**< Uninitialised, file access failed */
+        DescBufferTight = RAGEPHOTO_ERROR_DESCBUFFERTIGHT, /**< Description Buffer is too tight */
+        DescMallocError = RAGEPHOTO_ERROR_DESCMALLOCERROR, /**< Description Buffer can't be allocated */
+        DescReadError = RAGEPHOTO_ERROR_DESCREADERROR, /**< Description can't be read successfully */
+        HeaderBufferTight = RAGEPHOTO_ERROR_HEADERBUFFERTIGHT, /**< Header Buffer is too tight */
+        HeaderMallocError = RAGEPHOTO_ERROR_HEADERMALLOCERROR, /**< Header Buffer can't be allocated */
+        IncompatibleFormat = RAGEPHOTO_ERROR_INCOMPATIBLEFORMAT, /**< Format is incompatible */
+        IncompleteChecksum = RAGEPHOTO_ERROR_INCOMPLETECHECKSUM, /**< Header checksum is incomplete */
+        IncompleteDescBuffer = RAGEPHOTO_ERROR_INCOMPLETEDESCBUFFER, /**< Description Buffer Size is incomplete */
+        IncompleteDescMarker = RAGEPHOTO_ERROR_INCOMPLETEDESCMARKER, /**< Description Marker is incomplete */
+        IncompleteDescOffset = RAGEPHOTO_ERROR_INCOMPLETEDESCOFFSET, /**< Description Offset is incomplete */
+        IncompleteEOF = RAGEPHOTO_ERROR_INCOMPLETEEOF, /**< End Of File Offset is incomplete */
+        IncompleteHeader = RAGEPHOTO_ERROR_INCOMPLETEHEADER, /**< Header is incomplete */
+        IncompleteJendMarker = RAGEPHOTO_ERROR_INCOMPLETEJENDMARKER, /**< JEND Marker is incomplete */
+        IncompleteJpegMarker = RAGEPHOTO_ERROR_INCOMPLETEJPEGMARKER, /**< JPEG Marker is incomplete */
+        IncompleteJsonBuffer = RAGEPHOTO_ERROR_INCOMPLETEJSONBUFFER, /**< JSON Buffer Size is incomplete */
+        IncompleteJsonMarker = RAGEPHOTO_ERROR_INCOMPLETEJSONMARKER, /**< JSON Marker incomplete */
+        IncompleteJsonOffset = RAGEPHOTO_ERROR_INCOMPLETEJSONOFFSET, /**< JSON Offset incomplete */
+        IncompletePhotoBuffer = RAGEPHOTO_ERROR_INCOMPLETEPHOTOBUFFER, /**< Photo Buffer Size is incomplete */
+        IncompletePhotoSize = RAGEPHOTO_ERROR_INCOMPLETEPHOTOSIZE, /**< Photo Size is incomplete */
+        IncompleteTitleBuffer = RAGEPHOTO_ERROR_INCOMPLETETITLEBUFFER, /**< Title Buffer Size is incomplete */
+        IncompleteTitleMarker = RAGEPHOTO_ERROR_INCOMPLETETITLEMARKER, /**< Title Marker is incomplete */
+        IncompleteTitleOffset = RAGEPHOTO_ERROR_INCOMPLETETITLEOFFSET, /**< Title Offset is incomplete */
+        IncorrectDescMarker = RAGEPHOTO_ERROR_INCORRECTDESCMARKER, /**< Description Marker is incorrect */
+        IncorrectJendMarker = RAGEPHOTO_ERROR_INCORRECTJENDMARKER, /**< JEND Marker is incorrect */
+        IncorrectJpegMarker = RAGEPHOTO_ERROR_INCORRECTJPEGMARKER, /**< JPEG Marker is incorrect */
+        IncorrectJsonMarker = RAGEPHOTO_ERROR_INCORRECTJSONMARKER, /**< JSON Marker is incorrect */
+        IncorrectTitleMarker = RAGEPHOTO_ERROR_INCORRECTTITLEMARKER, /**< Title Marker is incorrect */
+        JsonBufferTight = RAGEPHOTO_ERROR_JSONBUFFERTIGHT, /**< JSON Buffer is too tight */
+        JsonMallocError = RAGEPHOTO_ERROR_JSONMALLOCERROR, /**< JSON Buffer can't be allocated */
+        JsonReadError = RAGEPHOTO_ERROR_JSONREADERROR, /**< JSON can't be read successfully */
+        NoError = RAGEPHOTO_ERROR_NOERROR, /**< Finished without errors */
+        NoFormatIdentifier = RAGEPHOTO_ERROR_NOFORMATIDENTIFIER, /**< No format detected, empty file */
+        PhotoBufferTight = RAGEPHOTO_ERROR_PHOTOBUFFERTIGHT, /**< Photo Buffer is too tight */
+        PhotoMallocError = RAGEPHOTO_ERROR_PHOTOMALLOCERROR, /**< Photo Buffer can't be allocated */
+        PhotoReadError = RAGEPHOTO_ERROR_PHOTOREADERROR, /**< Photo can't be read */
+        TitleBufferTight = RAGEPHOTO_ERROR_TITLEBUFFERTIGHT, /**< Title Buffer is too tight */
+        TitleMallocError = RAGEPHOTO_ERROR_TITLEMALLOCERROR, /**< Title Buffer can't be allocated */
+        TitleReadError = RAGEPHOTO_ERROR_TITLEREADERROR, /**< Title can't be read */
+        UnicodeInitError = RAGEPHOTO_ERROR_UNICODEINITERROR, /**< Failed to initialise Unicode decoder */
+        UnicodeHeaderError = RAGEPHOTO_ERROR_UNICODEHEADERERROR, /**< Header can't be encoded/decoded successfully */
+        Uninitialised = RAGEPHOTO_ERROR_UNINITIALISED, /**< Uninitialised, file access failed */
     };
     /** Photo Formats */
     enum PhotoFormat : uint32_t {
-        GTA5 = 0x01000000UL, /**< GTA V Photo Format */
-        RDR2 = 0x04000000UL, /**< RDR 2 Photo Format */
+        GTA5 = RAGEPHOTO_FORMAT_GTA5, /**< GTA V Photo Format */
+        RDR2 = RAGEPHOTO_FORMAT_RDR2, /**< RDR 2 Photo Format */
     };
     /** Sign Initials */
     enum SignInitials : uint32_t {
-        SIGTA5 = 0xE47AB81CUL, /**< GTA V Sign Initial */
-        SIRDR2 = 0x00FEEB1EUL, /**< RDR 2 Sign Initial */
+        SIGTA5 = RAGEPHOTO_SIGNINITIAL_GTA5, /**< GTA V Sign Initial */
+        SIRDR2 = RAGEPHOTO_SIGNINITIAL_RDR2, /**< RDR 2 Sign Initial */
     };
     photo() {
         instance = ragephoto_open();
@@ -346,7 +346,7 @@ private:
     ragephoto_t instance;
 };
 
-} // c_abi
+} // c_wrapper
 } // ragephoto
 #endif // __cplusplus
 

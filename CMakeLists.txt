@@ -70,6 +70,9 @@ endif()
 # RagePhoto Benchmark
 option(RAGEPHOTO_BENCHMARK "Build with libragephoto benchmark" OFF)
 
+# RagePhoto Debug
+option(RAGEPHOTO_DEBUG "Build with libragephoto debug output" OFF)
+
 # RagePhoto API
 option(RAGEPHOTO_C_API "Build libragephoto with C API support" ON)
 if (RAGEPHOTO_C_LIBRARY)
@@ -123,6 +126,7 @@ target_compile_definitions(ragephoto PRIVATE
     LIBRAGEPHOTO_LIBRARY
     ${LIBRAGEPHOTO_DEFINES}
     $<$<BOOL:${RAGEPHOTO_BENCHMARK}>:RAGEPHOTO_BENCHMARK>
+    $<$<BOOL:${RAGEPHOTO_DEBUG}>:RAGEPHOTO_DEBUG>
 )
 if (MSVC AND MSVC_VERSION GREATER_EQUAL 1914)
     target_compile_options(ragephoto PRIVATE $<$<COMPILE_LANGUAGE:CXX>:/Zc:__cplusplus>)

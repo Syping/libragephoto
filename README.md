@@ -1,10 +1,10 @@
 ## libragephoto
 Open Source RAGE Photo Parser for GTA V and RDR 2
 
-  - Read/Write RAGE Photos error free and correct
-  - Support for metadata stored in RAGE Photos
-  - Export RAGE Photos to jpeg with ragephoto-extract
-  - High Efficient and Simple C/C++ API
+- Read/Write RAGE Photos error free and correct
+- Support for metadata stored in RAGE Photos
+- Export RAGE Photos to jpeg with ragephoto-extract
+- High Efficient and Simple C/C++ API
 
 #### Build libragephoto
 
@@ -20,6 +20,7 @@ sudo cmake --install libragephoto-build
 `-DRAGEPHOTO_BENCHMARK=ON`  
 `-DRAGEPHOTO_C_API=OFF`  
 `-DRAGEPHOTO_C_LIBRARY=ON`  
+`-DRAGEPHOTO_DEBUG=ON`  
 `-DRAGEPHOTO_DOC=ON`  
 `-DRAGEPHOTO_EXAMPLE_GTKVIEWER=ON`  
 `-DRAGEPHOTO_EXAMPLE_QTVIEWER=ON`  
