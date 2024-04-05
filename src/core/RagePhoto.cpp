@@ -762,32 +762,32 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         char uInt32Buffer[4];
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(uInt32Buffer, &photoFormat, 4);
+        writeBuffer(&photoFormat, data, &pos, length, 4);
 #else
+        char uInt32Buffer[4];
         uInt32ToCharLE(photoFormat, uInt32Buffer);
-#endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
+#endif
 
         writeBuffer(photoHeader, data, &pos, length, photoHeader_size);
         zeroBuffer(data, &pos, length, 256 - photoHeader_size);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(uInt32Buffer, &rp_data->headerSum, 4);
+        writeBuffer(&rp_data->headerSum, data, &pos, length, 4);
 #else
         uInt32ToCharLE(rp_data->headerSum, uInt32Buffer);
-#endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
+#endif
 
         if (photoFormat == PhotoFormat::RDR2) {
-            char n_formatCheckBuffer[4]{};
-            writeBuffer(n_formatCheckBuffer, data, &pos, length, 4);
+            zeroBuffer(data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-            memcpy(uInt32Buffer, &rp_data->headerSum2, 4);
+            writeBuffer(&rp_data->headerSum2, data, &pos, length, 4);
 #else
             uInt32ToCharLE(rp_data->headerSum2, uInt32Buffer);
-#endif
             writeBuffer(uInt32Buffer, data, &pos, length, 4);
+#endif
         }
 
         const uint32_t jsonOffset = rp_data->jpegBuffer + UINT32_C(28);
@@ -796,48 +796,48 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         const uint32_t endOfFile = descOffset + rp_data->descBuffer + UINT32_C(12);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(uInt32Buffer, &endOfFile, 4);
+        writeBuffer(&endOfFile, data, &pos, length, 4);
 #else
         uInt32ToCharLE(endOfFile, uInt32Buffer);
-#endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
+#endif
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(uInt32Buffer, &jsonOffset, 4);
+        writeBuffer(&jsonOffset, data, &pos, length, 4);
 #else
         uInt32ToCharLE(jsonOffset, uInt32Buffer);
-#endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
+#endif
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(uInt32Buffer, &titlOffset, 4);
+        writeBuffer(&titlOffset, data, &pos, length, 4);
 #else
         uInt32ToCharLE(titlOffset, uInt32Buffer);
-#endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
+#endif
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(uInt32Buffer, &descOffset, 4);
+        writeBuffer(&descOffset, data, &pos, length, 4);
 #else
         uInt32ToCharLE(descOffset, uInt32Buffer);
-#endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
+#endif
 
         writeBuffer("JPEG", data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(uInt32Buffer, &rp_data->jpegBuffer, 4);
+        writeBuffer(&rp_data->jpegBuffer, data, &pos, length, 4);
 #else
         uInt32ToCharLE(rp_data->jpegBuffer, uInt32Buffer);
-#endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
+#endif
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(uInt32Buffer, &rp_data->jpegSize, 4);
+        writeBuffer(&rp_data->jpegSize, data, &pos, length, 4);
 #else
         uInt32ToCharLE(rp_data->jpegSize, uInt32Buffer);
-#endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
+#endif
 
         if (rp_data->jpeg) {
             if (rp_data->jpegSize > rp_data->jpegBuffer) {
@@ -848,17 +848,17 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
             zeroBuffer(data, &pos, length, rp_data->jpegBuffer - rp_data->jpegSize);
         }
         else {
-            zeroBuffer(data, &pos, length, rp_data->jpegBuffer - rp_data->jpegSize);
+            zeroBuffer(data, &pos, length, rp_data->jpegBuffer);
         }
 
         writeBuffer("JSON", data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(uInt32Buffer, &rp_data->jsonBuffer, 4);
+        writeBuffer(&rp_data->jsonBuffer, data, &pos, length, 4);
 #else
         uInt32ToCharLE(rp_data->jsonBuffer, uInt32Buffer);
-#endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
+#endif
 
         if (rp_data->json) {
             const size_t jsonString_size = strlen(rp_data->json) + 1;
@@ -876,11 +876,11 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         writeBuffer("TITL", data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(uInt32Buffer, &rp_data->titlBuffer, 4);
+        writeBuffer(&rp_data->titlBuffer, data, &pos, length, 4);
 #else
         uInt32ToCharLE(rp_data->titlBuffer, uInt32Buffer);
-#endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
+#endif
 
         if (rp_data->title) {
             const size_t titlString_size = strlen(rp_data->title) + 1;
@@ -898,11 +898,11 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         writeBuffer("DESC", data, &pos, length, 4);
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(uInt32Buffer, &rp_data->descBuffer, 4);
+        writeBuffer(&rp_data->descBuffer, data, &pos, length, 4);
 #else
         uInt32ToCharLE(rp_data->descBuffer, uInt32Buffer);
-#endif
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
+#endif
 
         if (rp_data->description) {
             const size_t descString_size = strlen(rp_data->description) + 1;
