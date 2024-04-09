@@ -1,16 +1,18 @@
 PROJECT_NAME           = "libragephoto"
 PROJECT_NUMBER         = "Version: @ragephoto_VERSION@"
-INPUT                  = "@CMAKE_CURRENT_SOURCE_DIR@/index.doc" \
-                         "@CMAKE_CURRENT_SOURCE_DIR@/build.doc" \
-                         "@CMAKE_CURRENT_SOURCE_DIR@/usage.doc" \
-                         "src/core"
+INPUT                  = "src/core" \
+                         "@CMAKE_CURRENT_SOURCE_DIR@/index.dox" \
+                         "@CMAKE_CURRENT_SOURCE_DIR@/build.dox" \
+                         "@CMAKE_CURRENT_SOURCE_DIR@/usage.dox"
 OUTPUT_DIRECTORY       = "@CMAKE_CURRENT_BINARY_DIR@"
+FULL_PATH_NAMES        = NO
 EXTRACT_PRIVATE        = NO
 ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
-EXPAND_ONLY_PREDEF     = YES
+EXPAND_ONLY_PREDEF     = NO
 PREDEFINED             = "__cplusplus=201703L" \
                          "RAGEPHOTO_CXX_STD=17" \
-                         "@LIBRAGEPHOTO_API@" \
                          "LIBRAGEPHOTO_C_PUBLIC=" \
-                         "LIBRAGEPHOTO_CXX_PUBLIC="
+                         "LIBRAGEPHOTO_CXX_PUBLIC=" \
+                         "INT32_C(val)=val" \
+                         "UINT32_C(val)=val##U"

@@ -9,12 +9,11 @@
 
 <b>Getting started</b>  
 \subpage Build "Build libragephoto"  
-\subpage Usage "Using libragephoto"
+\subpage Usage "Using libragephoto"  
 
 <b>Reference</b>  
-ragephoto::cxx_abi::photo (C++ API)  
-ragephoto::c_abi::photo (C++ API based on C API)  
-RagePhoto.h (C API)  
+\ref RagePhotoInstance "RagePhoto C API"  
+\ref ragephoto::photo "RagePhoto C++ API"  
 RagePhotoData (Data Object Struct)  
 RagePhotoFormatParser (Custom Format Parser Struct)
 

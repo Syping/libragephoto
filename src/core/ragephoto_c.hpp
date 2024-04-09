@@ -28,6 +28,7 @@ namespace ragephoto_c {
 
 /**
 * \brief GTA V and RDR 2 Photo Parser (C API wrapper).
+* \class ragephoto_c::photo RagePhoto.hpp RagePhoto
 */
 class photo
 {

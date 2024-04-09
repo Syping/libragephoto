@@ -31,6 +31,7 @@ namespace ragephoto {
 
 /**
 * \brief GTA V and RDR 2 Photo Parser.
+* \class ragephoto::photo RagePhoto.hpp RagePhoto
 */
 class LIBRAGEPHOTO_CXX_PUBLIC photo
 {

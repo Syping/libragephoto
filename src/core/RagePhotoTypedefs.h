@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2023 Syping
+* Copyright (C) 2021-2024 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -70,10 +70,12 @@ typedef struct RagePhotoFormatParser {
     ragephoto_saveszfunc_t funcSaveSz; /**< Pointer to saveSize function */
 } RagePhotoFormatParser;
 
-/** RagePhoto instance struct for storing data and format parser pointer. */
+/** RagePhoto instance struct for storing data and format parser pointer.
+* \struct RagePhotoInstance RagePhoto.h
+*/
 typedef struct RagePhotoInstance {
-    RagePhotoData *data; /**< Pointer for data */
-    RagePhotoFormatParser *parser; /**< Pointer for format parser */
+    RagePhotoData *data; /**< Pointer for internal data */
+    RagePhotoFormatParser *parser; /**< Pointer for internal format parser */
 } RagePhotoInstance;
 
 /* RagePhoto default sizes */

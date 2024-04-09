@@ -1,0 +1,245 @@
+/*! \page Usage Using libragephoto
+
+<h3 id="api_cxx">C++ API</h3>
+
+<h4 id="cxx_include">Including RagePhoto</h4>
+
+\code{.cpp}
+#include <RagePhoto>
+\endcode
+
+Initializing a RagePhoto object
+
+\code{.cpp}
+RagePhoto ragePhoto;
+\endcode
+
+<h4 id="cxx_loading">Loading a Photo</h4>
+
+From a file using RagePhoto::loadFile
+
+\code{.cpp}
+const bool loaded = ragePhoto.loadFile("PGTA5123456789");
+\endcode
+
+From a file using RagePhoto::load(const std::string&)
+
+\code{.cpp}
+// Reading file
+std::ifstream ifs("PGTA5123456789", std::ios::in | std::ios::binary);
+if (!ifs.is_open())
+    return;
+std::string sdata(std::istreambuf_iterator<char>{ifs}, {});
+ifs.close();
+
+// Loading file
+const bool loaded = ragePhoto.load(sdata);
+\endcode
+
+From a char* using RagePhoto::load(const char*, size_t)
+
+\code{.cpp}
+const bool loaded = ragePhoto.load(data, size);
+\endcode
+
+<h4 id="cxx_using">Querying Photo data</h4>
+
+\code{.cpp}
+// Returns the Photo Format
+const uint32_t format = ragePhoto.format();
+
+// Returns the JPEG as std::string
+const std::string jpeg = ragePhoto.jpeg();
+
+// Returns the JPEG as const char*
+const char* jpeg = ragePhoto.jpegData();
+const uint32_t size = ragePhoto.jpegSize();
+
+// Returns the JSON 
+const char* json = ragePhoto.json();
+
+// Returns the Title 
+const char* title = ragePhoto.title();
+\endcode
+
+Detecting if Photo is from GTA V or RDR 2
+
+\code{.cpp}
+switch (ragePhoto.format()) {
+case RagePhoto::PhotoFormat::GTA5:
+    std::cout << "GTA V format detected" << std::endl;
+    break;
+case RagePhoto::PhotoFormat::RDR2:
+    std::cout << "RDR 2 format detected" << std::endl;
+    break;
+default:
+    std::cout << "Unknown format detected" << std::endl;
+}
+\endcode
+
+Saving the JPEG from a Photo
+
+\code{.cpp}
+// Example saveJpeg function
+bool saveJpeg(RagePhoto &ragePhoto, const std::string &filename) {
+    std::ofstream ofs(filename, std::ios::out | std::ios::binary | std::ios::trunc);
+    if (!ofs.is_open())
+        return false;
+    ofs << ragePhoto.jpeg();
+    const bool saved = ofs.good();
+    ofs.close();
+    return saved;
+}
+
+// Using the saveJpeg function
+const bool saved = saveJpeg(ragePhoto, "photo.jpg");
+\endcode
+
+<h4 id="cxx_error">Querying last error</h4>
+
+\code{.cpp}
+const int32_t error = ragePhoto.error();
+switch (error) {
+case RagePhoto::Error::NoFormatIdentifier:
+    std::cout << "No format identifier" << std::endl;
+    break;
+case RagePhoto::Error::IncompatibleFormat:
+    std::cout << "Incompatible format" << std::endl;
+    break;
+// Detect for more errors here...
+case RagePhoto::Error::NoError:
+    std::cout << "No error detected" << std::endl;
+    break;
+default:
+    std::cout << "Unknown error detected" << std::endl;
+}
+\endcode
+
+Available error codes: RagePhoto::Error
+
+<h3 id="api_c">C API</h3>
+
+<h4 id="c_include">Including RagePhoto</h4>
+
+\code{.c}
+#include <RagePhoto.h>
+\endcode
+
+Initializing a RagePhoto instance
+
+\code{.c}
+ragephoto_t instance = ragephoto_open();
+\endcode
+
+Destroying a RagePhoto instance
+
+\code{.c}
+ragephoto_close(instance);
+\endcode
+
+<h4 id="c_loading">Loading a Photo</h4>
+
+From a file using ragephoto_loadfile(ragephoto_t, const char*)
+
+\code{.c}
+const bool loaded = ragephoto_loadfile(instance, "PGTA5123456789");
+\endcode
+
+From a char* using ragephoto_load(ragephoto_t, const char*, size_t)
+
+\code{.c}
+const bool loaded = ragephoto_load(instance, data, size);
+\endcode
+
+<h4 id="c_using">Querying Photo data</h4>
+
+\code{.c}
+// Returns the Photo Format
+const uint32_t format = ragephoto_getphotoformat(instance);
+
+// Returns the JPEG as const char*
+const char* jpeg = ragephoto_getphotojpeg(instance);
+const uint32_t size = ragephoto_getphotosize(instance);
+
+// Returns the JSON
+const char* json = ragephoto_getphotojson(instance);
+
+// Returns the Title
+const char* title = ragephoto_getphototitle(instance);
+\endcode
+
+Detecting if Photo is from GTA V or RDR 2
+
+\code{.c}
+switch (ragephoto_getphotoformat(instance)) {
+case RAGEPHOTO_FORMAT_GTA5:
+    printf("GTA V format detected\n");
+    break;
+case RAGEPHOTO_FORMAT_RDR2:
+    printf("RDR 2 format detected\n");
+    break;
+default:
+    printf("Unknown format detected\n");
+}
+\endcode
+
+Saving the JPEG from a Photo
+
+\code{.c}
+// Example saveJpeg function
+bool saveJpeg(ragephoto_t instance, const char* filename) {
+    FILE* file = fopen(filename, "wb");
+    if (!file)
+        return false;
+    const uint32_t jpegSize = ragephoto_getphotosize(instance);
+    const size_t writeSize = fwrite(ragephoto_getphotojpeg(instance), sizeof(char), jpegSize, file);
+    fclose(file);
+    return (jpegSize == writeSize);
+}
+
+// Using the saveJpeg function
+const bool saved = saveJpeg(instance, "photo.jpg");
+\endcode
+
+<h4 id="c_error">Querying last error</h4>
+
+\code{.c}
+const int32_t error = ragephoto_error(instance);
+switch (error) {
+case RAGEPHOTO_ERROR_NOFORMATIDENTIFIER:
+    printf("No format identifier\n");
+    break;
+case RAGEPHOTO_ERROR_INCOMPATIBLEFORMAT:
+    printf("Incompatible format\n");
+    break;
+// Detect for more errors here...
+case RAGEPHOTO_ERROR_NOERROR:
+    printf("No error detected\n");
+    break;
+default:
+    printf("Unknown error detected\n");
+}
+\endcode
+
+<h3 id="cmake">Including libragephoto in a CMake project</h3>
+
+<h4 id="cmake_pkgconfig">Using PkgConfig</h4>
+
+\code{.cmake}
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(RAGEPHOTO REQUIRED ragephoto)
+target_compile_options(your_project PRIVATE ${RAGEPHOTO_CFLAGS})
+target_link_libraries(your_project PRIVATE ${RAGEPHOTO_LIBRARIES})
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.13.0")
+    target_link_directories(your_project PRIVATE ${RAGEPHOTO_LIBRARY_DIRS})
+endif()
+target_include_directories(your_project PRIVATE ${RAGEPHOTO_INCLUDE_DIRS})
+\endcode
+
+<h4 id="cmake_add_subdirectory">Using add_subdirectory</h4>
+
+\code{.cmake}
+add_subdirectory(src/libragephoto)
+target_link_libraries(your_project PRIVATE ragephoto)
+\endcode
+*/
