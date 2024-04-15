@@ -198,13 +198,13 @@ public:
     const char* description() const {
         return ragephoto_getphotodesc(instance);
     }
-    /** Returns the Photo JSON data. */
-    const char* json() const {
-        return ragephoto_getphotojson(instance);
-    }
     /** Returns the Photo header. */
     const char* header() const {
         return ragephoto_getphotoheader(instance);
+    }
+    /** Returns the Photo JSON data. */
+    const char* json() const {
+        return ragephoto_getphotojson(instance);
     }
     /** Returns the Photo title. */
     const char* title() const {
@@ -314,6 +314,10 @@ public:
     void setFormat(uint32_t photoFormat) {
         ragephoto_setphotoformat(instance, photoFormat);
     }
+    /** Sets the Photo header. */
+    void setHeader(const char *header, uint32_t headerSum, uint32_t headerSum2 = 0) {
+        ragephoto_setphotoheader2(instance, header, headerSum, headerSum2);
+    }
     /** Sets the Photo JPEG data.
     * \param data JPEG data
     * \param size JPEG data size
@@ -333,9 +337,9 @@ public:
     void setJson(const char *json, uint32_t bufferSize = 0) {
         ragephoto_setphotojson(instance, json, bufferSize);
     }
-    /** Sets the Photo header. */
-    void setHeader(const char *header, uint32_t headerSum, uint32_t headerSum2 = 0) {
-        ragephoto_setphotoheader2(instance, header, headerSum, headerSum2);
+    /** Sets a library flag. */
+    static void setLibraryFlag(RagePhotoLibraryFlag flag, bool state = true) {
+        ragephoto_setlibraryflag(flag, state);
     }
     /** Sets the Photo title. */
     void setTitle(const char *title, uint32_t bufferSize = 0) {

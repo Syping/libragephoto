@@ -133,8 +133,8 @@ public:
     uint64_t jpegSign() const; /**< Returns the Photo JPEG sign. */
     uint32_t jpegSize() const; /**< Returns the Photo JPEG data size. */
     const char* description() const; /**< Returns the Photo description. */
-    const char* json() const; /**< Returns the Photo JSON data. */
     const char* header() const; /**< Returns the Photo header. */
+    const char* json() const; /**< Returns the Photo JSON data. */
     const char* title() const; /**< Returns the Photo title. */
     static const char* version(); /**< Returns the library version. */
     static bool save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser); /**< Saves a Photo to a char*. */
@@ -170,6 +170,7 @@ public:
     bool setData(RagePhotoData *rp_data, bool takeCopy = true); /**< Sets the internal RagePhotoData object. */
     void setDescription(const char *description, uint32_t bufferSize = 0); /**< Sets the Photo description. */
     void setFormat(uint32_t photoFormat); /**< Sets the Photo Format (GTA V or RDR 2). */
+    void setHeader(const char *header, uint32_t headerSum, uint32_t headerSum2 = 0); /**< Sets the Photo header. */
     /** Sets the Photo JPEG data.
     * \param data JPEG data
     * \param size JPEG data size
@@ -182,7 +183,7 @@ public:
     */
     bool setJpeg(const std::string &data, uint32_t bufferSize = 0);
     void setJson(const char *json, uint32_t bufferSize = 0); /**< Sets the Photo JSON data. */
-    void setHeader(const char *header, uint32_t headerSum, uint32_t headerSum2 = 0); /**< Sets the Photo header. */
+    static void setLibraryFlag(RagePhotoLibraryFlag flag, bool state = true); /**< Sets a library flag. */
     void setTitle(const char *title, uint32_t bufferSize = 0); /**< Sets the Photo title. */
 
 private:

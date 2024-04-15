@@ -301,6 +301,13 @@ LIBRAGEPHOTO_C_PUBLIC void ragephoto_setbufferoffsets(ragephoto_t instance);
 */
 LIBRAGEPHOTO_C_PUBLIC void ragephotodata_setbufferoffsets(RagePhotoData *rp_data);
 
+/** Sets a library flag.
+* \relates RagePhotoInstance
+* \param flag Library flag
+* \param state Flag state
+*/
+LIBRAGEPHOTO_C_PUBLIC void ragephoto_setlibraryflag(RagePhotoLibraryFlag flag, bool state);
+
 /** Sets the internal RagePhotoData object.
 * \memberof RagePhotoInstance
 * \param instance \p ragephoto_t instance

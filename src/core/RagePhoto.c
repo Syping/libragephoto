@@ -38,6 +38,10 @@
 #include <stringapiset.h>
 #endif
 
+/* RAGEPHOTO LIBRARY GLOBALS */
+int libraryflags = 0;
+const char* nullchar = "";
+
 /* BEGIN OF STATIC LIBRARY FUNCTIONS */
 inline size_t readBuffer(const char *input, void *output, size_t *pos, size_t outputLen, size_t inputLen)
 {
@@ -677,7 +681,9 @@ const char* ragephoto_getphotojpeg(ragephoto_t instance_t)
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->jpeg)
         return instance->data->jpeg;
-    return "";
+    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
+        return NULL;
+    return nullchar;
 }
 
 uint64_t ragephotodata_getphotosignf(RagePhotoData *rp_data, uint32_t photoFormat)
@@ -731,7 +737,9 @@ const char* ragephoto_getphotodesc(ragephoto_t instance_t)
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->description)
         return instance->data->description;
-    return "";
+    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
+        return NULL;
+    return nullchar;
 }
 
 const char* ragephoto_getphotojson(ragephoto_t instance_t)
@@ -739,7 +747,9 @@ const char* ragephoto_getphotojson(ragephoto_t instance_t)
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->json)
         return instance->data->json;
-    return "";
+    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
+        return NULL;
+    return nullchar;
 }
 
 const char* ragephoto_getphotoheader(ragephoto_t instance_t)
@@ -747,7 +757,9 @@ const char* ragephoto_getphotoheader(ragephoto_t instance_t)
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->header)
         return instance->data->header;
-    return "";
+    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
+        return NULL;
+    return nullchar;
 }
 
 const char* ragephoto_getphototitle(ragephoto_t instance_t)
@@ -755,7 +767,9 @@ const char* ragephoto_getphototitle(ragephoto_t instance_t)
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->title)
         return instance->data->title;
-    return "";
+    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
+        return NULL;
+    return nullchar;
 }
 
 const char* ragephoto_version()
@@ -1095,6 +1109,14 @@ void ragephoto_setbufferoffsets(ragephoto_t instance_t)
 {
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     ragephotodata_setbufferoffsets(instance->data);
+}
+
+void ragephoto_setlibraryflag(RagePhotoLibraryFlag flag, bool state)
+{
+    if (state)
+        libraryflags |= flag;
+    else
+        libraryflags &= ~flag;
 }
 
 bool ragephoto_setphotodata(ragephoto_t instance_t, RagePhotoData *rp_data)

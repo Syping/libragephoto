@@ -78,6 +78,11 @@ typedef struct RagePhotoInstance {
     RagePhotoFormatParser *parser; /**< Pointer for internal format parser */
 } RagePhotoInstance;
 
+/** RagePhoto library flags. */
+typedef enum RagePhotoLibraryFlag {
+    RAGEPHOTO_FLAG_LEGACY_NULL_RETURN = 1 << 0 /**< Flag to enable legacy NULL return */
+} RagePhotoLibraryFlag;
+
 /* RagePhoto default sizes */
 #define RAGEPHOTO_DEFAULT_GTA5_PHOTOBUFFER UINT32_C(524288) /**< GTA V default Photo Buffer Size */
 #define RAGEPHOTO_DEFAULT_RDR2_PHOTOBUFFER UINT32_C(1048576) /**< RDR 2 default Photo Buffer Size */

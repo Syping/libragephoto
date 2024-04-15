@@ -45,6 +45,10 @@
 /* CLASSIC RAGEPHOTO TYPEDEF */
 typedef ragephoto::photo RagePhoto;
 
+/* RAGEPHOTO LIBRARY GLOBALS */
+int libraryflags = 0;
+const char* nullchar = "";
+
 /* BEGIN OF STATIC LIBRARY FUNCTIONS */
 inline size_t readBuffer(const char *input, void *output, size_t *pos, size_t outputLen, size_t inputLen)
 {
@@ -639,7 +643,9 @@ const char* RagePhoto::jpegData() const
 {
     if (m_data->jpeg)
         return m_data->jpeg;
-    return "";
+    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
+        return nullptr;
+    return nullchar;
 }
 
 uint64_t RagePhoto::jpegSign(uint32_t photoFormat, RagePhotoData *rp_data)
@@ -679,28 +685,36 @@ const char* RagePhoto::description() const
 {
     if (m_data->description)
         return m_data->description;
-    return "";
-}
-
-const char* RagePhoto::json() const
-{
-    if (m_data->json)
-        return m_data->json;
-    return "";
+    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
+        return nullptr;
+    return nullchar;
 }
 
 const char* RagePhoto::header() const
 {
     if (m_data->header)
         return m_data->header;
-    return "";
+    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
+        return nullptr;
+    return nullchar;
+}
+
+const char* RagePhoto::json() const
+{
+    if (m_data->json)
+        return m_data->json;
+    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
+        return nullptr;
+    return nullchar;
 }
 
 const char* RagePhoto::title() const
 {
     if (m_data->title)
         return m_data->title;
-    return "";
+    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
+        return nullptr;
+    return nullchar;
 }
 
 const char* RagePhoto::version()
@@ -1151,6 +1165,17 @@ void RagePhoto::setFormat(uint32_t photoFormat)
     m_data->photoFormat = photoFormat;
 }
 
+void RagePhoto::setHeader(const char *header, uint32_t headerSum, uint32_t headerSum2)
+{
+    if (!writeDataChar(header, &m_data->header)) {
+        m_data->error = Error::HeaderMallocError; // 4
+        return;
+    }
+    m_data->headerSum = headerSum;
+    m_data->headerSum2 = headerSum2;
+    m_data->error = Error::NoError; // 255
+}
+
 bool RagePhoto::setJpeg(const char *data, uint32_t size, uint32_t bufferSize)
 {
     if (m_data->jpeg) {
@@ -1215,15 +1240,12 @@ void RagePhoto::setJson(const char *json, uint32_t bufferSize)
     m_data->error = Error::NoError; // 255
 }
 
-void RagePhoto::setHeader(const char *header, uint32_t headerSum, uint32_t headerSum2)
+void RagePhoto::setLibraryFlag(RagePhotoLibraryFlag flag, bool state)
 {
-    if (!writeDataChar(header, &m_data->header)) {
-        m_data->error = Error::HeaderMallocError; // 4
-        return;
-    }
-    m_data->headerSum = headerSum;
-    m_data->headerSum2 = headerSum2;
-    m_data->error = Error::NoError; // 255
+    if (state)
+        libraryflags |= flag;
+    else
+        libraryflags &= ~flag;
 }
 
 void RagePhoto::setTitle(const char *title, uint32_t bufferSize)
@@ -1474,6 +1496,11 @@ void ragephoto_setbufferoffsets(ragephoto_t instance)
 void ragephotodata_setbufferoffsets(RagePhotoData *rp_data)
 {
     RagePhoto::setBufferOffsets(rp_data);
+}
+
+void ragephoto_setlibraryflag(RagePhotoLibraryFlag flag, bool state)
+{
+    RagePhoto::setLibraryFlag(flag, state);
 }
 
 bool ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *rp_data)
