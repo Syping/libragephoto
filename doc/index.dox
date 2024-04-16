@@ -9,7 +9,7 @@
 
 <b>Getting started</b>  
 \subpage Build "Build libragephoto"  
-\subpage Usage "Using libragephoto"  
+\subpage Usage "Using libragephoto"
 
 <b>Reference</b>  
 \ref RagePhotoInstance "RagePhoto C API"  

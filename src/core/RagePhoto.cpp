@@ -643,9 +643,7 @@ const char* RagePhoto::jpegData() const
 {
     if (m_data->jpeg)
         return m_data->jpeg;
-    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
-        return nullptr;
-    return nullchar;
+    return (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN) ? nullptr : nullchar;
 }
 
 uint64_t RagePhoto::jpegSign(uint32_t photoFormat, RagePhotoData *rp_data)
@@ -685,36 +683,28 @@ const char* RagePhoto::description() const
 {
     if (m_data->description)
         return m_data->description;
-    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
-        return nullptr;
-    return nullchar;
+    return (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN) ? nullptr : nullchar;
 }
 
 const char* RagePhoto::header() const
 {
     if (m_data->header)
         return m_data->header;
-    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
-        return nullptr;
-    return nullchar;
+    return (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN) ? nullptr : nullchar;
 }
 
 const char* RagePhoto::json() const
 {
     if (m_data->json)
         return m_data->json;
-    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
-        return nullptr;
-    return nullchar;
+    return (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN) ? nullptr : nullchar;
 }
 
 const char* RagePhoto::title() const
 {
     if (m_data->title)
         return m_data->title;
-    if (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN)
-        return nullptr;
-    return nullchar;
+    return (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN) ? nullptr : nullchar;
 }
 
 const char* RagePhoto::version()
@@ -1242,10 +1232,7 @@ void RagePhoto::setJson(const char *json, uint32_t bufferSize)
 
 void RagePhoto::setLibraryFlag(RagePhotoLibraryFlag flag, bool state)
 {
-    if (state)
-        libraryflags |= flag;
-    else
-        libraryflags &= ~flag;
+    state ? (libraryflags |= flag) : (libraryflags &= ~flag);
 }
 
 void RagePhoto::setTitle(const char *title, uint32_t bufferSize)
