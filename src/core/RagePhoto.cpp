@@ -763,7 +763,6 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
 
         const size_t length = saveSize(photoFormat, rp_data, nullptr);
         size_t pos = 0;
-        char uInt32Buffer[4];
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
         writeBuffer(&photoFormat, data, &pos, length, 4);
