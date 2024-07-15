@@ -127,6 +127,15 @@ inline uint32_t charToUInt32LE(char *x)
             (unsigned char)(x[0]));
 }
 
+inline uint32_t swapToUInt32LE(uint32_t x)
+{
+    unsigned char *y = (unsigned char*)&x;
+    return (y[3] << 24 |
+            y[2] << 16 |
+            y[1] << 8 |
+            y[0]);
+}
+
 inline void uInt32ToCharLE(uint32_t x, char *y)
 {
     y[0] = x;
@@ -245,18 +254,15 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
     ragephotodata_clear(rp_data);
 
     size_t pos = 0;
-    char uInt32Buffer[4];
-    size_t size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+    size_t size = readBuffer(data, &rp_data->photoFormat, &pos, 4, length);
+#ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
+    rp_data->photoFormat = swapToUInt32LE(rp_data->photoFormat);
+#endif
     if (size != 4) {
         rp_data->error = RAGEPHOTO_ERROR_NOFORMATIDENTIFIER; // 1
         return false;
     }
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-    memcpy(&rp_data->photoFormat, uInt32Buffer, 4);
-#else
-    rp_data->photoFormat = charToUInt32LE(uInt32Buffer);
-#endif
     if (rp_data->photoFormat == RAGEPHOTO_FORMAT_GTA5 || rp_data->photoFormat == RAGEPHOTO_FORMAT_RDR2) {
 #if defined(UNICODE_ICONV) || defined(UNICODE_WINCVT)
         char photoHeader[256];
@@ -303,16 +309,14 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
         }
 #endif
 
-        size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+        size = readBuffer(data, &rp_data->headerSum, &pos, 4, length);
+#ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
+        rp_data->headerSum = swapToUInt32LE(rp_data->headerSum);
+#endif
         if (size != 4) {
             rp_data->error = RAGEPHOTO_ERROR_INCOMPLETECHECKSUM; // 7
             return false;
         }
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(&rp_data->headerSum, uInt32Buffer, 4);
-#else
-        rp_data->headerSum = charToUInt32LE(uInt32Buffer);
-#endif
 
         if (rp_data->photoFormat == RAGEPHOTO_FORMAT_RDR2) {
             char formatCheckBuffer[4];
@@ -328,60 +332,50 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
                 return false;
             }
 
-            size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+            size = readBuffer(data, &rp_data->headerSum2, &pos, 4, length);
+#ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
+            rp_data->headerSum2 = swapToUInt32LE(rp_data->headerSum2);
+#endif
             if (size != 4) {
                 rp_data->error = RAGEPHOTO_ERROR_INCOMPLETECHECKSUM; // 7
                 return false;
             }
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-            memcpy(&rp_data->headerSum2, uInt32Buffer, 4);
-#else
-            rp_data->headerSum2 = charToUInt32LE(uInt32Buffer);
-#endif
         }
 
-        size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+        size = readBuffer(data, &rp_data->endOfFile, &pos, 4, length);
+#ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
+        rp_data->endOfFile = swapToUInt32LE(rp_data->endOfFile);
+#endif
         if (size != 4) {
             rp_data->error = RAGEPHOTO_ERROR_INCOMPLETEEOF; // 8
             return false;
         }
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(&rp_data->endOfFile, uInt32Buffer, 4);
-#else
-        rp_data->endOfFile = charToUInt32LE(uInt32Buffer);
-#endif
 
-        size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+        size = readBuffer(data, &rp_data->jsonOffset, &pos, 4, length);
+#ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
+        rp_data->jsonOffset = swapToUInt32LE(rp_data->jsonOffset);
+#endif
         if (size != 4) {
             rp_data->error = RAGEPHOTO_ERROR_INCOMPLETEJSONOFFSET; // 9
             return false;
         }
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(&rp_data->jsonOffset, uInt32Buffer, 4);
-#else
-        rp_data->jsonOffset = charToUInt32LE(uInt32Buffer);
+        size = readBuffer(data, &rp_data->titlOffset, &pos, 4, length);
+#ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
+        rp_data->titlOffset = swapToUInt32LE(rp_data->titlOffset);
 #endif
-        size = readBuffer(data, uInt32Buffer, &pos, 4, length);
         if (size != 4) {
             rp_data->error = RAGEPHOTO_ERROR_INCOMPLETETITLEOFFSET; // 10
             return false;
         }
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(&rp_data->titlOffset, uInt32Buffer, 4);
-#else
-        rp_data->titlOffset = charToUInt32LE(uInt32Buffer);
-#endif
 
-        size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+        size = readBuffer(data, &rp_data->descOffset, &pos, 4, length);
+#ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
+        rp_data->descOffset = swapToUInt32LE(rp_data->descOffset);
+#endif
         if (size != 4) {
             rp_data->error = RAGEPHOTO_ERROR_INCOMPLETEDESCOFFSET; // 11
             return false;
         }
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(&rp_data->descOffset, uInt32Buffer, 4);
-#else
-        rp_data->descOffset = charToUInt32LE(uInt32Buffer);
-#endif
 
         char markerBuffer[4];
         size = readBuffer(data, markerBuffer, &pos, 4, length);
@@ -394,27 +388,23 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
             return false;
         }
 
-        size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+        size = readBuffer(data, &rp_data->jpegBuffer, &pos, 4, length);
+#ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
+        rp_data->jpegBuffer = swapToUInt32LE(rp_data->jpegBuffer);
+#endif
         if (size != 4) {
             rp_data->error = RAGEPHOTO_ERROR_INCOMPLETEPHOTOBUFFER; // 14
             return false;
         }
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(&rp_data->jpegBuffer, uInt32Buffer, 4);
-#else
-        rp_data->jpegBuffer = charToUInt32LE(uInt32Buffer);
-#endif
 
-        size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+        size = readBuffer(data, &rp_data->jpegSize, &pos, 4, length);
+#ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
+        rp_data->jpegSize = swapToUInt32LE(rp_data->jpegSize);
+#endif
         if (size != 4) {
             rp_data->error = RAGEPHOTO_ERROR_INCOMPLETEPHOTOSIZE; // 15
             return false;
         }
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(&rp_data->jpegSize, uInt32Buffer, 4);
-#else
-        rp_data->jpegSize = charToUInt32LE(uInt32Buffer);
-#endif
 
         rp_data->jpeg = (char*)malloc(rp_data->jpegSize);
         if (!rp_data->jpeg) {
@@ -440,16 +430,14 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
             return false;
         }
 
-        size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+        size = readBuffer(data, &rp_data->jsonBuffer, &pos, 4, length);
+#ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
+        rp_data->jsonBuffer = swapToUInt32LE(rp_data->jsonBuffer);
+#endif
         if (size != 4) {
             rp_data->error = RAGEPHOTO_ERROR_INCOMPLETEJSONBUFFER; // 20
             return false;
         }
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(&rp_data->jsonBuffer, uInt32Buffer, 4);
-#else
-        rp_data->jsonBuffer = charToUInt32LE(uInt32Buffer);
-#endif
 
         rp_data->json = (char*)malloc(rp_data->jsonBuffer);
         if (!rp_data->json) {
@@ -474,16 +462,14 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
             return false;
         }
 
-        size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+        size = readBuffer(data, &rp_data->titlBuffer, &pos, 4, length);
+#ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
+        rp_data->titlBuffer = swapToUInt32LE(rp_data->titlBuffer);
+#endif
         if (size != 4) {
             rp_data->error = RAGEPHOTO_ERROR_INCOMPLETETITLEBUFFER; // 25
             return false;
         }
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(&rp_data->titlBuffer, uInt32Buffer, 4);
-#else
-        rp_data->titlBuffer = charToUInt32LE(uInt32Buffer);
-#endif
 
         rp_data->title = (char*)malloc(rp_data->titlBuffer);
         if (!rp_data->title) {
@@ -508,16 +494,14 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
             return false;
         }
 
-        size = readBuffer(data, uInt32Buffer, &pos, 4, length);
+        size = readBuffer(data, &rp_data->descBuffer, &pos, 4, length);
+#ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
+        rp_data->descBuffer = swapToUInt32LE(rp_data->descBuffer);
+#endif
         if (size != 4) {
             rp_data->error = RAGEPHOTO_ERROR_INCOMPLETEDESCBUFFER; // 30
             return false;
         }
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-        memcpy(&rp_data->descBuffer, uInt32Buffer, 4);
-#else
-        rp_data->descBuffer = charToUInt32LE(uInt32Buffer);
-#endif
 
         rp_data->description = (char*)malloc(rp_data->descBuffer);
         if (!rp_data->description) {
@@ -808,7 +792,7 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
         const size_t length = ragephotodata_getsavesizef(rp_data, NULL, photoFormat);
         size_t pos = 0;
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef LIBRAGEPHOTO_LITTLE_ENDIAN
         writeBuffer(&photoFormat, data, &pos, length, 4);
 #else
         char uInt32Buffer[4];
@@ -819,7 +803,7 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
         writeBuffer(photoHeader, data, &pos, length, photoHeader_size);
         zeroBuffer(data, &pos, length, 256 - photoHeader_size);
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef LIBRAGEPHOTO_LITTLE_ENDIAN
         writeBuffer(&rp_data->headerSum, data, &pos, length, 4);
 #else
         uInt32ToCharLE(rp_data->headerSum, uInt32Buffer);
@@ -829,7 +813,7 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
         if (photoFormat == RAGEPHOTO_FORMAT_RDR2) {
             zeroBuffer(data, &pos, length, 4);
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef LIBRAGEPHOTO_LITTLE_ENDIAN
             writeBuffer(&rp_data->headerSum2, data, &pos, length, 4);
 #else
             uInt32ToCharLE(rp_data->headerSum2, uInt32Buffer);
@@ -842,28 +826,28 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
         const uint32_t descOffset = titlOffset + rp_data->titlBuffer + UINT32_C(8);
         const uint32_t endOfFile = descOffset + rp_data->descBuffer + UINT32_C(12);
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef LIBRAGEPHOTO_LITTLE_ENDIAN
         writeBuffer(&endOfFile, data, &pos, length, 4);
 #else
         uInt32ToCharLE(endOfFile, uInt32Buffer);
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 #endif
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef LIBRAGEPHOTO_LITTLE_ENDIAN
         writeBuffer(&jsonOffset, data, &pos, length, 4);
 #else
         uInt32ToCharLE(jsonOffset, uInt32Buffer);
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 #endif
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef LIBRAGEPHOTO_LITTLE_ENDIAN
         writeBuffer(&titlOffset, data, &pos, length, 4);
 #else
         uInt32ToCharLE(titlOffset, uInt32Buffer);
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 #endif
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef LIBRAGEPHOTO_LITTLE_ENDIAN
         writeBuffer(&descOffset, data, &pos, length, 4);
 #else
         uInt32ToCharLE(descOffset, uInt32Buffer);
@@ -872,14 +856,14 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 
         writeBuffer("JPEG", data, &pos, length, 4);
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef LIBRAGEPHOTO_LITTLE_ENDIAN
         writeBuffer(&rp_data->jpegBuffer, data, &pos, length, 4);
 #else
         uInt32ToCharLE(rp_data->jpegBuffer, uInt32Buffer);
         writeBuffer(uInt32Buffer, data, &pos, length, 4);
 #endif
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef LIBRAGEPHOTO_LITTLE_ENDIAN
         writeBuffer(&rp_data->jpegSize, data, &pos, length, 4);
 #else
         uInt32ToCharLE(rp_data->jpegSize, uInt32Buffer);
@@ -900,7 +884,7 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 
         writeBuffer("JSON", data, &pos, length, 4);
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef LIBRAGEPHOTO_LITTLE_ENDIAN
         writeBuffer(&rp_data->jsonBuffer, data, &pos, length, 4);
 #else
         uInt32ToCharLE(rp_data->jsonBuffer, uInt32Buffer);
@@ -922,7 +906,7 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 
         writeBuffer("TITL", data, &pos, length, 4);
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef LIBRAGEPHOTO_LITTLE_ENDIAN
         writeBuffer(&rp_data->titlBuffer, data, &pos, length, 4);
 #else
         uInt32ToCharLE(rp_data->titlBuffer, uInt32Buffer);
@@ -944,7 +928,7 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 
         writeBuffer("DESC", data, &pos, length, 4);
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifdef LIBRAGEPHOTO_LITTLE_ENDIAN
         writeBuffer(&rp_data->descBuffer, data, &pos, length, 4);
 #else
         uInt32ToCharLE(rp_data->descBuffer, uInt32Buffer);
