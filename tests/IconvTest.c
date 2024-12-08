@@ -16,14 +16,13 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include <cstring>
-#define VC_EXTRALEAN
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include <stdio.h>
+#include <string.h>
+#include <iconv.h>
 
 int main(int argc, char *argv[])
 {
-    const unsigned char photoHeader_english[256] = {
+    unsigned char photoHeader_english[256] = {
         0x50, 0x00, 0x48, 0x00, 0x4f, 0x00, 0x54, 0x00,
         0x4f, 0x00, 0x20, 0x00, 0x2d, 0x00, 0x20, 0x00,
         0x30, 0x00, 0x32, 0x00, 0x2f, 0x00, 0x30, 0x00,
@@ -58,7 +57,7 @@ int main(int argc, char *argv[])
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
-    const unsigned char photoHeader_japanese[256] = {
+    unsigned char photoHeader_japanese[256] = {
         0x99, 0x51, 0x1f, 0x77, 0x20, 0x00, 0x2d, 0x00,
         0x20, 0x00, 0x31, 0x00, 0x32, 0x00, 0x2f, 0x00,
         0x32, 0x00, 0x38, 0x00, 0x2f, 0x00, 0x32, 0x00,
@@ -93,7 +92,7 @@ int main(int argc, char *argv[])
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
-    const unsigned char photoHeader_korean[256] = {
+    unsigned char photoHeader_korean[256] = {
         0xac, 0xc0, 0xc4, 0xc9, 0x20, 0x00, 0x2d, 0x00,
         0x20, 0x00, 0x31, 0x00, 0x32, 0x00, 0x2f, 0x00,
         0x32, 0x00, 0x38, 0x00, 0x2f, 0x00, 0x32, 0x00,
@@ -128,7 +127,7 @@ int main(int argc, char *argv[])
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
-    const unsigned char photoHeader_russian[256] = {
+    unsigned char photoHeader_russian[256] = {
         0x24, 0x04, 0x1e, 0x04, 0x22, 0x04, 0x1e, 0x04,
         0x20, 0x00, 0x2d, 0x00, 0x20, 0x00, 0x31, 0x00,
         0x32, 0x00, 0x2f, 0x00, 0x32, 0x00, 0x38, 0x00,
@@ -163,7 +162,7 @@ int main(int argc, char *argv[])
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
-    const unsigned char photoHeader_taiwanese[256] = {
+    unsigned char photoHeader_taiwanese[256] = {
         0xf8, 0x76, 0x47, 0x72, 0x20, 0x00, 0x2d, 0x00,
         0x20, 0x00, 0x31, 0x00, 0x32, 0x00, 0x2f, 0x00,
         0x32, 0x00, 0x38, 0x00, 0x2f, 0x00, 0x32, 0x00,
@@ -198,40 +197,63 @@ int main(int argc, char *argv[])
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
-    int converted;
+    size_t src_s, dst_s, ret;
     char photoString[256];
+    iconv_t iconv_in = iconv_open("UTF-8", "UTF-16LE");
+    if (iconv_in == (iconv_t)-1)
+        return -1;
 
     // English
-    converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_english), -1, photoString, 256, NULL, NULL);
-    if (converted == 0)
+    src_s = sizeof(photoHeader_english);
+    dst_s = sizeof(photoString);
+    char *src_english = (char*)photoHeader_english;
+    char *dst_english = photoString;
+    ret = iconv(iconv_in, &src_english, &src_s, &dst_english, &dst_s);
+    if (ret == (size_t)-1)
         return 1;
     if (strcmp(photoString, "PHOTO - 02/01/17 08:42:44") != 0)
         return 2;
 
     // Japanese
-    converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_japanese), -1, photoString, 256, NULL, NULL);
-    if (converted == 0)
+    src_s = sizeof(photoHeader_japanese);
+    dst_s = sizeof(photoString);
+    char *src_japanese = (char*)photoHeader_japanese;
+    char *dst_japanese = photoString;
+    ret = iconv(iconv_in, &src_japanese, &src_s, &dst_japanese, &dst_s);
+    if (ret == (size_t)-1)
         return 3;
     if (strcmp(photoString, "写真 - 12/28/22 04:22:57") != 0)
         return 4;
 
     // Korean
-    converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_korean), -1, photoString, 256, NULL, NULL);
-    if (converted == 0)
+    src_s = sizeof(photoHeader_korean);
+    dst_s = sizeof(photoString);
+    char *src_korean = (char*)photoHeader_korean;
+    char *dst_korean = photoString;
+    ret = iconv(iconv_in, &src_korean, &src_s, &dst_korean, &dst_s);
+    if (ret == (size_t)-1)
         return 5;
     if (strcmp(photoString, "사진 - 12/28/22 04:18:28") != 0)
         return 6;
 
     // Russian
-    converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_russian), -1, photoString, 256, NULL, NULL);
-    if (converted == 0)
+    src_s = sizeof(photoHeader_russian);
+    dst_s = sizeof(photoString);
+    char *src_russian = (char*)photoHeader_russian;
+    char *dst_russian = photoString;
+    ret = iconv(iconv_in, &src_russian, &src_s, &dst_russian, &dst_s);
+    if (ret == (size_t)-1)
         return 7;
     if (strcmp(photoString, "ФОТО - 12/28/22 04:25:10") != 0)
         return 8;
 
     // Taiwanese
-    converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_taiwanese), -1, photoString, 256, NULL, NULL);
-    if (converted == 0)
+    src_s = sizeof(photoHeader_taiwanese);
+    dst_s = sizeof(photoString);
+    char *src_taiwanese = (char*)photoHeader_taiwanese;
+    char *dst_taiwanese = photoString;
+    ret = iconv(iconv_in, &src_taiwanese, &src_s, &dst_taiwanese, &dst_s);
+    if (ret == (size_t)-1)
         return 9;
     if (strcmp(photoString, "相片 - 12/28/22 04:21:01") != 0)
         return 10;

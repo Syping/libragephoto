@@ -38,8 +38,13 @@
 #elif defined UNICODE_ICONV
 #include <iconv.h>
 #elif defined UNICODE_WINCVT
+#ifndef VC_EXTRALEAN
+#define VC_EXTRALEAN
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
-#include <stringapiset.h>
 #endif
 
 /* CLASSIC RAGEPHOTO TYPEDEF */

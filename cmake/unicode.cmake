@@ -1,6 +1,6 @@
 #[[**************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2023 Syping
+* Copyright (C) 2021-2024 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -25,17 +25,23 @@ if (RAGEPHOTO_UNICODE)
     message("-- UnicodeCvt - ${RAGEPHOTO_UNICODE}")
 else()
     # RagePhoto Unicode functionality tests
-    message("-- Testing codecvt")
-    try_run(CODECVT_RUN CODECVT_COMPILE "${PROJECT_BINARY_DIR}" "${PROJECT_SOURCE_DIR}/tests/CodecvtTest.cpp")
-    if (CODECVT_COMPILE AND CODECVT_RUN EQUAL 0)
-        set(CODECVT_COMPAT TRUE)
-        message("-- Testing codecvt - yes")
-    else()
-        message("-- Testing codecvt - no")
+    if (NOT RAGEPHOTO_C_LIBRARY)
+        message("-- Testing codecvt")
+        try_run(CODECVT_RUN CODECVT_COMPILE "${PROJECT_BINARY_DIR}" "${PROJECT_SOURCE_DIR}/tests/CodecvtTest.cpp")
+        if (CODECVT_COMPILE AND CODECVT_RUN EQUAL 0)
+            set(CODECVT_COMPAT TRUE)
+            message("-- Testing codecvt - yes")
+        else()
+            message("-- Testing codecvt - no")
+        endif()
     endif()
-    
+
     message("-- Testing iconv")
-    try_run(ICONV_RUN ICONV_COMPILE "${PROJECT_BINARY_DIR}" "${PROJECT_SOURCE_DIR}/tests/IconvTest.cpp")
+    if (RAGEPHOTO_C_LIBRARY)
+        try_run(ICONV_RUN ICONV_COMPILE "${PROJECT_BINARY_DIR}" "${PROJECT_SOURCE_DIR}/tests/IconvTest.c")
+    else()
+        try_run(ICONV_RUN ICONV_COMPILE "${PROJECT_BINARY_DIR}" "${PROJECT_SOURCE_DIR}/tests/IconvTest.cpp")
+    endif()
     if (ICONV_COMPILE AND ICONV_RUN EQUAL 0)
         set(ICONV_COMPAT TRUE)
         message("-- Testing iconv - yes")
@@ -45,7 +51,11 @@ else()
     
     if (WIN32)
         message("-- Testing wincvt")
-        try_run(WINCVT_RUN WINCVT_COMPILE "${PROJECT_BINARY_DIR}" "${PROJECT_SOURCE_DIR}/tests/WincvtTest.cpp")
+        if (RAGEPHOTO_C_LIBRARY)
+            try_run(WINCVT_RUN WINCVT_COMPILE "${PROJECT_BINARY_DIR}" "${PROJECT_SOURCE_DIR}/tests/WincvtTest.c")
+        else()
+            try_run(WINCVT_RUN WINCVT_COMPILE "${PROJECT_BINARY_DIR}" "${PROJECT_SOURCE_DIR}/tests/WincvtTest.cpp")
+        endif()
         if (WINCVT_COMPILE AND WINCVT_RUN EQUAL 0)
             set(WINCVT_COMPAT TRUE)
             message("-- Testing wincvt - yes")

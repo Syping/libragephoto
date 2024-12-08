@@ -16,7 +16,8 @@
 * responsible for anything with use of the software, you are self responsible.
 ****************************************************************************]]
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16)
+cmake_policy(VERSION 3.16...3.28)
 project(ragephoto VERSION 0.6.0 LANGUAGES C CXX)
 include(GNUInstallDirs)
 

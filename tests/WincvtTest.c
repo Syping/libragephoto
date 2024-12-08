@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2024 Syping
+* Copyright (C) 2021-2022 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -16,7 +16,7 @@
 * responsible for anything with use of the software, you are self responsible.
 *****************************************************************************/
 
-#include <cstring>
+#include <string.h>
 #define VC_EXTRALEAN
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -202,35 +202,35 @@ int main(int argc, char *argv[])
     char photoString[256];
 
     // English
-    converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_english), -1, photoString, 256, NULL, NULL);
+    converted = WideCharToMultiByte(CP_UTF8, 0, (const wchar_t*)photoHeader_english, -1, photoString, 256, NULL, NULL);
     if (converted == 0)
         return 1;
     if (strcmp(photoString, "PHOTO - 02/01/17 08:42:44") != 0)
         return 2;
 
     // Japanese
-    converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_japanese), -1, photoString, 256, NULL, NULL);
+    converted = WideCharToMultiByte(CP_UTF8, 0, (const wchar_t*)photoHeader_japanese, -1, photoString, 256, NULL, NULL);
     if (converted == 0)
         return 3;
     if (strcmp(photoString, "写真 - 12/28/22 04:22:57") != 0)
         return 4;
 
     // Korean
-    converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_korean), -1, photoString, 256, NULL, NULL);
+    converted = WideCharToMultiByte(CP_UTF8, 0, (const wchar_t*)photoHeader_korean, -1, photoString, 256, NULL, NULL);
     if (converted == 0)
         return 5;
     if (strcmp(photoString, "사진 - 12/28/22 04:18:28") != 0)
         return 6;
 
     // Russian
-    converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_russian), -1, photoString, 256, NULL, NULL);
+    converted = WideCharToMultiByte(CP_UTF8, 0, (const wchar_t*)photoHeader_russian, -1, photoString, 256, NULL, NULL);
     if (converted == 0)
         return 7;
     if (strcmp(photoString, "ФОТО - 12/28/22 04:25:10") != 0)
         return 8;
 
     // Taiwanese
-    converted = WideCharToMultiByte(CP_UTF8, 0, reinterpret_cast<const wchar_t*>(photoHeader_taiwanese), -1, photoString, 256, NULL, NULL);
+    converted = WideCharToMultiByte(CP_UTF8, 0, (const wchar_t*)photoHeader_taiwanese, -1, photoString, 256, NULL, NULL);
     if (converted == 0)
         return 9;
     if (strcmp(photoString, "相片 - 12/28/22 04:21:01") != 0)
