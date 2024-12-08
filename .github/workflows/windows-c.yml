@@ -14,7 +14,7 @@ jobs:
           - amd64_x86
           - amd64_arm64
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         submodules: recursive
     - uses: ilammy/msvc-dev-cmd@v1
@@ -27,7 +27,7 @@ jobs:
     - name: Install
       run: cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --prefix ${{github.workspace}}/install
     - name: Upload
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: Windows MSVC ${{matrix.arch}}
         path: |
