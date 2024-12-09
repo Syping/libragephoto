@@ -16,37 +16,33 @@
 * responsible for anything with use of the software, you are self responsible.
 ****************************************************************************]]
 
-if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.13.0")
-    add_executable(ragephoto-wasm
-        ${RAGEPHOTO_HEADERS}
-        ${RAGEPHOTO_SOURCES}
-    )
-    set_target_properties(ragephoto-wasm PROPERTIES
-        CXX_STANDARD ${RAGEPHOTO_CXX_STANDARD}
-        CXX_STANDARD_REQUIRED ON
-        PREFIX "lib"
-        OUTPUT_NAME "ragephoto"
-    )
-    target_compile_definitions(ragephoto-wasm PRIVATE
-        LIBRAGEPHOTO_LIBRARY
-        LIBRAGEPHOTO_WASM
-        ${LIBRAGEPHOTO_DEFINES}
-    )
-    target_link_options(ragephoto-wasm PRIVATE
-        "SHELL:-O3"
-        "SHELL:--no-entry"
-        "SHELL:-s ALLOW_MEMORY_GROWTH=1"
-        "SHELL:-s MODULARIZE=1"
-        "SHELL:-s WASM=1"
-        "SHELL:-s WASM_BIGINT=1"
-        "SHELL:-s EXPORT_NAME=libragephotoModule"
-        "SHELL:-s EXPORTED_FUNCTIONS=_free,_malloc"
-        "SHELL:-s EXPORTED_RUNTIME_METHODS=ccall,cwrap"
-    )
-    target_include_directories(ragephoto-wasm PUBLIC
-        "${ragephoto_BINARY_DIR}/include"
-        "${ragephoto_SOURCE_DIR}/src/core"
-    )
-else()
-    message(WARNING "A useable WebAssembly build needs at least CMake 3.13.0 or newer")
-endif()
+add_executable(ragephoto-wasm
+    ${RAGEPHOTO_HEADERS}
+    ${RAGEPHOTO_SOURCES}
+)
+set_target_properties(ragephoto-wasm PROPERTIES
+    CXX_STANDARD ${RAGEPHOTO_CXX_STANDARD}
+    CXX_STANDARD_REQUIRED ON
+    PREFIX "lib"
+    OUTPUT_NAME "ragephoto"
+)
+target_compile_definitions(ragephoto-wasm PRIVATE
+    LIBRAGEPHOTO_LIBRARY
+    LIBRAGEPHOTO_WASM
+    ${LIBRAGEPHOTO_DEFINES}
+)
+target_link_options(ragephoto-wasm PRIVATE
+    "SHELL:-O3"
+    "SHELL:--no-entry"
+    "SHELL:-s ALLOW_MEMORY_GROWTH=1"
+    "SHELL:-s MODULARIZE=1"
+    "SHELL:-s WASM=1"
+    "SHELL:-s WASM_BIGINT=1"
+    "SHELL:-s EXPORT_NAME=libragephotoModule"
+    "SHELL:-s EXPORTED_FUNCTIONS=_free,_malloc"
+    "SHELL:-s EXPORTED_RUNTIME_METHODS=ccall,cwrap"
+)
+target_include_directories(ragephoto-wasm PUBLIC
+    "${ragephoto_BINARY_DIR}/include"
+    "${ragephoto_SOURCE_DIR}/src/core"
+)

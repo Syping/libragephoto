@@ -29,8 +29,8 @@ sudo cmake --install libragephoto-build
 
 #### RagePhoto API
 
-[RagePhoto C API](https://libragephoto.syping.de/doc/RagePhoto_8h.html)  
-[RagePhoto C++ API](https://libragephoto.syping.de/doc/classRagePhoto.html)
+[RagePhoto C API](https://libragephoto.syping.de/doc/structRagePhotoInstance.html)  
+[RagePhoto C++ API](https://libragephoto.syping.de/doc/classragephoto_1_1photo.html)
 
 #### libragephoto Documentation
 
