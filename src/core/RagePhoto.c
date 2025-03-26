@@ -53,7 +53,7 @@ int libraryflags = 0;
 const char* nullchar = "";
 
 /* BEGIN OF STATIC LIBRARY FUNCTIONS */
-inline size_t readBuffer(const char *input, void *output, size_t *pos, size_t outputLen, size_t inputLen)
+static inline size_t readBuffer(const char *input, void *output, size_t *pos, size_t outputLen, size_t inputLen)
 {
     size_t readLen = 0;
     if (*pos >= inputLen)
@@ -66,7 +66,7 @@ inline size_t readBuffer(const char *input, void *output, size_t *pos, size_t ou
     return readLen;
 }
 
-inline size_t writeBuffer(const void *input, char *output, size_t *pos, size_t outputLen, size_t inputLen)
+static inline size_t writeBuffer(const void *input, char *output, size_t *pos, size_t outputLen, size_t inputLen)
 {
     const size_t maxLen = outputLen - *pos;
     size_t writeLen = inputLen;
@@ -79,7 +79,7 @@ inline size_t writeBuffer(const void *input, char *output, size_t *pos, size_t o
     return writeLen;
 }
 
-inline size_t zeroBuffer(char *output, size_t *pos, size_t outputLen, size_t inputLen)
+static inline size_t zeroBuffer(char *output, size_t *pos, size_t outputLen, size_t inputLen)
 {
     const size_t maxLen = outputLen - *pos;
     size_t zeroLen = inputLen;
@@ -92,7 +92,7 @@ inline size_t zeroBuffer(char *output, size_t *pos, size_t outputLen, size_t inp
     return zeroLen;
 }
 
-inline bool writeDataChar(const char *input, char **output)
+static inline bool writeDataChar(const char *input, char **output)
 {
     const size_t src_s = strlen(input) + 1;
     if (*output) {
@@ -129,7 +129,7 @@ inline bool writeDataChar(const char *input, char **output)
     return true;
 }
 
-inline uint32_t charToUInt32LE(char *x)
+static inline uint32_t charToUInt32LE(char *x)
 {
     return ((unsigned char)(x[3]) << 24 |
             (unsigned char)(x[2]) << 16 |
@@ -137,7 +137,7 @@ inline uint32_t charToUInt32LE(char *x)
             (unsigned char)(x[0]));
 }
 
-inline uint32_t swapToUInt32LE(uint32_t x)
+static inline uint32_t swapToUInt32LE(uint32_t x)
 {
     unsigned char *y = (unsigned char*)&x;
     return (y[3] << 24 |
@@ -146,7 +146,7 @@ inline uint32_t swapToUInt32LE(uint32_t x)
             y[0]);
 }
 
-inline void uInt32ToCharLE(uint32_t x, char *y)
+static inline void uInt32ToCharLE(uint32_t x, char *y)
 {
     y[0] = x;
     y[1] = x >> 8;
@@ -154,7 +154,7 @@ inline void uInt32ToCharLE(uint32_t x, char *y)
     y[3] = x >> 24;
 }
 
-inline uint32_t joaatFromInitial(const char *data, size_t size, uint32_t init_val)
+static inline uint32_t joaatFromInitial(const char *data, size_t size, uint32_t init_val)
 {
     uint32_t val = init_val;
     for (size_t i = 0; i != size; i++) {
