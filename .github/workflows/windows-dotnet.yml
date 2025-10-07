@@ -55,15 +55,15 @@ jobs:
         path: assets/amd64_arm64
     - name: Copy Runtime Assets
       run: |
-          mkdir -p ${{github.workspace}}/src/dotnet/runtimes/win-arm64 \
-            ${{github.workspace}}/src/dotnet/runtimes/win-x64 \
-            ${{github.workspace}}/src/dotnet/runtimes/win-x86
+          mkdir -p ${{github.workspace}}/src/dotnet/runtimes/win-arm64/native \
+            ${{github.workspace}}/src/dotnet/runtimes/win-x64/native \
+            ${{github.workspace}}/src/dotnet/runtimes/win-x86/native
           cp ${{github.workspace}}/assets/amd64_arm64/bin/libragephoto.dll \
-            ${{github.workspace}}/src/dotnet/runtimes/win-arm64/libragephoto.dll
+            ${{github.workspace}}/src/dotnet/runtimes/win-arm64/native/libragephoto.dll
           cp ${{github.workspace}}/assets/amd64/bin/libragephoto.dll \
-            ${{github.workspace}}/src/dotnet/runtimes/win-x64/libragephoto.dll
+            ${{github.workspace}}/src/dotnet/runtimes/win-x64/native/libragephoto.dll
           cp ${{github.workspace}}/assets/amd64_x86/bin/libragephoto.dll \
-            ${{github.workspace}}/src/dotnet/runtimes/win-x86/libragephoto.dll
+            ${{github.workspace}}/src/dotnet/runtimes/win-x86/native/libragephoto.dll
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
