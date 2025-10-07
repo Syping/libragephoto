@@ -13,7 +13,11 @@ CMakeLists.txt text eol=lf
 *.pc.in text eol=lf
 
 # Windows development files
+*.cs text eol=crlf
+*.csproj text eol=crlf
 *.rc.in text encoding=cp1252 eol=crlf
+*.resx text eol=crlf
+*.sln text eol=crlf
 
 # Documentation files
 Doxyfile.in text eol=lf

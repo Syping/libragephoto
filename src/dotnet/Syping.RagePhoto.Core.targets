@@ -1,0 +1,17 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Condition="'$(Platform)' == 'ARM64' and '$(OS)' == 'Windows_NT'">
+    <Content Include="$(MSBuildThisFileDirectory)..\runtimes\win-arm64\native\libragephoto.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Platform)' == 'x64' and '$(OS)' == 'Windows_NT'">
+    <Content Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\libragephoto.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Platform)' == 'x86' and '$(OS)' == 'Windows_NT'">
+    <Content Include="$(MSBuildThisFileDirectory)..\runtimes\win-x86\native\libragephoto.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>
