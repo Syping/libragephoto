@@ -1,0 +1,80 @@
+name: Windows .NET
+on: push
+
+jobs:
+  Native:
+    runs-on: windows-latest
+    env:
+      BUILD_TYPE: Release
+    strategy:
+      matrix:
+        arch:
+          - amd64
+          - amd64_x86
+          - amd64_arm64
+    steps:
+    - name: Cloning
+      uses: actions/checkout@v4
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{matrix.arch}}
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_UNICODE=wincvt -GNinja
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - name: Install
+      run: cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --prefix ${{github.workspace}}/install
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: Windows MSVC ${{matrix.arch}}
+        path: |
+          ${{github.workspace}}/install/
+  Release:
+    needs: Native
+    runs-on: ubuntu-latest
+    env:
+      BUILD_TYPE: Release
+    steps:
+    - name: Cloning
+      uses: actions/checkout@v4
+    - name: Download Windows MSVC amd64
+      uses: actions/download-artifact@v4
+      with:
+        name: Windows MSVC amd64
+        path: assets/amd64
+    - name: Download Windows MSVC amd64_x86
+      uses: actions/download-artifact@v4
+      with:
+        name: Windows MSVC amd64_x86
+        path: assets/amd64_x86
+    - name: Download Windows MSVC amd64_arm64
+      uses: actions/download-artifact@v4
+      with:
+        name: Windows MSVC amd64_arm64
+        path: assets/amd64_arm64
+    - name: Copy Runtime Assets
+      run: |
+          mkdir -p ${{github.workspace}}/src/dotnet/runtimes/win-arm64 \
+            ${{github.workspace}}/src/dotnet/runtimes/win-x64 \
+            ${{github.workspace}}/src/dotnet/runtimes/win-x86
+          cp ${{github.workspace}}/assets/amd64_arm64/bin/libragephoto.dll \
+            ${{github.workspace}}/src/dotnet/runtimes/win-arm64/libragephoto.dll
+          cp ${{github.workspace}}/assets/amd64/bin/libragephoto.dll \
+            ${{github.workspace}}/src/dotnet/runtimes/win-x64/libragephoto.dll
+          cp ${{github.workspace}}/assets/amd64_x86/bin/libragephoto.dll \
+            ${{github.workspace}}/src/dotnet/runtimes/win-x86/libragephoto.dll
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore src/dotnet
+    - name: Pack Syping.RagePhoto.Core
+      run: dotnet pack src/dotnet --configuration ${{env.BUILD_TYPE}}
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: NuGet Package
+        path: |
+          ${{github.workspace}}/src/dotnet/bin/${{env.BUILD_TYPE}}/Syping.RagePhoto.Core.*.nupkg
