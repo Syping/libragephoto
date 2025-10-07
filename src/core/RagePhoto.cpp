@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2024 Syping
+* Copyright (C) 2021-2025 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -28,6 +28,18 @@
 #include <iostream>
 #include <iterator>
 
+#ifdef _WIN32
+#ifndef VC_EXTRALEAN
+#define VC_EXTRALEAN
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <fcntl.h>
+#include <io.h>
+#include <windows.h>
+#endif
+
 #ifdef RAGEPHOTO_BENCHMARK
 #include <chrono>
 #endif
@@ -37,14 +49,12 @@
 #include <locale>
 #elif defined UNICODE_ICONV
 #include <iconv.h>
-#elif defined UNICODE_WINCVT
-#ifndef VC_EXTRALEAN
-#define VC_EXTRALEAN
 #endif
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
+
+#if defined(_WIN32) && (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
+#include <filesystem>
+#elif defined(_WIN32)
+#include <memory>
 #endif
 
 /* CLASSIC RAGEPHOTO TYPEDEF */
@@ -55,6 +65,18 @@ int libraryflags = 0;
 const char* nullchar = "";
 
 /* BEGIN OF STATIC LIBRARY FUNCTIONS */
+#if defined(_WIN32) && ((RAGEPHOTO_CXX_STD < 17) || (__cplusplus < 201703L))
+inline std::unique_ptr<wchar_t> convertPath(const char* path)
+{
+    int wideCharSize = MultiByteToWideChar(CP_UTF8, 0, path, -1, nullptr, 0);
+    if (wideCharSize <= 0)
+        return std::unique_ptr<wchar_t>(new wchar_t[1]());
+    std::unique_ptr<wchar_t> wideCharPath(new wchar_t[wideCharSize]);
+    MultiByteToWideChar(CP_UTF8, 0, path, -1, wideCharPath.get(), wideCharSize);
+    return wideCharPath;
+}
+#endif
+
 inline size_t readBuffer(const char *input, void *output, size_t *pos, size_t outputLen, size_t inputLen)
 {
     size_t readLen = 0;
@@ -589,9 +611,15 @@ bool RagePhoto::load(const std::string &data)
     return load(data.data(), data.size(), m_data, m_parser);
 }
 
-bool RagePhoto::loadFile(const std::string &filename)
+bool RagePhoto::loadFile(const char *filename)
 {
+#if defined(_WIN32) && (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
+    std::ifstream ifs(std::filesystem::u8path(filename), std::ios::in | std::ios::binary);
+#elif defined(_WIN32)
+    std::ifstream ifs(convertPath(filename).get(), std::ios::in | std::ios::binary);
+#else
     std::ifstream ifs(filename, std::ios::in | std::ios::binary);
+#endif
     if (ifs.is_open()) {
         std::string sdata(std::istreambuf_iterator<char>{ifs}, {});
         ifs.close();
@@ -974,7 +1002,13 @@ bool RagePhoto::saveFile(const char *filename, uint32_t photoFormat)
     bool ok;
     const std::string sdata = save(photoFormat, &ok);
     if (ok) {
+#if defined(_WIN32) && (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
+        std::ofstream ofs(std::filesystem::u8path(filename), std::ios::out | std::ios::binary | std::ios::trunc);
+#elif defined(_WIN32)
+        std::ofstream ofs(convertPath(filename).get(), std::ios::out | std::ios::binary | std::ios::trunc);
+#else
         std::ofstream ofs(filename, std::ios::out | std::ios::binary | std::ios::trunc);
+#endif
         if (!ofs.is_open()) {
             m_data->error = Error::Uninitialised; // 0
             return false;

@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2024 Syping
+* Copyright (C) 2021-2025 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -119,7 +119,7 @@ public:
     /** Loads a Photo from a file.
     * \param filename File to load
     */
-    bool loadFile(const std::string &filename);
+    bool loadFile(const char *filename);
     int32_t error() const; /**< Returns the last error occurred. */
     uint32_t format() const; /**< Returns the Photo Format (GTA V or RDR 2). */
     const std::string jpeg() const; /**< Returns the Photo JPEG data. */

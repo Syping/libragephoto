@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2024 Syping
+* Copyright (C) 2021-2025 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef RAGEPHOTO_BENCHMARK
 #ifdef _WIN32
 #ifndef VC_EXTRALEAN
 #define VC_EXTRALEAN
@@ -30,22 +29,19 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
+#include <fcntl.h>
+#include <io.h>
 #include <windows.h>
-#else
+#endif
+
+#ifdef RAGEPHOTO_BENCHMARK
+#ifndef _WIN32
 #include <time.h>
 #endif
 #endif
 
-#if defined(UNICODE_ICONV)
+#ifdef UNICODE_ICONV
 #include <iconv.h>
-#elif defined(UNICODE_WINCVT)
-#ifndef VC_EXTRALEAN
-#define VC_EXTRALEAN
-#endif
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
 #endif
 
 /* RAGEPHOTO LIBRARY GLOBALS */
@@ -53,6 +49,40 @@ int libraryflags = 0;
 const char* nullchar = "";
 
 /* BEGIN OF STATIC LIBRARY FUNCTIONS */
+static inline FILE* openFile(const char *filename, char accessMode)
+{
+    if (accessMode != 'r' && accessMode != 'w')
+        return NULL;
+#ifdef _WIN32
+    int wideCharSize = MultiByteToWideChar(CP_UTF8, 0, filename, -1, NULL, 0);
+    if (wideCharSize <= 0)
+        return NULL;
+    wchar_t *wideCharFilename = (wchar_t*)malloc(wideCharSize * sizeof(wchar_t));
+    MultiByteToWideChar(CP_UTF8, 0, filename, -1, wideCharFilename, wideCharSize);
+    HANDLE hFile = CreateFileW(wideCharFilename,
+                               accessMode == 'r' ? GENERIC_READ : GENERIC_WRITE,
+                               accessMode == 'r' ? FILE_SHARE_READ : 0,
+                               NULL,
+                               accessMode == 'r' ? OPEN_EXISTING : CREATE_ALWAYS,
+                               FILE_ATTRIBUTE_NORMAL,
+                               NULL);
+    free(wideCharFilename);
+    int fd = _open_osfhandle((intptr_t)hFile, accessMode == 'r' ? _O_RDONLY | _O_BINARY : _O_WRONLY | _O_BINARY);
+    if (fd == -1) {
+        CloseHandle(hFile);
+        return NULL;
+    }
+    FILE *file = _fdopen(fd, accessMode == 'r' ? "rb" : "wb");
+    if (!file) {
+        _close(fd);
+        return NULL;
+    }
+#else
+    FILE *file = fopen(filename, accessMode == 'r' ? "rb" : "wb");
+#endif
+    return file;
+}
+
 static inline size_t readBuffer(const char *input, void *output, size_t *pos, size_t outputLen, size_t inputLen)
 {
     size_t readLen = 0;
@@ -601,12 +631,7 @@ bool ragephoto_load(ragephoto_t instance_t, const char *data, size_t size)
 bool ragephoto_loadfile(ragephoto_t instance_t, const char *filename)
 {
     RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
-#if defined(_WIN32)
-    FILE *file = NULL;
-    fopen_s(&file, filename, "rb");
-#else
-    FILE *file = fopen(filename, "rb");
-#endif
+    FILE *file = openFile(filename, 'r');
     if (!file)
         return false;
 #if defined(_WIN64)
@@ -1010,12 +1035,7 @@ bool ragephoto_savefilef(ragephoto_t instance_t, const char *filename, uint32_t 
         free(data);
         return false;
     }
-#ifdef _WIN32
-    FILE *file = NULL;
-    fopen_s(&file, filename, "wb");
-#else
-    FILE *file = fopen(filename, "wb");
-#endif
+    FILE *file = openFile(filename, 'w');
     if (!file) {
         free(data);
         return false;
