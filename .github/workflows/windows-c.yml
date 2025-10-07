@@ -1,5 +1,4 @@
 name: Windows C
-
 on: push
 
 jobs:

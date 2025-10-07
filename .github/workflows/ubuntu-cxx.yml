@@ -1,5 +1,4 @@
 name: Ubuntu CXX
-
 on: push
 
 jobs:

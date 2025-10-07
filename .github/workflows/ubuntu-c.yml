@@ -1,5 +1,4 @@
 name: Ubuntu C
-
 on: push
 
 jobs:

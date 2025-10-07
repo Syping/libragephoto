@@ -1,5 +1,4 @@
 name: Windows CXX
-
 on: push
 
 jobs:

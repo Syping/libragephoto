@@ -66,7 +66,7 @@ const char* nullchar = "";
 
 /* BEGIN OF STATIC LIBRARY FUNCTIONS */
 #if defined(_WIN32) && ((RAGEPHOTO_CXX_STD < 17) || (__cplusplus < 201703L))
-inline std::unique_ptr<wchar_t> convertPath(const char* path)
+inline std::unique_ptr<wchar_t> convertPath(const char *path)
 {
     int wideCharSize = MultiByteToWideChar(CP_UTF8, 0, path, -1, nullptr, 0);
     if (wideCharSize <= 0)

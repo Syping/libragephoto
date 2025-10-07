@@ -1,5 +1,4 @@
 name: WebAssembly CXX
-
 on: push
 
 jobs:
