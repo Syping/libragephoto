@@ -49,6 +49,10 @@ namespace Syping.RagePhoto {
         [DllImport(_library)]
         private static extern bool ragephoto_savef(IntPtr instance, [Out] Byte[] data, UInt32 photoFormat);
         [DllImport(_library)]
+        private static extern bool ragephoto_savefile(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename);
+        [DllImport(_library)]
+        private static extern bool ragephoto_savefilef(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename, UInt32 photoFormat);
+        [DllImport(_library)]
         private static extern void ragephoto_setbufferdefault(IntPtr instance);
         [DllImport(_library)]
         private static extern void ragephoto_setbufferoffsets(IntPtr instance);
@@ -66,8 +70,7 @@ namespace Syping.RagePhoto {
         [DllImport(_library)]
         private static extern void ragephoto_setphototitle(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String title, UInt32 bufferSize);
         [DllImport(_library)]
-        [return: MarshalAs(UnmanagedType.LPStr)]
-        private static extern String ragephoto_version();
+        private static extern IntPtr ragephoto_version();
 
         public enum DefaultSize : UInt32 {
             DEFAULT_GTA5_PHOTOBUFFER = 524288U,
@@ -288,6 +291,18 @@ namespace Syping.RagePhoto {
             return photo;
         }
 
+        public void SaveFile(String filePath) {
+            bool result = ragephoto_savefile(_instance, filePath);
+            if (!result)
+                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error.ToString()));
+        }
+
+        public void SaveFile(String filePath, PhotoFormat photoFormat) {
+            bool result = ragephoto_savefilef(_instance, filePath, (UInt32)photoFormat);
+            if (!result)
+                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error.ToString()));
+        }
+
         public void SetBufferDefault() {
             ragephoto_setbufferdefault(_instance);
         }
@@ -306,7 +321,10 @@ namespace Syping.RagePhoto {
         }
 
         public static String Version {
-            get => ragephoto_version();
+            get {
+                IntPtr versionPtr = ragephoto_version();
+                return versionPtr == IntPtr.Zero ? string.Empty : Marshal.PtrToStringAnsi(versionPtr);
+            }
         }
     }
 }
