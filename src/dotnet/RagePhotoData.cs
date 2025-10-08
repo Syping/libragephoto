@@ -2,17 +2,14 @@
 using System.Runtime.InteropServices;
 
 namespace Syping.RagePhoto {
+
     [StructLayout(LayoutKind.Sequential)]
     public readonly struct RagePhotoData {
         readonly IntPtr jpeg;
-        [MarshalAs(UnmanagedType.LPUTF8Str)]
-        readonly String description;
-        [MarshalAs(UnmanagedType.LPUTF8Str)]
-        readonly String json;
-        [MarshalAs(UnmanagedType.LPUTF8Str)]
-        readonly String header;
-        [MarshalAs(UnmanagedType.LPUTF8Str)]
-        readonly String title;
+        readonly IntPtr description;
+        readonly IntPtr json;
+        readonly IntPtr header;
+        readonly IntPtr title;
         readonly Int32 error;
         readonly UInt32 descBuffer;
         readonly UInt32 descOffset;
