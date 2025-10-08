@@ -16,10 +16,10 @@ namespace Syping.RagePhoto {
         [DllImport(_library)]
         private static extern void ragephoto_close(IntPtr instance);
         [DllImport(_library)]
-        [return: MarshalAs(UnmanagedType.Bool)]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_load(IntPtr instance, Byte[] data, UIntPtr size);
         [DllImport(_library)]
-        [return: MarshalAs(UnmanagedType.Bool)]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_loadfile(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename);
         [DllImport(_library)]
         private static extern Int32 ragephoto_error(IntPtr instance);
@@ -46,16 +46,16 @@ namespace Syping.RagePhoto {
         [DllImport(_library)]
         private static extern UIntPtr ragephoto_getsavesizef(IntPtr instance, UInt32 photoFormat);
         [DllImport(_library)]
-        [return: MarshalAs(UnmanagedType.Bool)]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_save(IntPtr instance, [Out] Byte[] data);
         [DllImport(_library)]
-        [return: MarshalAs(UnmanagedType.Bool)]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_savef(IntPtr instance, [Out] Byte[] data, UInt32 photoFormat);
         [DllImport(_library)]
-        [return: MarshalAs(UnmanagedType.Bool)]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_savefile(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename);
         [DllImport(_library)]
-        [return: MarshalAs(UnmanagedType.Bool)]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_savefilef(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename, UInt32 photoFormat);
         [DllImport(_library)]
         private static extern void ragephoto_setbufferdefault(IntPtr instance);
@@ -66,7 +66,7 @@ namespace Syping.RagePhoto {
         [DllImport(_library)]
         private static extern void ragephoto_setphotoformat(IntPtr instance, UInt32 photoFormat);
         [DllImport(_library)]
-        [return: MarshalAs(UnmanagedType.Bool)]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_setphotojpeg(IntPtr instance, Byte[] jpeg, UInt32 size, UInt32 bufferSize);
         [DllImport(_library)]
         private static extern void ragephoto_setphotojson(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String json, UInt32 bufferSize);
