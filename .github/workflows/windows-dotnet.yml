@@ -32,28 +32,29 @@ jobs:
           ${{github.workspace}}/install/
   Release:
     needs: Native
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     env:
       BUILD_TYPE: Release
     steps:
     - name: Cloning
       uses: actions/checkout@v4
-    - name: Download Windows MSVC amd64
+    - name: Download Windows MSVC amd64 Assets
       uses: actions/download-artifact@v4
       with:
         name: Windows MSVC amd64
         path: assets/amd64
-    - name: Download Windows MSVC amd64_x86
+    - name: Download Windows MSVC amd64_x86 Assets
       uses: actions/download-artifact@v4
       with:
         name: Windows MSVC amd64_x86
         path: assets/amd64_x86
-    - name: Download Windows MSVC amd64_arm64
+    - name: Download Windows MSVC amd64_arm64 Assets
       uses: actions/download-artifact@v4
       with:
         name: Windows MSVC amd64_arm64
         path: assets/amd64_arm64
-    - name: Copy Runtime Assets
+    - name: Copy Assets
+      shell: bash
       run: |
           mkdir -p ${{github.workspace}}/src/dotnet/runtimes/win-arm64/native \
             ${{github.workspace}}/src/dotnet/runtimes/win-x64/native \
@@ -64,14 +65,14 @@ jobs:
             ${{github.workspace}}/src/dotnet/runtimes/win-x64/native/libragephoto.dll
           cp ${{github.workspace}}/assets/amd64_x86/bin/libragephoto.dll \
             ${{github.workspace}}/src/dotnet/runtimes/win-x86/native/libragephoto.dll
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore src/dotnet
-    - name: Pack Syping.RagePhoto.Core
-      run: dotnet pack src/dotnet --configuration ${{env.BUILD_TYPE}}
+    - name: Build Syping.RagePhoto.Core
+      run: msbuild src/dotnet/Syping.RagePhoto.Core.csproj /t:pack /p:Configuration=${{env.BUILD_TYPE}}
     - name: Upload
       uses: actions/upload-artifact@v4
       with:

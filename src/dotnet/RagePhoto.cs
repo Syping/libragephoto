@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Syping.RagePhoto {
 
@@ -109,16 +110,15 @@ namespace Syping.RagePhoto {
         }
 
         public void Load(Byte[] data) {
-            UIntPtr size = (UIntPtr)data.LongLength;
-            bool result = ragephoto_load(_instance, data, size);
+            bool result = ragephoto_load(_instance, data, (UIntPtr)data.LongLength);
             if (!result)
-                throw new RagePhotoException(this, string.Format("Failed to load Photo: {0}", Error.ToString()));
+                throw new RagePhotoException(this, string.Format("Failed to load Photo: {0}", Error));
         }
 
         public void LoadFile(String path) {
             bool result = ragephoto_loadfile(_instance, path);
             if (!result)
-                throw new RagePhotoException(this, string.Format("Failed to load Photo: {0}", Error.ToString()));
+                throw new RagePhotoException(this, string.Format("Failed to load Photo: {0}", Error));
         }
 
         public RagePhotoData Data {
@@ -126,11 +126,8 @@ namespace Syping.RagePhoto {
         }
 
         public String Description {
-            get {
-                IntPtr descPtr = ragephoto_getphotodesc(_instance);
-                return descPtr == IntPtr.Zero ? string.Empty : Marshal.PtrToStringUTF8(descPtr);
-            }
-            set => ragephoto_setphotodesc(_instance, value, 0);
+            get => PtrToStringUTF8(ragephoto_getphotodesc(_instance));
+            set => ragephoto_setphotodesc(_instance, value, (UInt32)DefaultSize.DEFAULT_DESCBUFFER);
         }
 
         public PhotoError Error {
@@ -147,35 +144,12 @@ namespace Syping.RagePhoto {
                 UInt32 size = ragephoto_getphotosize(_instance);
                 if (size == 0)
                     return Array.Empty<Byte>();
-                IntPtr jpegPtr = ragephoto_getphotojpeg(_instance);
-                byte[] jpeg = new Byte[size];
-                Marshal.Copy(jpegPtr, jpeg, 0, (Int32)size);
-                return jpeg;
+                byte[] buffer = new Byte[size];
+                IntPtr ptr = ragephoto_getphotojpeg(_instance);
+                Marshal.Copy(ptr, buffer, 0, (Int32)size);
+                return buffer;
             }
-            set {
-                UInt32 bufferSize;
-                UInt32 size = (UInt32)value.Length;
-                switch (Format) {
-                    case PhotoFormat.GTA5:
-                        if (size > (UInt32)DefaultSize.DEFAULT_GTA5_PHOTOBUFFER)
-                            bufferSize = size;
-                        else
-                            bufferSize = (UInt32)DefaultSize.DEFAULT_GTA5_PHOTOBUFFER;
-                        break;
-                    case PhotoFormat.RDR2:
-                        if (size > (UInt32)DefaultSize.DEFAULT_RDR2_PHOTOBUFFER)
-                            bufferSize = size;
-                        else
-                            bufferSize = (UInt32)DefaultSize.DEFAULT_RDR2_PHOTOBUFFER;
-                        break;
-                    default:
-                        bufferSize = size;
-                        break;
-                }
-                bool result = ragephoto_setphotojpeg(_instance, value, size, bufferSize);
-                if (!result)
-                    throw new RagePhotoException(this, string.Format("Failed to set Jpeg: {0}", Error.ToString()));
-            }
+            set => SetJpeg(value);
         }
 
         public UInt32 JpegSize {
@@ -183,18 +157,12 @@ namespace Syping.RagePhoto {
         }
 
         public String Json {
-            get {
-                IntPtr jsonPtr = ragephoto_getphotojson(_instance);
-                return jsonPtr == IntPtr.Zero ? string.Empty : Marshal.PtrToStringUTF8(jsonPtr);
-            }
-            set => ragephoto_setphotojson(_instance, value, 0);
+            get => PtrToStringUTF8(ragephoto_getphotojson(_instance));
+            set => ragephoto_setphotojson(_instance, value, (UInt32)DefaultSize.DEFAULT_JSONBUFFER);
         }
 
         public String Header {
-            get {
-                IntPtr headerPtr = ragephoto_getphotoheader(_instance);
-                return headerPtr == IntPtr.Zero ? string.Empty : Marshal.PtrToStringUTF8(headerPtr);
-            }
+            get => PtrToStringUTF8(ragephoto_getphotoheader(_instance));
         }
 
         public UIntPtr SaveSize {
@@ -206,11 +174,8 @@ namespace Syping.RagePhoto {
         }
 
         public String Title {
-            get {
-                IntPtr titlePtr = ragephoto_getphototitle(_instance);
-                return titlePtr == IntPtr.Zero ? string.Empty : Marshal.PtrToStringUTF8(titlePtr);
-            }
-            set => ragephoto_setphototitle(_instance, value, 0);
+            get => PtrToStringUTF8(ragephoto_getphototitle(_instance));
+            set => ragephoto_setphototitle(_instance, value, (UInt32)DefaultSize.DEFAULT_TITLBUFFER);
         }
 
         public UIntPtr GetSaveSize() {
@@ -225,7 +190,7 @@ namespace Syping.RagePhoto {
             Byte[] photo = new Byte[Environment.Is64BitProcess ? (UInt64)GetSaveSize() : (UInt32)GetSaveSize()];
             bool result = ragephoto_save(_instance, photo);
             if (!result)
-                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error.ToString()));
+                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error));
             return photo;
         }
 
@@ -233,20 +198,20 @@ namespace Syping.RagePhoto {
             Byte[] photo = new Byte[Environment.Is64BitProcess ? (UInt64)GetSaveSize(photoFormat) : (UInt32)GetSaveSize(photoFormat)];
             bool result = ragephoto_savef(_instance, photo, (UInt32)photoFormat);
             if (!result)
-                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error.ToString()));
+                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error));
             return photo;
         }
 
         public void SaveFile(String path) {
             bool result = ragephoto_savefile(_instance, path);
             if (!result)
-                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error.ToString()));
+                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error));
         }
 
         public void SaveFile(String path, PhotoFormat photoFormat) {
             bool result = ragephoto_savefilef(_instance, path, (UInt32)photoFormat);
             if (!result)
-                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error.ToString()));
+                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error));
         }
 
         public void SetBufferDefault() {
@@ -257,20 +222,88 @@ namespace Syping.RagePhoto {
             ragephoto_setbufferoffsets(_instance);
         }
 
+        public void SetDescription(String description) {
+            ragephoto_setphotodesc(_instance, description, (UInt32)DefaultSize.DEFAULT_DESCBUFFER);
+        }
+
+        public void SetDescription(String description, UInt32 bufferSize) {
+            ragephoto_setphotodesc(_instance, description, bufferSize);
+        }
+
         public void SetHeader(String header, UInt32 headerSum, UInt32 headerSum2 = 0) {
             ragephoto_setphotoheader2(_instance, header, headerSum, headerSum2);
         }
 
-        public bool SetJpeg(Byte[] jpeg, UInt32 bufferSize = 0) {
+        public void SetJpeg(Byte[] jpeg) {
+            UInt32 bufferSize;
             UInt32 size = (UInt32)jpeg.Length;
-            return ragephoto_setphotojpeg(_instance, jpeg, size, bufferSize);
+            switch (Format) {
+                case PhotoFormat.GTA5:
+                    if (size > (UInt32)DefaultSize.DEFAULT_GTA5_PHOTOBUFFER)
+                        bufferSize = size;
+                    else
+                        bufferSize = (UInt32)DefaultSize.DEFAULT_GTA5_PHOTOBUFFER;
+                    break;
+                case PhotoFormat.RDR2:
+                    if (size > (UInt32)DefaultSize.DEFAULT_RDR2_PHOTOBUFFER)
+                        bufferSize = size;
+                    else
+                        bufferSize = (UInt32)DefaultSize.DEFAULT_RDR2_PHOTOBUFFER;
+                    break;
+                default:
+                    bufferSize = size;
+                    break;
+            }
+            bool result = ragephoto_setphotojpeg(_instance, jpeg, size, bufferSize);
+            if (!result)
+                throw new RagePhotoException(this, string.Format("Failed to set Jpeg: {0}", Error));
+        }
+
+        public void SetJpeg(Byte[] jpeg, UInt32 bufferSize) {
+            bool result = ragephoto_setphotojpeg(_instance, jpeg, (UInt32)jpeg.Length, bufferSize);
+            if (!result)
+                throw new RagePhotoException(this, string.Format("Failed to set Jpeg: {0}", Error));
+        }
+
+        public void SetJson(String json) {
+            ragephoto_setphotojson(_instance, json, (UInt32)DefaultSize.DEFAULT_JSONBUFFER);
+        }
+
+        public void SetJson(String json, UInt32 bufferSize) {
+            ragephoto_setphotojson(_instance, json, bufferSize);
+        }
+
+        public void SetTitle(String title) {
+            ragephoto_setphototitle(_instance, title, (UInt32)DefaultSize.DEFAULT_TITLBUFFER);
+        }
+
+        public void SetTitle(String title, UInt32 bufferSize) {
+            ragephoto_setphototitle(_instance, title, bufferSize);
         }
 
         public static String Version {
-            get {
-                IntPtr versionPtr = ragephoto_version();
-                return versionPtr == IntPtr.Zero ? string.Empty : Marshal.PtrToStringAnsi(versionPtr);
-            }
+            get => PtrToStringAnsi(ragephoto_version());
+        }
+
+        private static String PtrToStringAnsi(IntPtr ptr) {
+            if (ptr == IntPtr.Zero)
+                return string.Empty;
+            return Marshal.PtrToStringAnsi(ptr);
+        }
+
+        private static String PtrToStringUTF8(IntPtr ptr) {
+            if (ptr == IntPtr.Zero)
+                return string.Empty;
+#if NETSTANDARD2_1_OR_GREATER
+            return Marshal.PtrToStringUTF8(ptr);
+#else
+            Int32 length = 0;
+            while (Marshal.ReadByte(ptr, length) != 0)
+                length++;
+            byte[] buffer = new byte[length];
+            Marshal.Copy(ptr, buffer, 0, length);
+            return Encoding.UTF8.GetString(buffer);
+#endif
         }
     }
 }
