@@ -56,15 +56,12 @@ jobs:
     - name: Copy Assets
       shell: pwsh
       run: |
-          mkdir -p ${{github.workspace}}\src\dotnet\runtimes\win-arm64\native \
-            ${{github.workspace}}\src\dotnet\runtimes\win-x64\native \
-            ${{github.workspace}}\src\dotnet\runtimes\win-x86\native
-          cp ${{github.workspace}}\assets\amd64_arm64\bin\libragephoto.dll \
-            ${{github.workspace}}\src\dotnet\runtimes\win-arm64\native\libragephoto.dll
-          cp ${{github.workspace}}\assets\amd64\bin\libragephoto.dll \
-            ${{github.workspace}}\src\dotnet\runtimes\win-x64\native\libragephoto.dll
-          cp ${{github.workspace}}\assets\amd64_x86\bin\libragephoto.dll \
-            ${{github.workspace}}\src\dotnet\runtimes\win-x86\native\libragephoto.dll
+          mkdir -p ${{github.workspace}}\src\dotnet\runtimes\win-arm64\native
+          mkdir -p ${{github.workspace}}\src\dotnet\runtimes\win-x64\native
+          mkdir -p ${{github.workspace}}\src\dotnet\runtimes\win-x86\native
+          cp ${{github.workspace}}\assets\amd64_arm64\bin\libragephoto.dll ${{github.workspace}}\src\dotnet\runtimes\win-arm64\native\libragephoto.dll
+          cp ${{github.workspace}}\assets\amd64\bin\libragephoto.dll ${{github.workspace}}\src\dotnet\runtimes\win-x64\native\libragephoto.dll
+          cp ${{github.workspace}}\assets\amd64_x86\bin\libragephoto.dll ${{github.workspace}}\src\dotnet\runtimes\win-x86\native\libragephoto.dll
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
     - name: Setup .NET
