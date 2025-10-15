@@ -54,17 +54,17 @@ jobs:
         name: Windows MSVC amd64_arm64
         path: assets/amd64_arm64
     - name: Copy Assets
-      shell: bash
+      shell: pwsh
       run: |
-          mkdir -p ${{github.workspace}}/src/dotnet/runtimes/win-arm64/native \
-            ${{github.workspace}}/src/dotnet/runtimes/win-x64/native \
-            ${{github.workspace}}/src/dotnet/runtimes/win-x86/native
-          cp ${{github.workspace}}/assets/amd64_arm64/bin/libragephoto.dll \
-            ${{github.workspace}}/src/dotnet/runtimes/win-arm64/native/libragephoto.dll
-          cp ${{github.workspace}}/assets/amd64/bin/libragephoto.dll \
-            ${{github.workspace}}/src/dotnet/runtimes/win-x64/native/libragephoto.dll
-          cp ${{github.workspace}}/assets/amd64_x86/bin/libragephoto.dll \
-            ${{github.workspace}}/src/dotnet/runtimes/win-x86/native/libragephoto.dll
+          mkdir -p ${{github.workspace}}\src\dotnet\runtimes\win-arm64\native \
+            ${{github.workspace}}\src\dotnet\runtimes\win-x64\native \
+            ${{github.workspace}}\src\dotnet\runtimes\win-x86\native
+          cp ${{github.workspace}}\assets\amd64_arm64\bin\libragephoto.dll \
+            ${{github.workspace}}\src\dotnet\runtimes\win-arm64\native\libragephoto.dll
+          cp ${{github.workspace}}\assets\amd64\bin\libragephoto.dll \
+            ${{github.workspace}}\src\dotnet\runtimes\win-x64\native\libragephoto.dll
+          cp ${{github.workspace}}\assets\amd64_x86\bin\libragephoto.dll \
+            ${{github.workspace}}\src\dotnet\runtimes\win-x86\native\libragephoto.dll
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
     - name: Setup .NET
@@ -72,10 +72,10 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Build Syping.RagePhoto.Core
-      run: msbuild src/dotnet/Syping.RagePhoto.Core.csproj /t:pack /p:Configuration=${{env.BUILD_TYPE}}
+      run: msbuild ${{github.workspace}}\src\dotnet\Syping.RagePhoto.Core.csproj /t:pack /p:Configuration=${{env.BUILD_TYPE}}
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
         name: NuGet Package
         path: |
-          ${{github.workspace}}/src/dotnet/bin/${{env.BUILD_TYPE}}/Syping.RagePhoto.Core.*.nupkg
+          ${{github.workspace}}\src\dotnet\bin\${{env.BUILD_TYPE}}\Syping.RagePhoto.Core.*.nupkg
