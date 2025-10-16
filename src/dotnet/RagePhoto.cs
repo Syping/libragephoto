@@ -10,72 +10,75 @@ namespace Syping.RagePhoto {
         private readonly IntPtr _instance;
         private const String _library = "libragephoto";
 
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ragephoto_open();
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern void ragephoto_clear(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern void ragephoto_close(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_load(IntPtr instance, Byte[] data, UIntPtr size);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_loadfile(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern Int32 ragephoto_error(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ragephoto_getphotodata(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ragephoto_getphotodesc(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern UInt32 ragephoto_getphotoformat(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ragephoto_getphotojpeg(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ragephoto_getphotojson(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ragephoto_getphotoheader(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern UInt64 ragephoto_getphotosign(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern UInt32 ragephoto_getphotosize(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ragephoto_getphototitle(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern UIntPtr ragephoto_getsavesize(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern UIntPtr ragephoto_getsavesizef(IntPtr instance, UInt32 photoFormat);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_save(IntPtr instance, [Out] Byte[] data);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_savef(IntPtr instance, [Out] Byte[] data, UInt32 photoFormat);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_savefile(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_savefilef(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename, UInt32 photoFormat);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern void ragephoto_setbufferdefault(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern void ragephoto_setbufferoffsets(IntPtr instance);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool ragephoto_setphotodatac(IntPtr instance, IntPtr data);
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern void ragephoto_setphotodesc(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String description, UInt32 bufferSize);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern void ragephoto_setphotoformat(IntPtr instance, UInt32 photoFormat);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool ragephoto_setphotojpeg(IntPtr instance, Byte[] jpeg, UInt32 size, UInt32 bufferSize);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern void ragephoto_setphotojson(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String json, UInt32 bufferSize);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern void ragephoto_setphotoheader2(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String header, UInt32 headerSum, UInt32 headerSum2);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern void ragephoto_setphototitle(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String title, UInt32 bufferSize);
-        [DllImport(_library)]
+        [DllImport(_library, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr ragephoto_version();
 
         public Photo() {
@@ -87,6 +90,19 @@ namespace Syping.RagePhoto {
             catch (Exception exception) {
                 throw new RagePhotoException(this, "Failed to initialize libragephoto", exception);
             }
+        }
+
+        public Photo(Photo photo) {
+            try {
+                _instance = ragephoto_open();
+                if (_instance == IntPtr.Zero)
+                    throw new RagePhotoException(this, "Failed to initialize libragephoto");
+            }
+            catch (Exception exception) {
+                throw new RagePhotoException(this, "Failed to initialize libragephoto", exception);
+            }
+            if (!ragephoto_setphotodatac(_instance, ragephoto_getphotodata(photo._instance)))
+                throw new RagePhotoException(this, string.Format("Failed to copy Photo: {0}", Error));
         }
 
         ~Photo() {
@@ -110,19 +126,13 @@ namespace Syping.RagePhoto {
         }
 
         public void Load(Byte[] data) {
-            bool result = ragephoto_load(_instance, data, (UIntPtr)data.LongLength);
-            if (!result)
+            if (!ragephoto_load(_instance, data, (UIntPtr)data.LongLength))
                 throw new RagePhotoException(this, string.Format("Failed to load Photo: {0}", Error));
         }
 
         public void LoadFile(String path) {
-            bool result = ragephoto_loadfile(_instance, path);
-            if (!result)
+            if (!ragephoto_loadfile(_instance, path))
                 throw new RagePhotoException(this, string.Format("Failed to load Photo: {0}", Error));
-        }
-
-        public RagePhotoData Data {
-            get => Marshal.PtrToStructure<RagePhotoData>(ragephoto_getphotodata(_instance));
         }
 
         public String Description {
@@ -188,29 +198,25 @@ namespace Syping.RagePhoto {
 
         public Byte[] Save() {
             Byte[] photo = new Byte[Environment.Is64BitProcess ? (UInt64)GetSaveSize() : (UInt32)GetSaveSize()];
-            bool result = ragephoto_save(_instance, photo);
-            if (!result)
+            if (!ragephoto_save(_instance, photo))
                 throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error));
             return photo;
         }
 
         public Byte[] Save(PhotoFormat photoFormat) {
             Byte[] photo = new Byte[Environment.Is64BitProcess ? (UInt64)GetSaveSize(photoFormat) : (UInt32)GetSaveSize(photoFormat)];
-            bool result = ragephoto_savef(_instance, photo, (UInt32)photoFormat);
-            if (!result)
+            if (!ragephoto_savef(_instance, photo, (UInt32)photoFormat))
                 throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error));
             return photo;
         }
 
         public void SaveFile(String path) {
-            bool result = ragephoto_savefile(_instance, path);
-            if (!result)
+            if (!ragephoto_savefile(_instance, path))
                 throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error));
         }
 
         public void SaveFile(String path, PhotoFormat photoFormat) {
-            bool result = ragephoto_savefilef(_instance, path, (UInt32)photoFormat);
-            if (!result)
+            if (!ragephoto_savefilef(_instance, path, (UInt32)photoFormat))
                 throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error));
         }
 
@@ -254,14 +260,12 @@ namespace Syping.RagePhoto {
                     bufferSize = size;
                     break;
             }
-            bool result = ragephoto_setphotojpeg(_instance, jpeg, size, bufferSize);
-            if (!result)
+            if (!ragephoto_setphotojpeg(_instance, jpeg, size, bufferSize))
                 throw new RagePhotoException(this, string.Format("Failed to set Jpeg: {0}", Error));
         }
 
         public void SetJpeg(Byte[] jpeg, UInt32 bufferSize) {
-            bool result = ragephoto_setphotojpeg(_instance, jpeg, (UInt32)jpeg.Length, bufferSize);
-            if (!result)
+            if (!ragephoto_setphotojpeg(_instance, jpeg, (UInt32)jpeg.Length, bufferSize))
                 throw new RagePhotoException(this, string.Format("Failed to set Jpeg: {0}", Error));
         }
 
