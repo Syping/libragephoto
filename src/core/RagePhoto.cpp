@@ -153,21 +153,12 @@ inline bool writeDataChar(const char *input, char **output)
     return true;
 }
 
-inline uint32_t charToUInt32LE(char *x)
+inline uint32_t swapUInt32(uint32_t x)
 {
-    return (static_cast<unsigned char>(x[3]) << 24 |
-            static_cast<unsigned char>(x[2]) << 16 |
-            static_cast<unsigned char>(x[1]) << 8 |
-            static_cast<unsigned char>(x[0]));
-}
-
-inline uint32_t swapToUInt32LE(uint32_t x)
-{
-    unsigned char *y = reinterpret_cast<unsigned char*>(&x);
-    return (y[3] << 24 |
-            y[2] << 16 |
-            y[1] << 8 |
-            y[0]);
+    return (x >> 24 & 0x000000FF) |
+           (x >> 8  & 0x0000FF00) |
+           (x << 8  & 0x00FF0000) |
+           (x << 24 & 0xFF000000);
 }
 
 inline void uInt32ToCharLE(uint32_t x, char *y)
@@ -227,7 +218,7 @@ void RagePhoto::addParser(RagePhotoFormatParser *rp_parser)
             return;
         size_t length;
         for (length = 0; memcmp(&n_parser[0], &m_parser[length], sizeof(RagePhotoFormatParser)); length++);
-        RagePhotoFormatParser *t_parser = static_cast<RagePhotoFormatParser*>(realloc(m_parser, (length + 2 * sizeof(RagePhotoFormatParser))));
+        RagePhotoFormatParser *t_parser = static_cast<RagePhotoFormatParser*>(realloc(m_parser, (length + 2) * sizeof(RagePhotoFormatParser)));
         if (!t_parser)
             throw std::runtime_error("RagePhotoFormatParser array can't be expanded");
         m_parser = t_parser;
@@ -269,7 +260,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
     size_t pos = 0;
     size_t size = readBuffer(data, &rp_data->photoFormat, &pos, 4, length);
 #ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
-    rp_data->photoFormat = swapToUInt32LE(rp_data->photoFormat);
+    rp_data->photoFormat = swapUInt32(rp_data->photoFormat);
 #endif
     if (size != 4) {
         rp_data->error = Error::NoFormatIdentifier; // 1
@@ -338,7 +329,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
 
         size = readBuffer(data, &rp_data->headerSum, &pos, 4, length);
 #ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
-        rp_data->headerSum = swapToUInt32LE(rp_data->headerSum);
+        rp_data->headerSum = swapUInt32(rp_data->headerSum);
 #endif
         if (size != 4) {
             rp_data->error = Error::IncompleteChecksum; // 7
@@ -360,7 +351,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
 
             size = readBuffer(data, &rp_data->headerSum2, &pos, 4, length);
 #ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
-            rp_data->headerSum2 = swapToUInt32LE(rp_data->headerSum2);
+            rp_data->headerSum2 = swapUInt32(rp_data->headerSum2);
 #endif
             if (size != 4) {
                 rp_data->error = Error::IncompleteChecksum; // 7
@@ -370,7 +361,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
 
         size = readBuffer(data, &rp_data->endOfFile, &pos, 4, length);
 #ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
-        rp_data->endOfFile = swapToUInt32LE(rp_data->endOfFile);
+        rp_data->endOfFile = swapUInt32(rp_data->endOfFile);
 #endif
         if (size != 4) {
             rp_data->error = Error::IncompleteEOF; // 8
@@ -379,7 +370,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
 
         size = readBuffer(data, &rp_data->jsonOffset, &pos, 4, length);
 #ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
-        rp_data->jsonOffset = swapToUInt32LE(rp_data->jsonOffset);
+        rp_data->jsonOffset = swapUInt32(rp_data->jsonOffset);
 #endif
         if (size != 4) {
             rp_data->error = Error::IncompleteJsonOffset; // 9
@@ -387,7 +378,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
         }
         size = readBuffer(data, &rp_data->titlOffset, &pos, 4, length);
 #ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
-        rp_data->titlOffset = swapToUInt32LE(rp_data->titlOffset);
+        rp_data->titlOffset = swapUInt32(rp_data->titlOffset);
 #endif
         if (size != 4) {
             rp_data->error = Error::IncompleteTitleOffset; // 10
@@ -396,7 +387,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
 
         size = readBuffer(data, &rp_data->descOffset, &pos, 4, length);
 #ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
-        rp_data->descOffset = swapToUInt32LE(rp_data->descOffset);
+        rp_data->descOffset = swapUInt32(rp_data->descOffset);
 #endif
         if (size != 4) {
             rp_data->error = Error::IncompleteDescOffset; // 11
@@ -416,7 +407,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
 
         size = readBuffer(data, &rp_data->jpegBuffer, &pos, 4, length);
 #ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
-        rp_data->jpegBuffer = swapToUInt32LE(rp_data->jpegBuffer);
+        rp_data->jpegBuffer = swapUInt32(rp_data->jpegBuffer);
 #endif
         if (size != 4) {
             rp_data->error = Error::IncompletePhotoBuffer; // 14
@@ -425,7 +416,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
 
         size = readBuffer(data, &rp_data->jpegSize, &pos, 4, length);
 #ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
-        rp_data->jpegSize = swapToUInt32LE(rp_data->jpegSize);
+        rp_data->jpegSize = swapUInt32(rp_data->jpegSize);
 #endif
         if (size != 4) {
             rp_data->error = Error::IncompletePhotoSize; // 15
@@ -458,7 +449,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
 
         size = readBuffer(data, &rp_data->jsonBuffer, &pos, 4, length);
 #ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
-        rp_data->jsonBuffer = swapToUInt32LE(rp_data->jsonBuffer);
+        rp_data->jsonBuffer = swapUInt32(rp_data->jsonBuffer);
 #endif
         if (size != 4) {
             rp_data->error = Error::IncompleteJsonBuffer; // 20
@@ -490,7 +481,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
 
         size = readBuffer(data, &rp_data->titlBuffer, &pos, 4, length);
 #ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
-        rp_data->titlBuffer = swapToUInt32LE(rp_data->titlBuffer);
+        rp_data->titlBuffer = swapUInt32(rp_data->titlBuffer);
 #endif
         if (size != 4) {
             rp_data->error = Error::IncompleteTitleBuffer; // 25
@@ -522,7 +513,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
 
         size = readBuffer(data, &rp_data->descBuffer, &pos, 4, length);
 #ifndef LIBRAGEPHOTO_LITTLE_ENDIAN
-        rp_data->descBuffer = swapToUInt32LE(rp_data->descBuffer);
+        rp_data->descBuffer = swapUInt32(rp_data->descBuffer);
 #endif
         if (size != 4) {
             rp_data->error = Error::IncompleteDescBuffer; // 30
