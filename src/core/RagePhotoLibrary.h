@@ -71,16 +71,16 @@
     #if defined(__DARWIN_BYTE_ORDER) && defined(__DARWIN_LITTLE_ENDIAN) && __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
         #define LIBRAGEPHOTO_LITTLE_ENDIAN
     #endif // __DARWIN_BYTE_ORDER
-#elif defined(__linux__)
-    #include <endian.h>
-    #if defined(__BYTE_ORDER) && defined(__LITTLE_ENDIAN) && __BYTE_ORDER == __LITTLE_ENDIAN
-        #define LIBRAGEPHOTO_LITTLE_ENDIAN
-    #endif // __BYTE_ORDER
 #elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
     #include <sys/endian.h>
     #if defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && _BYTE_ORDER == _LITTLE_ENDIAN
         #define LIBRAGEPHOTO_LITTLE_ENDIAN
     #endif // _BYTE_ORDER
+#elif defined(__linux__)
+    #include <endian.h>
+    #if defined(__BYTE_ORDER) && defined(__LITTLE_ENDIAN) && __BYTE_ORDER == __LITTLE_ENDIAN
+        #define LIBRAGEPHOTO_LITTLE_ENDIAN
+    #endif // __BYTE_ORDER
 #endif
 /* RAGEPHOTO LIBRARY ENDIAN END */
 
