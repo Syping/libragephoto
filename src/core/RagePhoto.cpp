@@ -1004,11 +1004,7 @@ bool RagePhoto::saveFile(const char *filename, uint32_t photoFormat)
             m_data->error = Error::Uninitialised; // 0
             return false;
         }
-#if (RAGEPHOTO_CXX_STD >= 11) && (__cplusplus >= 201103L)
-        ofs << sdata;
-#else
         ofs.write(sdata.data(), sdata.size());
-#endif
         ok = ofs.good();
         ofs.close();
         return ok;
