@@ -1,6 +1,6 @@
 #[[**************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2024 Syping
+* Copyright (C) 2021-2025 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -136,6 +136,7 @@ target_include_directories(ragephoto PUBLIC
     "${ragephoto_BINARY_DIR}/include"
     "${ragephoto_SOURCE_DIR}/src/core"
 )
+target_link_libraries(ragephoto PRIVATE ${LIBRAGEPHOTO_LIBRARIES})
 install(TARGETS ragephoto
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
