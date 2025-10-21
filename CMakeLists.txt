@@ -136,7 +136,7 @@ target_include_directories(ragephoto PUBLIC
     "${ragephoto_BINARY_DIR}/include"
     "${ragephoto_SOURCE_DIR}/src/core"
 )
-target_link_libraries(ragephoto PRIVATE ${LIBRAGEPHOTO_LIBRARIES})
+target_link_libraries(ragephoto PRIVATE ${LIBRAGEPHOTO_LIBS})
 install(TARGETS ragephoto
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"

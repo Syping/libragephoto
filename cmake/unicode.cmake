@@ -17,14 +17,14 @@
 ****************************************************************************]]
 
 set(RAGEPHOTO_UNICODE "" CACHE STRING "libragephoto Unicode implementation")
-set(RAGEPHOTO_UNICODE_LIBRARIES "" CACHE STRING "libragephoto Unicode libraries")
+set(RAGEPHOTO_UNICODE_LIBS "" CACHE STRING "libragephoto Unicode libraries")
 if (RAGEPHOTO_UNICODE)
     string(TOUPPER "UNICODE_${RAGEPHOTO_UNICODE}" UNICODE_DEF)
     list(APPEND LIBRAGEPHOTO_DEFINES
         ${UNICODE_DEF}
     )
-    list(APPEND LIBRAGEPHOTO_LIBRARIES
-        ${RAGEPHOTO_UNICODE_LIBRARIES}
+    list(APPEND LIBRAGEPHOTO_LIBS
+        ${RAGEPHOTO_UNICODE_LIBS}
     )
     message("-- UnicodeCvt - ${RAGEPHOTO_UNICODE}")
 else()
@@ -41,7 +41,7 @@ else()
     # RagePhoto Unicode functionality tests
     if (NOT RAGEPHOTO_C_LIBRARY)
         message("-- Testing codecvt")
-        try_run(CODECVT_RUN CODECVT_COMPILE "${PROJECT_BINARY_DIR}" ${CODECVT_SOURCE})
+        try_run(CODECVT_RUN CODECVT_COMPILE "${PROJECT_BINARY_DIR}" "${CODECVT_SOURCE}")
         if (CODECVT_COMPILE AND CODECVT_RUN EQUAL 0)
             set(CODECVT_COMPAT TRUE)
             message("-- Testing codecvt - yes")
@@ -93,7 +93,7 @@ else()
             UNICODE_ICONV
         )
         if (ICONV_LINKED)
-            list(APPEND LIBRAGEPHOTO_LIBRARIES
+            list(APPEND LIBRAGEPHOTO_LIBS
                 iconv
             )
         endif()
