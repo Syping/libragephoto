@@ -13,18 +13,18 @@ jobs:
           - amd64_x86
           - amd64_arm64
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-    - uses: ilammy/msvc-dev-cmd@v1
+    - name: Cloning
+      uses: actions/checkout@v4
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: ${{matrix.arch}}
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_UNICODE=wincvt -GNinja
+      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_UNICODE=wincvt -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
     - name: Install
-      run: cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --prefix ${{github.workspace}}/install
+      run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install"
     - name: Upload
       uses: actions/upload-artifact@v4
       with:

@@ -7,9 +7,8 @@ jobs:
     env:
       BUILD_TYPE: Release
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: recursive
+    - name: Cloning
+      uses: actions/checkout@v4
     - name: Setup emsdk
       uses: mymindstorm/setup-emsdk@v14
       with:
@@ -19,9 +18,9 @@ jobs:
         sudo apt-get update -qq
         sudo apt-get install cmake ninja-build -qq
     - name: Configure CMake
-      run: emcmake cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DRAGEPHOTO_C_LIBRARY=ON -GNinja
+      run: emcmake cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
     - name: Upload
       uses: actions/upload-artifact@v4
       with:

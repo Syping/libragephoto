@@ -7,19 +7,18 @@ jobs:
     env:
       BUILD_TYPE: Release
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: recursive
+    - name: Cloning
+      uses: actions/checkout@v4
     - name: Install packages
       run: |
         sudo apt-get update -qq
         sudo apt-get install cmake gcc g++ ninja-build -qq
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DRAGEPHOTO_C_LIBRARY=ON -GNinja
+      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
     - name: Install
-      run: cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --prefix ${{github.workspace}}/install/usr/local
+      run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install/usr/local"
     - name: Upload
       uses: actions/upload-artifact@v4
       with:

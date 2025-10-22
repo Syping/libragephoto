@@ -15,15 +15,16 @@ jobs:
     steps:
     - name: Cloning
       uses: actions/checkout@v4
-    - uses: ilammy/msvc-dev-cmd@v1
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: ${{matrix.arch}}
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_UNICODE=wincvt -GNinja
+      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_UNICODE=wincvt -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
     - name: Install
-      run: cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --prefix ${{github.workspace}}/install
+      run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install"
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
@@ -33,6 +34,9 @@ jobs:
   Release:
     needs: Native
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
     env:
       BUILD_TYPE: Release
     steps:
@@ -54,14 +58,13 @@ jobs:
         name: Windows MSVC amd64_arm64
         path: assets/amd64_arm64
     - name: Copy Assets
-      shell: pwsh
       run: |
-          mkdir -p ${{github.workspace}}\src\dotnet\runtimes\win-arm64\native
-          mkdir -p ${{github.workspace}}\src\dotnet\runtimes\win-x64\native
-          mkdir -p ${{github.workspace}}\src\dotnet\runtimes\win-x86\native
-          cp ${{github.workspace}}\assets\amd64_arm64\bin\libragephoto.dll ${{github.workspace}}\src\dotnet\runtimes\win-arm64\native\libragephoto.dll
-          cp ${{github.workspace}}\assets\amd64\bin\libragephoto.dll ${{github.workspace}}\src\dotnet\runtimes\win-x64\native\libragephoto.dll
-          cp ${{github.workspace}}\assets\amd64_x86\bin\libragephoto.dll ${{github.workspace}}\src\dotnet\runtimes\win-x86\native\libragephoto.dll
+          mkdir -p "${{github.workspace}}\src\dotnet\runtimes\win-arm64\native"
+          mkdir -p "${{github.workspace}}\src\dotnet\runtimes\win-x64\native"
+          mkdir -p "${{github.workspace}}\src\dotnet\runtimes\win-x86\native"
+          cp "${{github.workspace}}\assets\amd64_arm64\bin\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-arm64\native\libragephoto.dll"
+          cp "${{github.workspace}}\assets\amd64\bin\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-x64\native\libragephoto.dll"
+          cp "${{github.workspace}}\assets\amd64_x86\bin\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-x86\native\libragephoto.dll"
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
     - name: Setup .NET
@@ -69,7 +72,7 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Build Syping.RagePhoto.Core
-      run: msbuild ${{github.workspace}}\src\dotnet\Syping.RagePhoto.Core.csproj /t:restore /t:pack /p:Configuration=${{env.BUILD_TYPE}}
+      run: msbuild "${{github.workspace}}\src\dotnet\Syping.RagePhoto.Core.csproj" /t:restore /t:pack /p:Configuration=${{env.BUILD_TYPE}}
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
