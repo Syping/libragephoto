@@ -1,0 +1,106 @@
+name: .NET
+on: push
+
+jobs:
+  Linux Native:
+    runs-on: ubuntu-latest
+    container:
+      image: almalinux:8
+    steps:
+    - name: Cloning
+      uses: actions/checkout@v4
+    - name: Install packages
+      run: dnf install -y cmake gcc gcc-c++
+    - name: Configure CMake
+      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    - name: Build
+      run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
+    - name: Install
+      run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install/usr/local"
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: AlmaLinux amd64
+        path: ${{github.workspace}}/install/
+  Windows Native:
+    runs-on: windows-latest
+    env:
+      BUILD_TYPE: Release
+    strategy:
+      matrix:
+        arch:
+          - amd64
+          - amd64_x86
+          - amd64_arm64
+    steps:
+    - name: Cloning
+      uses: actions/checkout@v4
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{matrix.arch}}
+    - name: Configure CMake
+      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_UNICODE=wincvt -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
+    - name: Build
+      run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
+    - name: Install
+      run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install"
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: Windows MSVC ${{matrix.arch}}
+        path: ${{github.workspace}}/install/
+  Release:
+    needs: [Linux Native, Windows Native]
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      BUILD_TYPE: Release
+    steps:
+    - name: Cloning
+      uses: actions/checkout@v4
+    - name: Download Linux amd64 Assets
+      uses: actions/download-artifact@v4
+      with:
+        name: AlmaLinux amd64
+        path: assets/win-x64
+    - name: Download Windows MSVC amd64 Assets
+      uses: actions/download-artifact@v4
+      with:
+        name: Windows MSVC amd64
+        path: assets/win-x64
+    - name: Download Windows MSVC amd64_x86 Assets
+      uses: actions/download-artifact@v4
+      with:
+        name: Windows MSVC amd64_x86
+        path: assets/win-x86
+    - name: Download Windows MSVC amd64_arm64 Assets
+      uses: actions/download-artifact@v4
+      with:
+        name: Windows MSVC amd64_arm64
+        path: assets/win-arm64
+    - name: Copy Assets
+      run: |
+          mkdir -p "${{github.workspace}}\src\dotnet\runtimes\linux-x64\native"
+          mkdir -p "${{github.workspace}}\src\dotnet\runtimes\win-arm64\native"
+          mkdir -p "${{github.workspace}}\src\dotnet\runtimes\win-x64\native"
+          mkdir -p "${{github.workspace}}\src\dotnet\runtimes\win-x86\native"
+          cp "${{github.workspace}}\assets\linux-x64\lib64\libragephoto.so" "${{github.workspace}}\src\dotnet\runtimes\linux-x64\native\libragephoto.so"
+          cp "${{github.workspace}}\assets\win-arm64\bin\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-arm64\native\libragephoto.dll"
+          cp "${{github.workspace}}\assets\win-x64\bin\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-x64\native\libragephoto.dll"
+          cp "${{github.workspace}}\assets\win-x86\bin\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-x86\native\libragephoto.dll"
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Build RagePhoto.Core
+      run: msbuild "${{github.workspace}}\src\dotnet\RagePhoto.Core.csproj" /t:restore /t:pack /p:Configuration=${{env.BUILD_TYPE}}
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: NuGet Package
+        path: ${{github.workspace}}\src\dotnet\bin\${{env.BUILD_TYPE}}\RagePhoto.Core.*.nupkg

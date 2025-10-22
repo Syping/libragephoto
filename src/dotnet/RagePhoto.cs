@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Syping.RagePhoto {
+namespace RagePhoto {
 
     public class Photo : IDisposable {
 

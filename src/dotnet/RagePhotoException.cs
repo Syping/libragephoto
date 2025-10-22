@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Syping.RagePhoto {
+namespace RagePhoto {
 
     public class RagePhotoException : Exception {
 

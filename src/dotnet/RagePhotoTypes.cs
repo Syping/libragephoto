@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Syping.RagePhoto {
+namespace RagePhoto {
 
     public enum DefaultSize : UInt32 {
         DEFAULT_GTA5_PHOTOBUFFER = 524288U,
