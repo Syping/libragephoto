@@ -2,27 +2,29 @@ name: .NET
 on: push
 
 jobs:
-  Linux Native:
+  Linux_Native:
     runs-on: ubuntu-latest
     container:
       image: almalinux:8
+    env:
+      BUILD_TYPE: Release
     steps:
     - name: Cloning
       uses: actions/checkout@v4
     - name: Install packages
       run: dnf install -y cmake gcc gcc-c++
     - name: Configure CMake
-      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -B "build" -DRAGEPHOTO_C_LIBRARY=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
     - name: Build
-      run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
+      run: cmake --build "build" --config ${{env.BUILD_TYPE}}
     - name: Install
-      run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install/usr/local"
+      run: cmake --install "build" --config ${{env.BUILD_TYPE}} --prefix "install/"
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
         name: AlmaLinux amd64
         path: ${{github.workspace}}/install/
-  Windows Native:
+  Windows_Native:
     runs-on: windows-latest
     env:
       BUILD_TYPE: Release
@@ -51,7 +53,7 @@ jobs:
         name: Windows MSVC ${{matrix.arch}}
         path: ${{github.workspace}}/install/
   Release:
-    needs: [Linux Native, Windows Native]
+    needs: [Linux_Native, Windows_Native]
     runs-on: windows-latest
     defaults:
       run:
@@ -65,7 +67,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: AlmaLinux amd64
-        path: assets/win-x64
+        path: assets/linux-x64
     - name: Download Windows MSVC amd64 Assets
       uses: actions/download-artifact@v4
       with:
