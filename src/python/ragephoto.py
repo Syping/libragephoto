@@ -1,6 +1,6 @@
 ##############################################################################
 # libragephoto for Python
-# Copyright (C) 2023-2024 Syping
+# Copyright (C) 2023-2025 Syping
 #
 # Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
@@ -73,6 +73,7 @@ class RagePhoto:
     Uninitialised = 0
 
   class PhotoFormat(IntEnum):
+    JPEG = 0xE0FFD8FF
     GTA5 = 0x01000000
     RDR2 = 0x04000000
 

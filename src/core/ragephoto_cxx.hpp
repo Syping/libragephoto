@@ -44,7 +44,7 @@ public:
         DEFAULT_JSONBUFFER = RAGEPHOTO_DEFAULT_JSONBUFFER, /**< Default JSON Buffer Size */
         DEFAULT_TITLBUFFER = RAGEPHOTO_DEFAULT_TITLBUFFER, /**< Default Title Buffer Size */
         GTA5_HEADERSIZE = RAGEPHOTO_GTA5_HEADERSIZE, /**< GTA V Header Size */
-        RDR2_HEADERSIZE = RAGEPHOTO_RDR2_HEADERSIZE, /**< RDR 2 Header Size */
+        RDR2_HEADERSIZE = RAGEPHOTO_RDR2_HEADERSIZE /**< RDR 2 Header Size */
     };
     /** Parsing and set errors */
     enum Error : int32_t {
@@ -88,17 +88,18 @@ public:
         TitleReadError = RAGEPHOTO_ERROR_TITLEREADERROR, /**< Title can't be read */
         UnicodeInitError = RAGEPHOTO_ERROR_UNICODEINITERROR, /**< Failed to initialise Unicode decoder */
         UnicodeHeaderError = RAGEPHOTO_ERROR_UNICODEHEADERERROR, /**< Header can't be encoded/decoded successfully */
-        Uninitialised = RAGEPHOTO_ERROR_UNINITIALISED, /**< Uninitialised, file access failed */
+        Uninitialised = RAGEPHOTO_ERROR_UNINITIALISED /**< Uninitialised, file access failed */
     };
     /** Photo Formats */
     enum PhotoFormat : uint32_t {
+        JPEG = RAGEPHOTO_FORMAT_JPEG, /**< JPEG Photo Format */
         GTA5 = RAGEPHOTO_FORMAT_GTA5, /**< GTA V Photo Format */
-        RDR2 = RAGEPHOTO_FORMAT_RDR2, /**< RDR 2 Photo Format */
+        RDR2 = RAGEPHOTO_FORMAT_RDR2 /**< RDR 2 Photo Format */
     };
     /** Sign Initials */
     enum SignInitials : uint32_t {
         SIGTA5 = RAGEPHOTO_SIGNINITIAL_GTA5, /**< GTA V Sign Initial */
-        SIRDR2 = RAGEPHOTO_SIGNINITIAL_RDR2, /**< RDR 2 Sign Initial */
+        SIRDR2 = RAGEPHOTO_SIGNINITIAL_RDR2 /**< RDR 2 Sign Initial */
     };
     photo();
     ~photo();

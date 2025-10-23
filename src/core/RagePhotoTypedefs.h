@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2024 Syping
+* Copyright (C) 2021-2025 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -136,6 +136,7 @@ typedef enum RagePhotoLibraryFlag {
 #define RAGEPHOTO_ERROR_UNINITIALISED INT32_C(0) /**< Uninitialised, file access failed */
 
 /* RagePhoto formats */
+#define RAGEPHOTO_FORMAT_JPEG UINT32_C(0xE0FFD8FF) /**< JPEG Photo Format */
 #define RAGEPHOTO_FORMAT_GTA5 UINT32_C(0x01000000) /**< GTA V Photo Format */
 #define RAGEPHOTO_FORMAT_RDR2 UINT32_C(0x04000000) /**< RDR 2 Photo Format */
 

@@ -984,6 +984,15 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
         return false;
 #endif
     }
+    else if (photoFormat == RAGEPHOTO_FORMAT_JPEG) {
+        const size_t length = ragephotodata_getsavesizef(rp_data, NULL, photoFormat);
+        size_t pos = 0;
+
+        writeBuffer(rp_data->jpeg, data, &pos, length, rp_data->jpegSize);
+
+        rp_data->error = RAGEPHOTO_ERROR_NOERROR; // 255
+        return true;
+    }
     else if (rp_parser) {
         RagePhotoFormatParser n_parser;
         memset(&n_parser, 0, sizeof(RagePhotoFormatParser));
@@ -1049,6 +1058,8 @@ size_t ragephotodata_getsavesizef(RagePhotoData *rp_data, RagePhotoFormatParser 
         return (rp_data->jpegBuffer + rp_data->jsonBuffer + rp_data->titlBuffer + rp_data->descBuffer + RAGEPHOTO_GTA5_HEADERSIZE + UINT32_C(56));
     else if (photoFormat == RAGEPHOTO_FORMAT_RDR2)
         return (rp_data->jpegBuffer + rp_data->jsonBuffer + rp_data->titlBuffer + rp_data->descBuffer + RAGEPHOTO_RDR2_HEADERSIZE + UINT32_C(56));
+    else if (photoFormat == RAGEPHOTO_FORMAT_JPEG)
+        return (rp_data->jpegSize);
     else if (rp_parser) {
         RagePhotoFormatParser n_parser;
         memset(&n_parser, 0, sizeof(RagePhotoFormatParser));

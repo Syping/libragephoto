@@ -57,6 +57,7 @@ namespace RagePhoto {
     }
 
     public enum PhotoFormat : UInt32 {
+        JPEG = 0xE0FFD8FFU,
         GTA5 = 0x01000000U,
         RDR2 = 0x04000000U
     }

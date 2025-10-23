@@ -939,6 +939,15 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
         return false;
 #endif
     }
+    else if (photoFormat == PhotoFormat::JPEG) {
+        const size_t length = saveSize(photoFormat, rp_data, nullptr);
+        size_t pos = 0;
+
+        writeBuffer(rp_data->jpeg, data, &pos, length, rp_data->jpegSize);
+
+        rp_data->error = Error::NoError; // 255
+        return true;
+    }
     else if (rp_parser) {
         RagePhotoFormatParser n_parser[1]{};
         for (size_t i = 0; memcmp(&n_parser[0], &rp_parser[i], sizeof(RagePhotoFormatParser)); i++) {
@@ -1024,6 +1033,8 @@ size_t RagePhoto::saveSize(uint32_t photoFormat, RagePhotoData *rp_data, RagePho
         return (rp_data->jpegBuffer + rp_data->jsonBuffer + rp_data->titlBuffer + rp_data->descBuffer + GTA5_HEADERSIZE + UINT32_C(56));
     else if (photoFormat == PhotoFormat::RDR2)
         return (rp_data->jpegBuffer + rp_data->jsonBuffer + rp_data->titlBuffer + rp_data->descBuffer + RDR2_HEADERSIZE + UINT32_C(56));
+    else if (photoFormat == PhotoFormat::JPEG)
+        return (rp_data->jpegSize);
     else if (rp_parser) {
         RagePhotoFormatParser n_parser[1]{};
         for (size_t i = 0; memcmp(&n_parser[0], &rp_parser[i], sizeof(RagePhotoFormatParser)); i++) {
