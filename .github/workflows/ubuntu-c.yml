@@ -8,7 +8,7 @@ jobs:
       BUILD_TYPE: Release
     steps:
     - name: Cloning
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Install packages
       run: |
         sudo apt-get update -qq
@@ -20,8 +20,7 @@ jobs:
     - name: Install
       run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install/usr/local"
     - name: Upload
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: Ubuntu
-        path: |
-          ${{github.workspace}}/install/
+        path: ${{github.workspace}}/install/

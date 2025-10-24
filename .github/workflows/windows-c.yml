@@ -14,7 +14,7 @@ jobs:
           - amd64_arm64
     steps:
     - name: Cloning
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
       with:
@@ -26,8 +26,7 @@ jobs:
     - name: Install
       run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install"
     - name: Upload
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: Windows MSVC ${{matrix.arch}}
-        path: |
-          ${{github.workspace}}/install/
+        path: ${{github.workspace}}/install/
