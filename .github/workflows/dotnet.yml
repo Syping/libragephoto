@@ -46,6 +46,42 @@ jobs:
       with:
         name: AlmaLinux arm64
         path: ${{github.workspace}}/install/
+  macOS_amd64:
+    runs-on: macos-15-intel
+    env:
+      BUILD_TYPE: Release
+    steps:
+    - name: Cloning
+      uses: actions/checkout@v5
+    - name: Configure CMake
+      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
+    - name: Build
+      run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
+    - name: Install
+      run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install/"
+    - name: Upload
+      uses: actions/upload-artifact@v5
+      with:
+        name: macOS amd64
+        path: ${{github.workspace}}/install/
+  macOS_arm64:
+    runs-on: macos-15
+    env:
+      BUILD_TYPE: Release
+    steps:
+    - name: Cloning
+      uses: actions/checkout@v5
+    - name: Configure CMake
+      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
+    - name: Build
+      run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
+    - name: Install
+      run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install/"
+    - name: Upload
+      uses: actions/upload-artifact@v5
+      with:
+        name: macOS arm64
+        path: ${{github.workspace}}/install/
   Windows:
     runs-on: windows-latest
     env:
@@ -75,7 +111,7 @@ jobs:
         name: Windows MSVC ${{matrix.arch}}
         path: ${{github.workspace}}/install/
   Release:
-    needs: [Linux_amd64, Linux_arm64, Windows]
+    needs: [Linux_amd64, Linux_arm64, macOS_amd64, macOS_arm64, Windows]
     runs-on: windows-latest
     defaults:
       run:
@@ -85,40 +121,54 @@ jobs:
     steps:
     - name: Cloning
       uses: actions/checkout@v5
-    - name: Download Linux arm64 Assets
-      uses: actions/download-artifact@v6
-      with:
-        name: AlmaLinux arm64
-        path: assets/linux-arm64
     - name: Download Linux amd64 Assets
       uses: actions/download-artifact@v6
       with:
         name: AlmaLinux amd64
         path: assets/linux-x64
+    - name: Download Linux arm64 Assets
+      uses: actions/download-artifact@v6
+      with:
+        name: AlmaLinux arm64
+        path: assets/linux-arm64
+    - name: Download macOS amd64 Assets
+      uses: actions/download-artifact@v6
+      with:
+        name: macOS amd64
+        path: assets/osx-x64
+    - name: Download macOS arm64 Assets
+      uses: actions/download-artifact@v6
+      with:
+        name: macOS arm64
+        path: assets/osx-arm64
     - name: Download Windows MSVC amd64 Assets
       uses: actions/download-artifact@v6
       with:
         name: Windows MSVC amd64
         path: assets/win-x64
-    - name: Download Windows MSVC x86 Assets
-      uses: actions/download-artifact@v6
-      with:
-        name: Windows MSVC amd64_x86
-        path: assets/win-x86
     - name: Download Windows MSVC arm64 Assets
       uses: actions/download-artifact@v6
       with:
         name: Windows MSVC amd64_arm64
         path: assets/win-arm64
+    - name: Download Windows MSVC x86 Assets
+      uses: actions/download-artifact@v6
+      with:
+        name: Windows MSVC amd64_x86
+        path: assets/win-x86
     - name: Copy Assets
       run: |
           mkdir -p "${{github.workspace}}\src\dotnet\runtimes\linux-arm64\native"
           mkdir -p "${{github.workspace}}\src\dotnet\runtimes\linux-x64\native"
+          mkdir -p "${{github.workspace}}\src\dotnet\runtimes\osx-arm64\native"
+          mkdir -p "${{github.workspace}}\src\dotnet\runtimes\osx-x64\native"
           mkdir -p "${{github.workspace}}\src\dotnet\runtimes\win-arm64\native"
           mkdir -p "${{github.workspace}}\src\dotnet\runtimes\win-x64\native"
           mkdir -p "${{github.workspace}}\src\dotnet\runtimes\win-x86\native"
           cp "${{github.workspace}}\assets\linux-arm64\lib64\libragephoto.so" "${{github.workspace}}\src\dotnet\runtimes\linux-arm64\native\libragephoto.so"
           cp "${{github.workspace}}\assets\linux-x64\lib64\libragephoto.so" "${{github.workspace}}\src\dotnet\runtimes\linux-x64\native\libragephoto.so"
+          cp "${{github.workspace}}\assets\osx-arm64\lib\libragephoto.dylib" "${{github.workspace}}\src\dotnet\runtimes\osx-arm64\native\libragephoto.dylib"
+          cp "${{github.workspace}}\assets\osx-x64\lib\libragephoto.dylib" "${{github.workspace}}\src\dotnet\runtimes\osx-x64\native\libragephoto.dylib"
           cp "${{github.workspace}}\assets\win-arm64\bin\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-arm64\native\libragephoto.dll"
           cp "${{github.workspace}}\assets\win-x64\bin\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-x64\native\libragephoto.dll"
           cp "${{github.workspace}}\assets\win-x86\bin\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-x86\native\libragephoto.dll"
