@@ -18,7 +18,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 cmake_policy(VERSION 3.16...3.28)
-project(ragephoto VERSION 0.7.0 LANGUAGES C CXX)
+project(ragephoto VERSION 0.7.1 LANGUAGES C CXX)
 include(GNUInstallDirs)
 
 # RagePhoto CMake includes

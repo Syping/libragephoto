@@ -1207,7 +1207,7 @@ void ragephoto_setphotodesc(ragephoto_t instance_t, const char *description, uin
     }
     if (bufferSize != 0) {
         instance->data->descBuffer = bufferSize;
-        ragephoto_setbufferoffsets(instance->data);
+        ragephotodata_setbufferoffsets(instance->data);
     }
     instance->data->error = RAGEPHOTO_ERROR_NOERROR; // 255
 }
