@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2023 Syping
+* Copyright (C) 2021-2025 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -26,13 +26,10 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    // Initialise RagePhoto
     ragephoto_t ragephoto_in = ragephoto_open();
 
-    // Load Photo
-    const int loaded = ragephoto_loadfile(ragephoto_in, argv[1]);
-
-    if (loaded != 1) {
+    const bool loaded = ragephoto_loadfile(ragephoto_in, argv[1]);
+    if (!loaded) {
         const int32_t error = ragephoto_error(ragephoto_in);
         if (error == RAGEPHOTO_ERROR_UNINITIALISED) {
             printf("Failed to open file: %s\n", argv[1]);
@@ -46,23 +43,8 @@ int main(int argc, char *argv[])
         }
     }
 
-    // Write jpeg
-#ifdef _WIN32
-    FILE *file = NULL;
-    fopen_s(&file, argv[2], "wb");
-#else
-    FILE *file = fopen(argv[2], "wb");
-#endif
-    if (!file) {
-        printf("Failed to write file: %s\n", argv[2]);
-        ragephoto_close(ragephoto_in);
-        return 1;
-    }
-    const size_t jpegSize = ragephoto_getphotosize(ragephoto_in);
-    const size_t fileSize = fwrite(ragephoto_getphotojpeg(ragephoto_in), sizeof(char), jpegSize, file);
-    fclose(file);
-
-    if (fileSize != jpegSize) {
+    const bool saved = ragephoto_savefilef(ragephoto_in, argv[2], RAGEPHOTO_FORMAT_JPEG);
+    if (!saved) {
         printf("Failed to write file: %s\n", argv[2]);
         ragephoto_close(ragephoto_in);
         return 1;

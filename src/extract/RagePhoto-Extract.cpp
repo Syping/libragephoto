@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2024 Syping
+* Copyright (C) 2021-2025 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -26,10 +26,8 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    // Initialise RagePhoto
     RagePhoto ragePhoto;
 
-    // Load Photo
     const bool loaded = ragePhoto.loadFile(argv[1]);
 
     if (!loaded) {
@@ -44,17 +42,9 @@ int main(int argc, char *argv[])
         }
     }
 
-    // Write jpeg
-    std::ofstream ofs(argv[2], std::ios::out | std::ios::binary | std::ios::trunc);
-    if (!ofs.is_open()) {
-        std::cout << "Failed to write file: " << argv[2] << std::endl;
-        return 1;
-    }
-    ofs << ragePhoto.jpeg();
-    const bool ok = ofs.good();
-    ofs.close();
+    const bool saved = ragePhoto.saveFile(argv[2], RagePhoto::JPEG);
 
-    if (!ok) {
+    if (!saved) {
         std::cout << "Failed to write file: " << argv[2] << std::endl;
         return 1;
     }
