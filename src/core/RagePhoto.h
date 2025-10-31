@@ -35,7 +35,11 @@ extern "C" {
 /** RagePhoto typedef for C instance/C++ object.
 * \memberof RagePhotoInstance
 */
+#ifdef LIBRAGEPHOTO_C_ONLY
 typedef RagePhotoInstance* ragephoto_t;
+#else
+typedef void* ragephoto_t;
+#endif
 
 /** Opens a \p ragephoto_t instance.
 * \memberof RagePhotoInstance
