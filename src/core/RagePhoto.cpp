@@ -1273,7 +1273,7 @@ void RagePhoto::setTitle(const char *title, uint32_t bufferSize)
 ragephoto_t ragephoto_open()
 {
     try {
-        return static_cast<ragephoto_t>(new RagePhoto);
+        return reinterpret_cast<ragephoto_t>(new RagePhoto);
     }
     catch (const std::exception &exception) {
         std::cerr << "[libragephoto] Exception thrown at ragephoto_open: " << exception.what() << std::endl;
@@ -1283,7 +1283,7 @@ ragephoto_t ragephoto_open()
 
 void ragephoto_addparser(ragephoto_t instance, RagePhotoFormatParser *rp_parser)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     try {
         ragePhoto->addParser(rp_parser);
     }
@@ -1294,7 +1294,7 @@ void ragephoto_addparser(ragephoto_t instance, RagePhotoFormatParser *rp_parser)
 
 void ragephoto_clear(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     ragePhoto->clear();
 }
 
@@ -1305,7 +1305,7 @@ void ragephotodata_clear(RagePhotoData *rp_data)
 
 bool ragephoto_load(ragephoto_t instance, const char *data, size_t size)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->load(data, size);
 }
 
@@ -1316,13 +1316,13 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
 
 bool ragephoto_loadfile(ragephoto_t instance, const char *filename)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->loadFile(filename);
 }
 
 int32_t ragephoto_error(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->error();
 }
 
@@ -1348,61 +1348,61 @@ uint32_t ragephoto_format_rdr2()
 
 RagePhotoData* ragephoto_getphotodata(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->data();
 }
 
 const char* ragephoto_getphotodesc(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->description();
 }
 
 uint32_t ragephoto_getphotoformat(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->format();
 }
 
 const char* ragephoto_getphotojpeg(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->jpegData();
 }
 
 const char* ragephoto_getphotojson(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->json();
 }
 
 const char* ragephoto_getphotoheader(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->header();
 }
 
 uint64_t ragephoto_getphotosign(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->jpegSign();
 }
 
 uint64_t ragephoto_getphotosignf(ragephoto_t instance, uint32_t photoFormat)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->jpegSign(photoFormat);
 }
 
 void ragephoto_getphotosigns(ragephoto_t instance, char *data, size_t size)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     snprintf(data, size, "%" PRIu64, ragePhoto->jpegSign());
 }
 
 void ragephoto_getphotosignsf(ragephoto_t instance, char *data, size_t size, uint32_t photoFormat)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     snprintf(data, size, "%" PRIu64, ragePhoto->jpegSign(photoFormat));
 }
 
@@ -1418,19 +1418,19 @@ uint64_t ragephotodata_getphotosignf(RagePhotoData *rp_data, uint32_t photoForma
 
 uint32_t ragephoto_getphotosize(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->jpegSize();
 }
 
 const char* ragephoto_getphototitle(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->title();
 }
 
 size_t ragephoto_getsavesize(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->saveSize();
 }
 
@@ -1441,7 +1441,7 @@ size_t ragephotodata_getsavesize(RagePhotoData *rp_data, RagePhotoFormatParser *
 
 size_t ragephoto_getsavesizef(ragephoto_t instance, uint32_t photoFormat)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->saveSize(photoFormat);
 }
 
@@ -1452,7 +1452,7 @@ size_t ragephotodata_getsavesizef(RagePhotoData *rp_data, RagePhotoFormatParser 
 
 bool ragephoto_save(ragephoto_t instance, char *data)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->save(data);
 }
 
@@ -1463,7 +1463,7 @@ bool ragephotodata_save(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
 
 bool ragephoto_savef(ragephoto_t instance, char *data, uint32_t photoFormat)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->save(data, photoFormat);
 }
 
@@ -1474,19 +1474,19 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 
 bool ragephoto_savefile(ragephoto_t instance, const char *filename)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->saveFile(filename);
 }
 
 bool ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t photoFormat)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->saveFile(filename, photoFormat);
 }
 
 void ragephoto_setbufferdefault(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     ragePhoto->setBufferDefault();
 }
 
@@ -1497,7 +1497,7 @@ void ragephotodata_setbufferdefault(RagePhotoData *rp_data)
 
 void ragephoto_setbufferoffsets(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     ragePhoto->setBufferOffsets();
 }
 
@@ -1513,61 +1513,61 @@ void ragephoto_setlibraryflag(RagePhotoLibraryFlag flag, bool state)
 
 bool ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *rp_data)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->setData(rp_data, false);
 }
 
 bool ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *rp_data)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->setData(rp_data, true);
 }
 
 void ragephoto_setphotodesc(ragephoto_t instance, const char *description, uint32_t bufferSize)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     ragePhoto->setDescription(description, bufferSize);
 }
 
 void ragephoto_setphotoformat(ragephoto_t instance, uint32_t photoFormat)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     ragePhoto->setFormat(photoFormat);
 }
 
 bool ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     return ragePhoto->setJpeg(data, size, bufferSize);
 }
 
 void ragephoto_setphotojson(ragephoto_t instance, const char *json, uint32_t bufferSize)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     ragePhoto->setJson(json, bufferSize);
 }
 
 void ragephoto_setphotoheader(ragephoto_t instance, const char *header, uint32_t headerSum)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     ragePhoto->setHeader(header, headerSum);
 }
 
 void ragephoto_setphotoheader2(ragephoto_t instance, const char *header, uint32_t headerSum, uint32_t headerSum2)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     ragePhoto->setHeader(header, headerSum, headerSum2);
 }
 
 void ragephoto_setphototitle(ragephoto_t instance, const char *title, uint32_t bufferSize)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     ragePhoto->setTitle(title, bufferSize);
 }
 
 void ragephoto_close(ragephoto_t instance)
 {
-    RagePhoto *ragePhoto = static_cast<RagePhoto*>(instance);
+    RagePhoto *ragePhoto = reinterpret_cast<RagePhoto*>(instance);
     delete ragePhoto;
 }
 

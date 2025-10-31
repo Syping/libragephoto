@@ -210,12 +210,11 @@ ragephoto_t ragephoto_open()
     }
     memset(instance->parser, 0, sizeof(RagePhotoFormatParser));
     ragephotodata_setbufferdefault(instance->data);
-    return (ragephoto_t)instance;
+    return instance;
 }
 
-void ragephoto_close(ragephoto_t instance_t)
+void ragephoto_close(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     free(instance->data->jpeg);
     free(instance->data->description);
     free(instance->data->json);
@@ -226,9 +225,8 @@ void ragephoto_close(ragephoto_t instance_t)
     free(instance);
 }
 
-void ragephoto_addparser(ragephoto_t instance_t, RagePhotoFormatParser *rp_parser)
+void ragephoto_addparser(ragephoto_t instance, RagePhotoFormatParser *rp_parser)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (rp_parser) {
         RagePhotoFormatParser n_parser;
         memset(&n_parser, 0, sizeof(RagePhotoFormatParser));
@@ -256,15 +254,13 @@ void ragephotodata_clear(RagePhotoData *rp_data)
     ragephotodata_setbufferdefault(rp_data);
 }
 
-void ragephoto_clear(ragephoto_t instance_t)
+void ragephoto_clear(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     ragephotodata_clear(instance->data);
 }
 
-RagePhotoData* ragephoto_getphotodata(ragephoto_t instance_t)
+RagePhotoData* ragephoto_getphotodata(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     return instance->data;
 }
 
@@ -613,15 +609,13 @@ bool ragephotodata_load(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
     return false;
 }
 
-bool ragephoto_load(ragephoto_t instance_t, const char *data, size_t size)
+bool ragephoto_load(ragephoto_t instance, const char *data, size_t size)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     return ragephotodata_load(instance->data, instance->parser, data, size);
 }
 
-bool ragephoto_loadfile(ragephoto_t instance_t, const char *filename)
+bool ragephoto_loadfile(ragephoto_t instance, const char *filename)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     FILE *file = openFile(filename, 'r');
     if (!file)
         return false;
@@ -674,21 +668,18 @@ bool ragephoto_loadfile(ragephoto_t instance_t, const char *filename)
     return isLoaded;
 }
 
-int32_t ragephoto_error(ragephoto_t instance_t)
+int32_t ragephoto_error(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     return instance->data->error;
 }
 
-uint32_t ragephoto_getphotoformat(ragephoto_t instance_t)
+uint32_t ragephoto_getphotoformat(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     return instance->data->photoFormat;
 }
 
-const char* ragephoto_getphotojpeg(ragephoto_t instance_t)
+const char* ragephoto_getphotojpeg(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->jpeg)
         return instance->data->jpeg;
     return (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN) ? NULL : nullchar;
@@ -710,15 +701,13 @@ uint64_t ragephotodata_getphotosign(RagePhotoData *rp_data)
     return ragephotodata_getphotosignf(rp_data, rp_data->photoFormat);
 }
 
-uint64_t ragephoto_getphotosignf(ragephoto_t instance_t, uint32_t photoFormat)
+uint64_t ragephoto_getphotosignf(ragephoto_t instance, uint32_t photoFormat)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     return ragephotodata_getphotosignf(instance->data, photoFormat);
 }
 
-uint64_t ragephoto_getphotosign(ragephoto_t instance_t)
+uint64_t ragephoto_getphotosign(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     return ragephotodata_getphotosignf(instance->data, instance->data->photoFormat);
 }
 
@@ -732,41 +721,36 @@ void ragephoto_getphotosignsf(ragephoto_t instance, char *data, size_t size, uin
     snprintf(data, size, "%" PRIu64, ragephoto_getphotosignf(instance, photoFormat));
 }
 
-uint32_t ragephoto_getphotosize(ragephoto_t instance_t)
+uint32_t ragephoto_getphotosize(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->jpeg)
         return instance->data->jpegSize;
     return 0;
 }
 
-const char* ragephoto_getphotodesc(ragephoto_t instance_t)
+const char* ragephoto_getphotodesc(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->description)
         return instance->data->description;
     return (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN) ? NULL : nullchar;
 }
 
-const char* ragephoto_getphotojson(ragephoto_t instance_t)
+const char* ragephoto_getphotojson(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->json)
         return instance->data->json;
     return (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN) ? NULL : nullchar;
 }
 
-const char* ragephoto_getphotoheader(ragephoto_t instance_t)
+const char* ragephoto_getphotoheader(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->header)
         return instance->data->header;
     return (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN) ? NULL : nullchar;
 }
 
-const char* ragephoto_getphototitle(ragephoto_t instance_t)
+const char* ragephoto_getphototitle(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->title)
         return instance->data->title;
     return (libraryflags & RAGEPHOTO_FLAG_LEGACY_NULL_RETURN) ? NULL : nullchar;
@@ -1012,21 +996,18 @@ bool ragephotodata_save(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser
     return ragephotodata_savef(rp_data, rp_parser, data, rp_data->photoFormat);
 }
 
-bool ragephoto_savef(ragephoto_t instance_t, char *data, uint32_t photoFormat)
+bool ragephoto_savef(ragephoto_t instance, char *data, uint32_t photoFormat)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     return ragephotodata_savef(instance->data, instance->parser, data, photoFormat);
 }
 
-bool ragephoto_save(ragephoto_t instance_t, char *data)
+bool ragephoto_save(ragephoto_t instance, char *data)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     return ragephotodata_savef(instance->data, instance->parser, data, instance->data->photoFormat);
 }
 
-bool ragephoto_savefilef(ragephoto_t instance_t, const char *filename, uint32_t photoFormat)
+bool ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t photoFormat)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     const size_t fileSize = ragephotodata_getsavesizef(instance->data, instance->parser, photoFormat);
     char *data = (char*)malloc(fileSize);
     if (!data)
@@ -1046,10 +1027,9 @@ bool ragephoto_savefilef(ragephoto_t instance_t, const char *filename, uint32_t 
     return (fileSize == writeSize);
 }
 
-bool ragephoto_savefile(ragephoto_t instance_t, const char *filename)
+bool ragephoto_savefile(ragephoto_t instance, const char *filename)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
-    return ragephoto_savefilef(instance_t, filename, instance->data->photoFormat);
+    return ragephoto_savefilef(instance, filename, instance->data->photoFormat);
 }
 
 size_t ragephotodata_getsavesizef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parser, uint32_t photoFormat)
@@ -1077,15 +1057,13 @@ size_t ragephotodata_getsavesize(RagePhotoData *rp_data, RagePhotoFormatParser *
     return ragephotodata_getsavesizef(rp_data, rp_parser, rp_data->photoFormat);
 }
 
-size_t ragephoto_getsavesizef(ragephoto_t instance_t, uint32_t photoFormat)
+size_t ragephoto_getsavesizef(ragephoto_t instance, uint32_t photoFormat)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     return ragephotodata_getsavesizef(instance->data, instance->parser, photoFormat);
 }
 
-size_t ragephoto_getsavesize(ragephoto_t instance_t)
+size_t ragephoto_getsavesize(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     return ragephotodata_getsavesizef(instance->data, instance->parser, instance->data->photoFormat);
 }
 
@@ -1097,9 +1075,8 @@ void ragephotodata_setbufferdefault(RagePhotoData *rp_data)
     ragephotodata_setbufferoffsets(rp_data);
 }
 
-void ragephoto_setbufferdefault(ragephoto_t instance_t)
+void ragephoto_setbufferdefault(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     ragephotodata_setbufferdefault(instance->data);
 }
 
@@ -1111,9 +1088,8 @@ void ragephotodata_setbufferoffsets(RagePhotoData *rp_data)
     rp_data->endOfFile = rp_data->descOffset + rp_data->descBuffer + 12;
 }
 
-void ragephoto_setbufferoffsets(ragephoto_t instance_t)
+void ragephoto_setbufferoffsets(ragephoto_t instance)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     ragephotodata_setbufferoffsets(instance->data);
 }
 
@@ -1122,9 +1098,8 @@ void ragephoto_setlibraryflag(RagePhotoLibraryFlag flag, bool state)
     state ? (libraryflags |= flag) : (libraryflags &= ~flag);
 }
 
-bool ragephoto_setphotodata(ragephoto_t instance_t, RagePhotoData *rp_data)
+bool ragephoto_setphotodata(ragephoto_t instance, RagePhotoData *rp_data)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data == rp_data)
         return true;
 
@@ -1139,9 +1114,8 @@ bool ragephoto_setphotodata(ragephoto_t instance_t, RagePhotoData *rp_data)
     return true;
 }
 
-bool ragephoto_setphotodatac(ragephoto_t instance_t, RagePhotoData *rp_data)
+bool ragephoto_setphotodatac(ragephoto_t instance, RagePhotoData *rp_data)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data == rp_data)
         return true;
 
@@ -1198,9 +1172,8 @@ bool ragephoto_setphotodatac(ragephoto_t instance_t, RagePhotoData *rp_data)
     return true;
 }
 
-void ragephoto_setphotodesc(ragephoto_t instance_t, const char *description, uint32_t bufferSize)
+void ragephoto_setphotodesc(ragephoto_t instance, const char *description, uint32_t bufferSize)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (!writeDataChar(description, &instance->data->description)) {
         instance->data->error = RAGEPHOTO_ERROR_DESCMALLOCERROR; // 31
         return;
@@ -1212,15 +1185,13 @@ void ragephoto_setphotodesc(ragephoto_t instance_t, const char *description, uin
     instance->data->error = RAGEPHOTO_ERROR_NOERROR; // 255
 }
 
-void ragephoto_setphotoformat(ragephoto_t instance_t, uint32_t photoFormat)
+void ragephoto_setphotoformat(ragephoto_t instance, uint32_t photoFormat)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     instance->data->photoFormat = photoFormat;
 }
 
-bool ragephoto_setphotojpeg(ragephoto_t instance_t, const char *data, uint32_t size, uint32_t bufferSize)
+bool ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (instance->data->jpeg) {
         if (instance->data->jpegSize > size) {
             char *t_photoData = (char*)realloc(instance->data->jpeg, size);
@@ -1265,9 +1236,8 @@ bool ragephoto_setphotojpeg(ragephoto_t instance_t, const char *data, uint32_t s
     return true;
 }
 
-void ragephoto_setphotojson(ragephoto_t instance_t, const char *json, uint32_t bufferSize)
+void ragephoto_setphotojson(ragephoto_t instance, const char *json, uint32_t bufferSize)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (!writeDataChar(json, &instance->data->json)) {
         instance->data->error = RAGEPHOTO_ERROR_JSONMALLOCERROR; // 21
         return;
@@ -1279,9 +1249,8 @@ void ragephoto_setphotojson(ragephoto_t instance_t, const char *json, uint32_t b
     instance->data->error = RAGEPHOTO_ERROR_NOERROR; // 255
 }
 
-void ragephoto_setphotoheader(ragephoto_t instance_t, const char *header, uint32_t headerSum)
+void ragephoto_setphotoheader(ragephoto_t instance, const char *header, uint32_t headerSum)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (!writeDataChar(header, &instance->data->header)) {
         instance->data->error = RAGEPHOTO_ERROR_HEADERMALLOCERROR; // 4
         return;
@@ -1291,9 +1260,8 @@ void ragephoto_setphotoheader(ragephoto_t instance_t, const char *header, uint32
     instance->data->error = RAGEPHOTO_ERROR_NOERROR; // 255
 }
 
-void ragephoto_setphotoheader2(ragephoto_t instance_t, const char *header, uint32_t headerSum, uint32_t headerSum2)
+void ragephoto_setphotoheader2(ragephoto_t instance, const char *header, uint32_t headerSum, uint32_t headerSum2)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (!writeDataChar(header, &instance->data->header)) {
         instance->data->error = RAGEPHOTO_ERROR_HEADERMALLOCERROR; // 4
         return;
@@ -1303,9 +1271,8 @@ void ragephoto_setphotoheader2(ragephoto_t instance_t, const char *header, uint3
     instance->data->error = RAGEPHOTO_ERROR_NOERROR; // 255
 }
 
-void ragephoto_setphototitle(ragephoto_t instance_t, const char *title, uint32_t bufferSize)
+void ragephoto_setphototitle(ragephoto_t instance, const char *title, uint32_t bufferSize)
 {
-    RagePhotoInstance *instance = (RagePhotoInstance*)instance_t;
     if (!writeDataChar(title, &instance->data->title)) {
         instance->data->error = RAGEPHOTO_ERROR_TITLEMALLOCERROR; // 26
         return;
