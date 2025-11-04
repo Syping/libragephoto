@@ -14,7 +14,7 @@ jobs:
     - name: Install packages
       run: dnf install -y cmake gcc gcc-c++
     - name: Configure CMake
-      run: cmake -B "build" -DRAGEPHOTO_C_LIBRARY=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -B "build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_EXTRACT=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
     - name: Build
       run: cmake --build "build" --config ${{env.BUILD_TYPE}}
     - name: Install
@@ -23,7 +23,7 @@ jobs:
       uses: actions/upload-artifact@v5
       with:
         name: AlmaLinux amd64
-        path: ${{github.workspace}}/install/
+        path: ${{github.workspace}}/install/lib64/libragephoto.so
   Linux_arm64:
     runs-on: ubuntu-24.04-arm
     container:
@@ -36,7 +36,7 @@ jobs:
     - name: Install packages
       run: dnf install -y cmake gcc gcc-c++
     - name: Configure CMake
-      run: cmake -B "build" -DRAGEPHOTO_C_LIBRARY=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -B "build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_EXTRACT=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
     - name: Build
       run: cmake --build "build" --config ${{env.BUILD_TYPE}}
     - name: Install
@@ -45,7 +45,7 @@ jobs:
       uses: actions/upload-artifact@v5
       with:
         name: AlmaLinux arm64
-        path: ${{github.workspace}}/install/
+        path: ${{github.workspace}}/install/lib64/libragephoto.so
   macOS_amd64:
     runs-on: macos-15-intel
     env:
@@ -54,7 +54,7 @@ jobs:
     - name: Cloning
       uses: actions/checkout@v5
     - name: Configure CMake
-      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
+      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_EXTRACT=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
     - name: Build
       run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
     - name: Install
@@ -63,7 +63,7 @@ jobs:
       uses: actions/upload-artifact@v5
       with:
         name: macOS amd64
-        path: ${{github.workspace}}/install/
+        path: ${{github.workspace}}/install/lib/libragephoto.dylib
   macOS_arm64:
     runs-on: macos-15
     env:
@@ -72,7 +72,7 @@ jobs:
     - name: Cloning
       uses: actions/checkout@v5
     - name: Configure CMake
-      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
+      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_EXTRACT=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
     - name: Build
       run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
     - name: Install
@@ -81,7 +81,7 @@ jobs:
       uses: actions/upload-artifact@v5
       with:
         name: macOS arm64
-        path: ${{github.workspace}}/install/
+        path: ${{github.workspace}}/install/lib/libragephoto.dylib
   Windows:
     runs-on: windows-latest
     env:
@@ -100,7 +100,7 @@ jobs:
       with:
         arch: ${{matrix.arch}}
     - name: Configure CMake
-      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_UNICODE=wincvt -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
+      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_EXTRACT=OFF -DRAGEPHOTO_UNICODE=wincvt -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
     - name: Build
       run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
     - name: Install
@@ -109,7 +109,7 @@ jobs:
       uses: actions/upload-artifact@v5
       with:
         name: Windows MSVC ${{matrix.arch}}
-        path: ${{github.workspace}}/install/
+        path: ${{github.workspace}}/install/bin/libragephoto.dll
   Release:
     needs: [Linux_amd64, Linux_arm64, macOS_amd64, macOS_arm64, Windows]
     runs-on: windows-latest
@@ -165,13 +165,13 @@ jobs:
           mkdir -p "${{github.workspace}}\src\dotnet\runtimes\win-arm64\native"
           mkdir -p "${{github.workspace}}\src\dotnet\runtimes\win-x64\native"
           mkdir -p "${{github.workspace}}\src\dotnet\runtimes\win-x86\native"
-          cp "${{github.workspace}}\assets\linux-arm64\lib64\libragephoto.so" "${{github.workspace}}\src\dotnet\runtimes\linux-arm64\native\libragephoto.so"
-          cp "${{github.workspace}}\assets\linux-x64\lib64\libragephoto.so" "${{github.workspace}}\src\dotnet\runtimes\linux-x64\native\libragephoto.so"
-          cp "${{github.workspace}}\assets\osx-arm64\lib\libragephoto.dylib" "${{github.workspace}}\src\dotnet\runtimes\osx-arm64\native\libragephoto.dylib"
-          cp "${{github.workspace}}\assets\osx-x64\lib\libragephoto.dylib" "${{github.workspace}}\src\dotnet\runtimes\osx-x64\native\libragephoto.dylib"
-          cp "${{github.workspace}}\assets\win-arm64\bin\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-arm64\native\libragephoto.dll"
-          cp "${{github.workspace}}\assets\win-x64\bin\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-x64\native\libragephoto.dll"
-          cp "${{github.workspace}}\assets\win-x86\bin\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-x86\native\libragephoto.dll"
+          cp "${{github.workspace}}\assets\linux-arm64\libragephoto.so" "${{github.workspace}}\src\dotnet\runtimes\linux-arm64\native\libragephoto.so"
+          cp "${{github.workspace}}\assets\linux-x64\libragephoto.so" "${{github.workspace}}\src\dotnet\runtimes\linux-x64\native\libragephoto.so"
+          cp "${{github.workspace}}\assets\osx-arm64\libragephoto.dylib" "${{github.workspace}}\src\dotnet\runtimes\osx-arm64\native\libragephoto.dylib"
+          cp "${{github.workspace}}\assets\osx-x64\libragephoto.dylib" "${{github.workspace}}\src\dotnet\runtimes\osx-x64\native\libragephoto.dylib"
+          cp "${{github.workspace}}\assets\win-arm64\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-arm64\native\libragephoto.dll"
+          cp "${{github.workspace}}\assets\win-x64\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-x64\native\libragephoto.dll"
+          cp "${{github.workspace}}\assets\win-x86\libragephoto.dll" "${{github.workspace}}\src\dotnet\runtimes\win-x86\native\libragephoto.dll"
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
     - name: Setup .NET
