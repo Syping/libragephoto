@@ -1,13 +1,21 @@
 name: .NET
 on: push
+env:
+  BUILD_TYPE: Release
 
 jobs:
-  Linux_amd64:
-    runs-on: ubuntu-24.04
+  Linux:
+    runs-on: ${{matrix.runner}}
     container:
       image: almalinux:8
-    env:
-      BUILD_TYPE: Release
+    strategy:
+      matrix:
+        arch: [arm64, x64]
+        include:
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+          - arch: x64
+            runner: ubuntu-24.04
     steps:
     - name: Cloning
       uses: actions/checkout@v5
@@ -22,83 +30,53 @@ jobs:
     - name: Upload
       uses: actions/upload-artifact@v5
       with:
-        name: AlmaLinux amd64
+        name: Linux ${{matrix.arch}}
         path: ${{github.workspace}}/install/lib64/libragephoto.so
-  Linux_arm64:
-    runs-on: ubuntu-24.04-arm
-    container:
-      image: almalinux:8
-    env:
-      BUILD_TYPE: Release
-    steps:
-    - name: Cloning
-      uses: actions/checkout@v5
-    - name: Install packages
-      run: dnf install -y cmake gcc gcc-c++
-    - name: Configure CMake
-      run: cmake -B "build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_EXTRACT=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-    - name: Build
-      run: cmake --build "build" --config ${{env.BUILD_TYPE}}
-    - name: Install
-      run: cmake --install "build" --config ${{env.BUILD_TYPE}} --prefix "install/"
-    - name: Upload
-      uses: actions/upload-artifact@v5
-      with:
-        name: AlmaLinux arm64
-        path: ${{github.workspace}}/install/lib64/libragephoto.so
-  macOS_amd64:
-    runs-on: macos-15-intel
-    env:
-      BUILD_TYPE: Release
-    steps:
-    - name: Cloning
-      uses: actions/checkout@v5
-    - name: Configure CMake
-      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_EXTRACT=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
-    - name: Build
-      run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
-    - name: Install
-      run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install/"
-    - name: Upload
-      uses: actions/upload-artifact@v5
-      with:
-        name: macOS amd64
-        path: ${{github.workspace}}/install/lib/libragephoto.dylib
-  macOS_arm64:
-    runs-on: macos-15
-    env:
-      BUILD_TYPE: Release
-    steps:
-    - name: Cloning
-      uses: actions/checkout@v5
-    - name: Configure CMake
-      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_EXTRACT=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
-    - name: Build
-      run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
-    - name: Install
-      run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install/"
-    - name: Upload
-      uses: actions/upload-artifact@v5
-      with:
-        name: macOS arm64
-        path: ${{github.workspace}}/install/lib/libragephoto.dylib
-  Windows:
-    runs-on: windows-latest
+  macOS:
+    runs-on: ${{matrix.runner}}
     env:
       BUILD_TYPE: Release
     strategy:
       matrix:
-        arch:
-          - amd64
-          - amd64_x86
-          - amd64_arm64
+        arch: [arm64, x64]
+        include:
+          - arch: arm64
+            runner: macos-15
+          - arch: x64
+            runner: macos-15-intel
+    steps:
+    - name: Cloning
+      uses: actions/checkout@v5
+    - name: Configure CMake
+      run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_EXTRACT=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
+    - name: Build
+      run: cmake --build "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}}
+    - name: Install
+      run: cmake --install "${{github.workspace}}/build" --config ${{env.BUILD_TYPE}} --prefix "${{github.workspace}}/install/"
+    - name: Upload
+      uses: actions/upload-artifact@v5
+      with:
+        name: macOS ${{matrix.arch}}
+        path: ${{github.workspace}}/install/lib/libragephoto.dylib
+  Windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [arm64, x64, x86]
+        include:
+          - arch: arm64
+            msvc: amd64_arm64
+          - arch: x64
+            msvc: amd64
+          - arch: x86
+            msvc: amd64_x86
     steps:
     - name: Cloning
       uses: actions/checkout@v5
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
       with:
-        arch: ${{matrix.arch}}
+        arch: ${{matrix.msvc}}
     - name: Configure CMake
       run: cmake -B "${{github.workspace}}/build" -DRAGEPHOTO_C_LIBRARY=ON -DRAGEPHOTO_EXTRACT=OFF -DRAGEPHOTO_UNICODE=wincvt -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -GNinja
     - name: Build
@@ -111,50 +89,48 @@ jobs:
         name: Windows MSVC ${{matrix.arch}}
         path: ${{github.workspace}}/install/bin/libragephoto.dll
   Release:
-    needs: [Linux_amd64, Linux_arm64, macOS_amd64, macOS_arm64, Windows]
+    needs: [Linux, macOS, Windows]
     runs-on: windows-latest
     defaults:
       run:
         shell: pwsh
-    env:
-      BUILD_TYPE: Release
     steps:
     - name: Cloning
       uses: actions/checkout@v5
-    - name: Download Linux amd64 Assets
-      uses: actions/download-artifact@v6
-      with:
-        name: AlmaLinux amd64
-        path: assets/linux-x64
     - name: Download Linux arm64 Assets
       uses: actions/download-artifact@v6
       with:
-        name: AlmaLinux arm64
+        name: Linux arm64
         path: assets/linux-arm64
-    - name: Download macOS amd64 Assets
+    - name: Download Linux x64 Assets
       uses: actions/download-artifact@v6
       with:
-        name: macOS amd64
-        path: assets/osx-x64
+        name: Linux x64
+        path: assets/linux-x64
     - name: Download macOS arm64 Assets
       uses: actions/download-artifact@v6
       with:
         name: macOS arm64
         path: assets/osx-arm64
-    - name: Download Windows MSVC amd64 Assets
+    - name: Download macOS x64 Assets
       uses: actions/download-artifact@v6
       with:
-        name: Windows MSVC amd64
-        path: assets/win-x64
+        name: macOS x64
+        path: assets/osx-x64
     - name: Download Windows MSVC arm64 Assets
       uses: actions/download-artifact@v6
       with:
-        name: Windows MSVC amd64_arm64
+        name: Windows MSVC arm64
         path: assets/win-arm64
+    - name: Download Windows MSVC x64 Assets
+      uses: actions/download-artifact@v6
+      with:
+        name: Windows MSVC x64
+        path: assets/win-x64
     - name: Download Windows MSVC x86 Assets
       uses: actions/download-artifact@v6
       with:
-        name: Windows MSVC amd64_x86
+        name: Windows MSVC x86
         path: assets/win-x86
     - name: Copy Assets
       run: |
