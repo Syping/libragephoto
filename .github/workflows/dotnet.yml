@@ -117,17 +117,17 @@ jobs:
       with:
         name: macOS x64
         path: assets/osx-x64
-    - name: Download Windows MSVC arm64 Assets
+    - name: Download Windows arm64 Assets
       uses: actions/download-artifact@v6
       with:
         name: Windows MSVC arm64
         path: assets/win-arm64
-    - name: Download Windows MSVC x64 Assets
+    - name: Download Windows x64 Assets
       uses: actions/download-artifact@v6
       with:
         name: Windows MSVC x64
         path: assets/win-x64
-    - name: Download Windows MSVC x86 Assets
+    - name: Download Windows x86 Assets
       uses: actions/download-artifact@v6
       with:
         name: Windows MSVC x86
