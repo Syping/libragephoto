@@ -1204,12 +1204,13 @@ bool RagePhoto::setJpeg(const char *data, uint32_t size, uint32_t bufferSize)
                 m_data->jpegSize = size;
             }
             else if (m_data->jpegSize < size) {
-                free(m_data->jpeg);
-                m_data->jpeg = static_cast<char*>(malloc(size));
-                if (!m_data->jpeg) {
+                char *t_photoData = static_cast<char*>(malloc(size));
+                if (!t_photoData) {
                     m_data->error = Error::PhotoMallocError; // 16
                     return false;
                 }
+                free(m_data->jpeg);
+                m_data->jpeg = t_photoData;
                 memcpy(m_data->jpeg, data, size);
                 m_data->jpegSize = size;
             }

@@ -1208,12 +1208,13 @@ bool ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t siz
                 instance->data->jpegSize = size;
             }
             else if (instance->data->jpegSize < size) {
-                free(instance->data->jpeg);
-                instance->data->jpeg = (char*)malloc(size);
-                if (!instance->data->jpeg) {
+                char *t_photoData = (char*)malloc(size);
+                if (!t_photoData) {
                     instance->data->error = RAGEPHOTO_ERROR_PHOTOMALLOCERROR; // 16
                     return false;
                 }
+                free(instance->data->jpeg);
+                instance->data->jpeg = t_photoData;
                 memcpy(instance->data->jpeg, data, size);
                 instance->data->jpegSize = size;
             }
