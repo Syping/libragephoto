@@ -124,37 +124,40 @@ static inline size_t zeroBuffer(char *output, size_t *pos, size_t outputLen, siz
 
 static inline bool writeDataChar(const char *input, char **output)
 {
-    const size_t src_s = strlen(input) + 1;
-    if (*output) {
-        const size_t dst_s = strlen(*output) + 1;
-        if (dst_s > src_s) {
-            char *t_output = (char*)realloc(*output, src_s);
-            if (!t_output) {
-                return false;
+    if (input) {
+        const size_t src_s = strlen(input) + 1;
+        if (*output) {
+            const size_t dst_s = strlen(*output) + 1;
+            if (dst_s > src_s) {
+                char *t_output = (char*)realloc(*output, src_s);
+                if (!t_output)
+                    return false;
+                *output = t_output;
+                memcpy(*output, input, src_s);
             }
-            *output = t_output;
-            memcpy(*output, input, src_s);
-        }
-        else if (dst_s < src_s) {
-            char *t_output = (char*)malloc(src_s);
-            if (!t_output) {
-                return false;
+            else if (dst_s < src_s) {
+                char *t_output = (char*)malloc(src_s);
+                if (!t_output)
+                    return false;
+                free(*output);
+                *output = t_output;
+                memcpy(*output, input, src_s);
             }
-            free(*output);
-            *output = t_output;
-            memcpy(*output, input, src_s);
+            else {
+                memcpy(*output, input, src_s);
+            }
         }
         else {
+            char *t_output = (char*)malloc(src_s);
+            if (!t_output)
+                return false;
+            *output = t_output;
             memcpy(*output, input, src_s);
         }
     }
-    else {
-        char *t_output = (char*)malloc(src_s);
-        if (!t_output) {
-            return false;
-        }
-        *output = t_output;
-        memcpy(*output, input, src_s);
+    else if (*output) {
+        free(*output);
+        *output = NULL;
     }
     return true;
 }
@@ -1024,7 +1027,7 @@ bool ragephoto_savefilef(ragephoto_t instance, const char *filename, uint32_t ph
     const size_t writeSize = fwrite(data, sizeof(char), fileSize, file);
     fclose(file);
     free(data);
-    return (fileSize == writeSize);
+    return fileSize == writeSize;
 }
 
 bool ragephoto_savefile(ragephoto_t instance, const char *filename)
@@ -1192,19 +1195,33 @@ void ragephoto_setphotoformat(ragephoto_t instance, uint32_t photoFormat)
 
 bool ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t size, uint32_t bufferSize)
 {
-    if (instance->data->jpeg) {
-        if (instance->data->jpegSize > size) {
-            char *t_photoData = (char*)realloc(instance->data->jpeg, size);
-            if (!t_photoData) {
-                instance->data->error = RAGEPHOTO_ERROR_PHOTOMALLOCERROR; // 16
-                return false;
+    if (data && size) {
+        if (instance->data->jpeg) {
+            if (instance->data->jpegSize > size) {
+                char *t_photoData = (char*)realloc(instance->data->jpeg, size);
+                if (!t_photoData) {
+                    instance->data->error = RAGEPHOTO_ERROR_PHOTOMALLOCERROR; // 16
+                    return false;
+                }
+                instance->data->jpeg = t_photoData;
+                memcpy(instance->data->jpeg, data, size);
+                instance->data->jpegSize = size;
             }
-            instance->data->jpeg = t_photoData;
-            memcpy(instance->data->jpeg, data, size);
-            instance->data->jpegSize = size;
+            else if (instance->data->jpegSize < size) {
+                free(instance->data->jpeg);
+                instance->data->jpeg = (char*)malloc(size);
+                if (!instance->data->jpeg) {
+                    instance->data->error = RAGEPHOTO_ERROR_PHOTOMALLOCERROR; // 16
+                    return false;
+                }
+                memcpy(instance->data->jpeg, data, size);
+                instance->data->jpegSize = size;
+            }
+            else {
+                memcpy(instance->data->jpeg, data, size);
+            }
         }
-        else if (instance->data->jpegSize < size) {
-            free(instance->data->jpeg);
+        else {
             instance->data->jpeg = (char*)malloc(size);
             if (!instance->data->jpeg) {
                 instance->data->error = RAGEPHOTO_ERROR_PHOTOMALLOCERROR; // 16
@@ -1213,18 +1230,10 @@ bool ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t siz
             memcpy(instance->data->jpeg, data, size);
             instance->data->jpegSize = size;
         }
-        else {
-            memcpy(instance->data->jpeg, data, size);
-        }
     }
-    else {
-        instance->data->jpeg = (char*)malloc(size);
-        if (!instance->data->jpeg) {
-            instance->data->error = RAGEPHOTO_ERROR_PHOTOMALLOCERROR; // 16
-            return false;
-        }
-        memcpy(instance->data->jpeg, data, size);
-        instance->data->jpegSize = size;
+    else if (instance->data->jpeg) {
+        free(instance->data->jpeg);
+        instance->data->jpeg = NULL;
     }
 
     if (bufferSize != 0) {

@@ -118,37 +118,40 @@ inline size_t zeroBuffer(char *output, size_t *pos, size_t outputLen, size_t inp
 
 inline bool writeDataChar(const char *input, char **output)
 {
-    const size_t src_s = strlen(input) + 1;
-    if (*output) {
-        const size_t dst_s = strlen(*output) + 1;
-        if (dst_s > src_s) {
-            char *t_output = static_cast<char*>(realloc(*output, src_s));
-            if (!t_output) {
-                return false;
+    if (input) {
+        const size_t src_s = strlen(input) + 1;
+        if (*output) {
+            const size_t dst_s = strlen(*output) + 1;
+            if (dst_s > src_s) {
+                char *t_output = static_cast<char*>(realloc(*output, src_s));
+                if (!t_output)
+                    return false;
+                *output = t_output;
+                memcpy(*output, input, src_s);
             }
-            *output = t_output;
-            memcpy(*output, input, src_s);
-        }
-        else if (dst_s < src_s) {
-            char *t_output = static_cast<char*>(malloc(src_s));
-            if (!t_output) {
-                return false;
+            else if (dst_s < src_s) {
+                char *t_output = static_cast<char*>(malloc(src_s));
+                if (!t_output)
+                    return false;
+                free(*output);
+                *output = t_output;
+                memcpy(*output, input, src_s);
             }
-            free(*output);
-            *output = t_output;
-            memcpy(*output, input, src_s);
+            else {
+                memcpy(*output, input, src_s);
+            }
         }
         else {
+            char *t_output = static_cast<char*>(malloc(src_s));
+            if (!t_output)
+                return false;
+            *output = t_output;
             memcpy(*output, input, src_s);
         }
     }
-    else {
-        char *t_output = static_cast<char*>(malloc(src_s));
-        if (!t_output) {
-            return false;
-        }
-        *output = t_output;
-        memcpy(*output, input, src_s);
+    else if (*output) {
+        free(*output);
+        *output = nullptr;
     }
     return true;
 }
@@ -1018,8 +1021,7 @@ bool RagePhoto::saveFile(const char *filename, uint32_t photoFormat)
         ofs.close();
         return ok;
     }
-    else
-        return false;
+    return false;
 }
 
 bool RagePhoto::saveFile(const char *filename)
@@ -1189,19 +1191,33 @@ void RagePhoto::setHeader(const char *header, uint32_t headerSum, uint32_t heade
 
 bool RagePhoto::setJpeg(const char *data, uint32_t size, uint32_t bufferSize)
 {
-    if (m_data->jpeg) {
-        if (m_data->jpegSize > size) {
-            char *t_photoData = static_cast<char*>(realloc(m_data->jpeg, size));
-            if (!t_photoData) {
-                m_data->error = Error::PhotoMallocError; // 16
-                return false;
+    if (data && size) {
+        if (m_data->jpeg) {
+            if (m_data->jpegSize > size) {
+                char *t_photoData = static_cast<char*>(realloc(m_data->jpeg, size));
+                if (!t_photoData) {
+                    m_data->error = Error::PhotoMallocError; // 16
+                    return false;
+                }
+                m_data->jpeg = t_photoData;
+                memcpy(m_data->jpeg, data, size);
+                m_data->jpegSize = size;
             }
-            m_data->jpeg = t_photoData;
-            memcpy(m_data->jpeg, data, size);
-            m_data->jpegSize = size;
+            else if (m_data->jpegSize < size) {
+                free(m_data->jpeg);
+                m_data->jpeg = static_cast<char*>(malloc(size));
+                if (!m_data->jpeg) {
+                    m_data->error = Error::PhotoMallocError; // 16
+                    return false;
+                }
+                memcpy(m_data->jpeg, data, size);
+                m_data->jpegSize = size;
+            }
+            else {
+                memcpy(m_data->jpeg, data, size);
+            }
         }
-        else if (m_data->jpegSize < size) {
-            free(m_data->jpeg);
+        else {
             m_data->jpeg = static_cast<char*>(malloc(size));
             if (!m_data->jpeg) {
                 m_data->error = Error::PhotoMallocError; // 16
@@ -1210,18 +1226,10 @@ bool RagePhoto::setJpeg(const char *data, uint32_t size, uint32_t bufferSize)
             memcpy(m_data->jpeg, data, size);
             m_data->jpegSize = size;
         }
-        else {
-            memcpy(m_data->jpeg, data, size);
-        }
     }
-    else {
-        m_data->jpeg = static_cast<char*>(malloc(size));
-        if (!m_data->jpeg) {
-            m_data->error = Error::PhotoMallocError; // 16
-            return false;
-        }
-        memcpy(m_data->jpeg, data, size);
-        m_data->jpegSize = size;
+    else if (m_data->jpeg) {
+        free(m_data->jpeg);
+        m_data->jpeg = nullptr;
     }
 
     if (bufferSize != 0) {
