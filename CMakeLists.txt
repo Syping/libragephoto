@@ -91,7 +91,8 @@ else()
     endif()
 endif()
 
-# RagePhoto C++ Standard
+# RagePhoto C/C++ Standard
+set(RAGEPHOTO_C_STANDARD "99" CACHE STRING "libragephoto C standard")
 set(RAGEPHOTO_CXX_STANDARD "11" CACHE STRING "libragephoto C++ standard")
 
 # RagePhoto Win32 Shared Resources
@@ -120,6 +121,8 @@ else()
     )
 endif()
 set_target_properties(ragephoto PROPERTIES
+    C_STANDARD ${RAGEPHOTO_C_STANDARD}
+    C_STANDARD_REQUIRED ON
     CXX_STANDARD ${RAGEPHOTO_CXX_STANDARD}
     CXX_STANDARD_REQUIRED ON
 )
@@ -136,7 +139,9 @@ target_include_directories(ragephoto PUBLIC
     "${ragephoto_BINARY_DIR}/include"
     "${ragephoto_SOURCE_DIR}/src/core"
 )
-target_link_libraries(ragephoto PRIVATE ${LIBRAGEPHOTO_LIBS})
+target_link_libraries(ragephoto PRIVATE
+    $<$<BOOL:${ICONV_LINKED}>:iconv>
+)
 install(TARGETS ragephoto
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"

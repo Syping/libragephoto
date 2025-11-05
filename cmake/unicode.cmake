@@ -17,14 +17,10 @@
 ****************************************************************************]]
 
 set(RAGEPHOTO_UNICODE "" CACHE STRING "libragephoto Unicode implementation")
-set(RAGEPHOTO_UNICODE_LIBS "" CACHE STRING "libragephoto Unicode libraries")
 if (RAGEPHOTO_UNICODE)
     string(TOUPPER "UNICODE_${RAGEPHOTO_UNICODE}" UNICODE_DEF)
     list(APPEND LIBRAGEPHOTO_DEFINES
         ${UNICODE_DEF}
-    )
-    list(APPEND LIBRAGEPHOTO_LIBS
-        ${RAGEPHOTO_UNICODE_LIBS}
     )
     message("-- UnicodeCvt - ${RAGEPHOTO_UNICODE}")
 else()
@@ -92,11 +88,6 @@ else()
         list(APPEND LIBRAGEPHOTO_DEFINES
             UNICODE_ICONV
         )
-        if (ICONV_LINKED)
-            list(APPEND LIBRAGEPHOTO_LIBS
-                iconv
-            )
-        endif()
         message("-- UnicodeCvt - iconv")
     else()
         message("-- UnicodeCvt - none")

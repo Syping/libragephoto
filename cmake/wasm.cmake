@@ -1,6 +1,6 @@
 #[[**************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2023-2024 Syping
+* Copyright (C) 2023-2025 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -21,6 +21,8 @@ add_executable(ragephoto-wasm
     ${RAGEPHOTO_SOURCES}
 )
 set_target_properties(ragephoto-wasm PROPERTIES
+    C_STANDARD ${RAGEPHOTO_C_STANDARD}
+    C_STANDARD_REQUIRED ON
     CXX_STANDARD ${RAGEPHOTO_CXX_STANDARD}
     CXX_STANDARD_REQUIRED ON
     PREFIX "lib"
