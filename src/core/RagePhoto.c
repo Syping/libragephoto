@@ -1235,6 +1235,7 @@ bool ragephoto_setphotojpeg(ragephoto_t instance, const char *data, uint32_t siz
     else if (instance->data->jpeg) {
         free(instance->data->jpeg);
         instance->data->jpeg = NULL;
+        instance->data->jpegSize = 0;
     }
 
     if (bufferSize != 0) {

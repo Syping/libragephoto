@@ -1231,6 +1231,7 @@ bool RagePhoto::setJpeg(const char *data, uint32_t size, uint32_t bufferSize)
     else if (m_data->jpeg) {
         free(m_data->jpeg);
         m_data->jpeg = nullptr;
+        m_data->jpegSize = 0;
     }
 
     if (bufferSize != 0) {
