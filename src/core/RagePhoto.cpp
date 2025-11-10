@@ -943,10 +943,14 @@ bool RagePhoto::save(char *data, uint32_t photoFormat, RagePhotoData *rp_data, R
 #endif
     }
     else if (photoFormat == PhotoFormat::JPEG) {
-        const size_t length = saveSize(photoFormat, rp_data, nullptr);
-        size_t pos = 0;
-
-        writeBuffer(rp_data->jpeg, data, &pos, length, rp_data->jpegSize);
+        if (rp_data->jpeg) {
+            size_t pos = 0;
+            writeBuffer(rp_data->jpeg, data, &pos, rp_data->jpegSize, rp_data->jpegSize);
+        }
+        else {
+            rp_data->error = Error::PhotoReadError; // 17
+            return false;
+        }
 
         rp_data->error = Error::NoError; // 255
         return true;

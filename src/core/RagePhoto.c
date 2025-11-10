@@ -972,10 +972,14 @@ bool ragephotodata_savef(RagePhotoData *rp_data, RagePhotoFormatParser *rp_parse
 #endif
     }
     else if (photoFormat == RAGEPHOTO_FORMAT_JPEG) {
-        const size_t length = ragephotodata_getsavesizef(rp_data, NULL, photoFormat);
-        size_t pos = 0;
-
-        writeBuffer(rp_data->jpeg, data, &pos, length, rp_data->jpegSize);
+        if (rp_data->jpeg) {
+            size_t pos = 0;
+            writeBuffer(rp_data->jpeg, data, &pos, rp_data->jpegSize, rp_data->jpegSize);
+        }
+        else {
+            rp_data->error = RAGEPHOTO_ERROR_PHOTOREADERROR; // 17
+            return false;
+        }
 
         rp_data->error = RAGEPHOTO_ERROR_NOERROR; // 255
         return true;
