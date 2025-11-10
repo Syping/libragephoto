@@ -98,7 +98,7 @@ namespace RagePhoto {
                 if (_instance == IntPtr.Zero)
                     throw new RagePhotoException("Failed to initialize libragephoto");
                 if (!ragephoto_setphotodatac(_instance, ragephoto_getphotodata(photo._instance)))
-                    throw new RagePhotoException(this, String.Format("Failed to copy Photo: {0}", Error), Error);
+                    throw new RagePhotoException(this, "Failed to copy Photo", Error);
             }
             catch (Exception exception) {
                 throw new RagePhotoException("Failed to initialize libragephoto", exception);
@@ -127,12 +127,12 @@ namespace RagePhoto {
 
         public void Load(Byte[] data) {
             if (!ragephoto_load(_instance, data, (UIntPtr)data.LongLength))
-                throw new RagePhotoException(this, String.Format("Failed to load Photo: {0}", Error), Error);
+                throw new RagePhotoException(this, "Failed to load Photo", Error);
         }
 
         public void LoadFile(String path) {
             if (!ragephoto_loadfile(_instance, path))
-                throw new RagePhotoException(this, String.Format("Failed to load Photo: {0}", Error), Error);
+                throw new RagePhotoException(this, "Failed to load Photo", Error);
         }
 
         public String Description {
@@ -159,7 +159,16 @@ namespace RagePhoto {
                 Marshal.Copy(ptr, buffer, 0, (Int32)size);
                 return buffer;
             }
-            set => SetJpeg(value);
+            set {
+                UInt32 size = (UInt32)value.Length;
+                UInt32 bufferSize = Format switch {
+                    PhotoFormat.GTA5 => size > (UInt32)DefaultSize.DEFAULT_GTA5_PHOTOBUFFER ? size : (UInt32)DefaultSize.DEFAULT_GTA5_PHOTOBUFFER,
+                    PhotoFormat.RDR2 => size > (UInt32)DefaultSize.DEFAULT_RDR2_PHOTOBUFFER ? size : (UInt32)DefaultSize.DEFAULT_RDR2_PHOTOBUFFER,
+                    _ => size
+                };
+                if (!ragephoto_setphotojpeg(_instance, value, size, bufferSize))
+                    throw new RagePhotoException(this, "Failed to set Jpeg", Error);
+            }
         }
 
         public UInt32 JpegSize {
@@ -199,25 +208,25 @@ namespace RagePhoto {
         public Byte[] Save() {
             Byte[] photo = new Byte[Environment.Is64BitProcess ? (UInt64)GetSaveSize() : (UInt32)GetSaveSize()];
             if (!ragephoto_save(_instance, photo))
-                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error), Error);
+                throw new RagePhotoException(this, "Failed to save Photo", Error);
             return photo;
         }
 
         public Byte[] Save(PhotoFormat photoFormat) {
             Byte[] photo = new Byte[Environment.Is64BitProcess ? (UInt64)GetSaveSize(photoFormat) : (UInt32)GetSaveSize(photoFormat)];
             if (!ragephoto_savef(_instance, photo, (UInt32)photoFormat))
-                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error), Error);
+                throw new RagePhotoException(this, "Failed to save Photo", Error);
             return photo;
         }
 
         public void SaveFile(String path) {
             if (!ragephoto_savefile(_instance, path))
-                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error), Error);
+                throw new RagePhotoException(this, "Failed to save Photo", Error);
         }
 
         public void SaveFile(String path, PhotoFormat photoFormat) {
             if (!ragephoto_savefilef(_instance, path, (UInt32)photoFormat))
-                throw new RagePhotoException(this, string.Format("Failed to save Photo: {0}", Error), Error);
+                throw new RagePhotoException(this, "Failed to save Photo", Error);
         }
 
         public void SetBufferDefault() {
@@ -241,32 +250,19 @@ namespace RagePhoto {
         }
 
         public void SetJpeg(Byte[] jpeg) {
-            UInt32 bufferSize;
             UInt32 size = (UInt32)jpeg.Length;
-            switch (Format) {
-                case PhotoFormat.GTA5:
-                    if (size > (UInt32)DefaultSize.DEFAULT_GTA5_PHOTOBUFFER)
-                        bufferSize = size;
-                    else
-                        bufferSize = (UInt32)DefaultSize.DEFAULT_GTA5_PHOTOBUFFER;
-                    break;
-                case PhotoFormat.RDR2:
-                    if (size > (UInt32)DefaultSize.DEFAULT_RDR2_PHOTOBUFFER)
-                        bufferSize = size;
-                    else
-                        bufferSize = (UInt32)DefaultSize.DEFAULT_RDR2_PHOTOBUFFER;
-                    break;
-                default:
-                    bufferSize = size;
-                    break;
-            }
+            UInt32 bufferSize = Format switch {
+                PhotoFormat.GTA5 => size > (UInt32)DefaultSize.DEFAULT_GTA5_PHOTOBUFFER ? size : (UInt32)DefaultSize.DEFAULT_GTA5_PHOTOBUFFER,
+                PhotoFormat.RDR2 => size > (UInt32)DefaultSize.DEFAULT_RDR2_PHOTOBUFFER ? size : (UInt32)DefaultSize.DEFAULT_RDR2_PHOTOBUFFER,
+                _ => size
+            };
             if (!ragephoto_setphotojpeg(_instance, jpeg, size, bufferSize))
-                throw new RagePhotoException(this, String.Format("Failed to set Jpeg: {0}", Error), Error);
+                throw new RagePhotoException(this, "Failed to set Jpeg", Error);
         }
 
         public void SetJpeg(Byte[] jpeg, UInt32 bufferSize) {
             if (!ragephoto_setphotojpeg(_instance, jpeg, (UInt32)jpeg.Length, bufferSize))
-                throw new RagePhotoException(this, String.Format("Failed to set Jpeg: {0}", Error), Error);
+                throw new RagePhotoException(this, "Failed to set Jpeg", Error);
         }
 
         public void SetJson(String json) {

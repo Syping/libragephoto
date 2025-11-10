@@ -15,7 +15,7 @@ namespace RagePhoto {
             _error = PhotoError.Uninitialised;
         }
 
-        public RagePhotoException(Photo photo, String message, PhotoError error) : base(message) {
+        public RagePhotoException(Photo photo, String message, PhotoError error) : base(String.Format("{0}: {1}", message, error)) {
             _error = error;
             _photo = photo;
         }
