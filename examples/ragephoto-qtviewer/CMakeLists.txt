@@ -1,6 +1,6 @@
 #[[**************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2022 Syping
+* Copyright (C) 2021-2025 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -16,7 +16,8 @@
 * responsible for anything with use of the software, you are self responsible.
 ****************************************************************************]]
 
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.16)
+cmake_policy(VERSION 3.16...3.28)
 project(ragephoto-qtviewer LANGUAGES CXX)
 include(GNUInstallDirs)
 
@@ -41,7 +42,7 @@ if (TARGET ragephoto)
     set(RAGEPHOTO_LIBRARY_DIRS ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 else()
     find_package(PkgConfig REQUIRED)
-    pkg_check_modules(RAGEPHOTO REQUIRED ragephoto>=0.6)
+    pkg_check_modules(RAGEPHOTO REQUIRED ragephoto>=0.8)
 endif()
 
 add_executable(ragephoto-qtviewer WIN32 ${QTVIEWER_SOURCES})
@@ -50,8 +51,6 @@ set_target_properties(ragephoto-qtviewer PROPERTIES
 )
 target_compile_options(ragephoto-qtviewer PRIVATE ${RAGEPHOTO_CFLAGS})
 target_link_libraries(ragephoto-qtviewer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${RAGEPHOTO_LIBRARIES})
-if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.13.0")
-    target_link_directories(ragephoto-qtviewer PRIVATE ${RAGEPHOTO_LIBRARY_DIRS})
-endif()
+target_link_directories(ragephoto-qtviewer PRIVATE ${RAGEPHOTO_LIBRARY_DIRS})
 target_include_directories(ragephoto-qtviewer PRIVATE ${RAGEPHOTO_INCLUDE_DIRS})
 install(TARGETS ragephoto-qtviewer DESTINATION ${CMAKE_INSTALL_BINDIR})
