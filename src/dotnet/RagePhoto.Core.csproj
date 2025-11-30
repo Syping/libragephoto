@@ -1,17 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net47;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net47</TargetFrameworks>
     <AssemblyName>RagePhoto.Core</AssemblyName>
     <RootNamespace>RagePhoto</RootNamespace>
-    <Version>0.8.1</Version>
-    <AssemblyVersion>0.8.1</AssemblyVersion>
-    <FileVersion>0.8.1</FileVersion>
+    <Version>0.8.2</Version>
+    <AssemblyVersion>0.8.2</AssemblyVersion>
+    <FileVersion>0.8.2</FileVersion>
     <Authors>Syping</Authors>
     <Copyright>Copyright © 2025 Syping</Copyright>
     <Description>Open Source RAGE Photo Parser for GTA V and RDR 2</Description>
     <PackageLicenseExpression>BSD-2-Clause</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>libragephoto;gta5;gtav;snapmatic;rdr2;photo</PackageTags>
     <RepositoryUrl>https://github.com/Syping/libragephoto</RepositoryUrl>
     <Nullable>disable</Nullable>
   </PropertyGroup>

@@ -6,7 +6,7 @@ namespace RagePhoto {
 
     public class Photo : IDisposable {
 
-        private bool _disposed;
+        private Boolean _disposed;
         private readonly IntPtr _instance;
         private const String _library = "libragephoto";
 
@@ -18,10 +18,10 @@ namespace RagePhoto {
         private static extern void ragephoto_close(IntPtr instance);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.I1)]
-        private static extern bool ragephoto_load(IntPtr instance, Byte[] data, UIntPtr size);
+        private static extern Boolean ragephoto_load(IntPtr instance, Byte[] data, UIntPtr size);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.I1)]
-        private static extern bool ragephoto_loadfile(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename);
+        private static extern Boolean ragephoto_loadfile(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern Int32 ragephoto_error(IntPtr instance);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -48,30 +48,30 @@ namespace RagePhoto {
         private static extern UIntPtr ragephoto_getsavesizef(IntPtr instance, UInt32 photoFormat);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.I1)]
-        private static extern bool ragephoto_save(IntPtr instance, [Out] Byte[] data);
+        private static extern Boolean ragephoto_save(IntPtr instance, [Out] Byte[] data);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.I1)]
-        private static extern bool ragephoto_savef(IntPtr instance, [Out] Byte[] data, UInt32 photoFormat);
+        private static extern Boolean ragephoto_savef(IntPtr instance, [Out] Byte[] data, UInt32 photoFormat);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.I1)]
-        private static extern bool ragephoto_savefile(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename);
+        private static extern Boolean ragephoto_savefile(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.I1)]
-        private static extern bool ragephoto_savefilef(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename, UInt32 photoFormat);
+        private static extern Boolean ragephoto_savefilef(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String filename, UInt32 photoFormat);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void ragephoto_setbufferdefault(IntPtr instance);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void ragephoto_setbufferoffsets(IntPtr instance);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.I1)]
-        private static extern bool ragephoto_setphotodatac(IntPtr instance, IntPtr data);
+        private static extern Boolean ragephoto_setphotodatac(IntPtr instance, IntPtr data);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void ragephoto_setphotodesc(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String description, UInt32 bufferSize);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void ragephoto_setphotoformat(IntPtr instance, UInt32 photoFormat);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.I1)]
-        private static extern bool ragephoto_setphotojpeg(IntPtr instance, Byte[] jpeg, UInt32 size, UInt32 bufferSize);
+        private static extern Boolean ragephoto_setphotojpeg(IntPtr instance, Byte[] jpeg, UInt32 size, UInt32 bufferSize);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void ragephoto_setphotojson(IntPtr instance, [MarshalAs(UnmanagedType.LPUTF8Str)] String json, UInt32 bufferSize);
         [DllImport(_library, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -114,7 +114,7 @@ namespace RagePhoto {
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing) {
+        protected virtual void Dispose(Boolean disposing) {
             if (_disposed)
                 return;
             ragephoto_close(_instance);

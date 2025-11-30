@@ -66,13 +66,16 @@ const char* nullchar = "";
 
 /* BEGIN OF STATIC LIBRARY FUNCTIONS */
 #if defined(_WIN32) && ((RAGEPHOTO_CXX_STD < 17) || (__cplusplus < 201703L))
-inline std::unique_ptr<wchar_t> convertPath(const char *path)
+inline std::wstring convertPath(const char *path)
 {
     int wideCharSize = MultiByteToWideChar(CP_UTF8, 0, path, -1, nullptr, 0);
     if (wideCharSize <= 0)
-        return std::unique_ptr<wchar_t>(new wchar_t[1]());
-    std::unique_ptr<wchar_t> wideCharPath(new wchar_t[wideCharSize]);
-    MultiByteToWideChar(CP_UTF8, 0, path, -1, wideCharPath.get(), wideCharSize);
+        return {};
+    std::wstring wideCharPath;
+    wideCharPath.resize(wideCharSize);
+    if (!MultiByteToWideChar(CP_UTF8, 0, path, -1, &wideCharPath[0], wideCharSize))
+        return {};
+    wideCharPath.resize(wideCharSize - 1);
     return wideCharPath;
 }
 #endif
@@ -292,7 +295,7 @@ bool RagePhoto::load(const char *data, size_t length, RagePhotoData *rp_data, Ra
             rp_data->error = Error::HeaderMallocError; // 4
             return false;
         }
-        memcpy(rp_data->header, photoHeader_string.c_str(), photoHeader_size);
+        memcpy(rp_data->header, photoHeader_string.data(), photoHeader_size);
 #elif defined UNICODE_ICONV
         iconv_t iconv_in = iconv_open("UTF-8", "UTF-16LE");
         if (iconv_in == (iconv_t)-1) {
@@ -610,7 +613,7 @@ bool RagePhoto::loadFile(const char *filename)
 #if defined(_WIN32) && (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
     std::ifstream ifs(std::filesystem::u8path(filename), std::ios::in | std::ios::binary);
 #elif defined(_WIN32)
-    std::ifstream ifs(convertPath(filename).get(), std::ios::in | std::ios::binary);
+    std::ifstream ifs(convertPath(filename).data(), std::ios::in | std::ios::binary);
 #else
     std::ifstream ifs(filename, std::ios::in | std::ios::binary);
 #endif
@@ -1012,7 +1015,7 @@ bool RagePhoto::saveFile(const char *filename, uint32_t photoFormat)
 #if defined(_WIN32) && (RAGEPHOTO_CXX_STD >= 17) && (__cplusplus >= 201703L)
         std::ofstream ofs(std::filesystem::u8path(filename), std::ios::out | std::ios::binary | std::ios::trunc);
 #elif defined(_WIN32)
-        std::ofstream ofs(convertPath(filename).get(), std::ios::out | std::ios::binary | std::ios::trunc);
+        std::ofstream ofs(convertPath(filename).data(), std::ios::out | std::ios::binary | std::ios::trunc);
 #else
         std::ofstream ofs(filename, std::ios::out | std::ios::binary | std::ios::trunc);
 #endif

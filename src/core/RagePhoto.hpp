@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2023-2024 Syping
+* Copyright (C) 2023-2025 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
