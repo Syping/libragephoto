@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2025 Syping
+* Copyright (C) 2021-2026 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -69,7 +69,7 @@ const char* nullchar = "";
 inline std::wstring convertPath(const char *path)
 {
     int wideCharSize = MultiByteToWideChar(CP_UTF8, 0, path, -1, nullptr, 0);
-    if (wideCharSize <= 0)
+    if (!wideCharSize)
         return {};
     std::wstring wideCharPath;
     wideCharPath.resize(wideCharSize);

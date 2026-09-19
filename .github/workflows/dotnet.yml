@@ -15,9 +15,9 @@ jobs:
         libc: [glibc]
         include:
           - arch: arm64
-            runner: ubuntu-24.04-arm
+            runner: ubuntu-26.04-arm
           - arch: x64
-            runner: ubuntu-24.04
+            runner: ubuntu-26.04
           - libc: glibc
             image: almalinux:8
             install: dnf install -y cmake gcc gcc-c++
@@ -75,7 +75,7 @@ jobs:
         name: macOS ${{matrix.arch}}
         path: ${{github.workspace}}/artifacts/
   Windows:
-    runs-on: windows-latest
+    runs-on: windows-2025
     strategy:
       matrix:
         arch: [arm64, x64, x86]
@@ -110,7 +110,7 @@ jobs:
         path: ${{github.workspace}}/artifacts/
   Release:
     needs: [Linux, macOS, Windows]
-    runs-on: windows-latest
+    runs-on: windows-2025
     steps:
     - name: Cloning
       uses: actions/checkout@v5

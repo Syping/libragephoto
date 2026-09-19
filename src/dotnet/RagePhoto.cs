@@ -125,6 +125,30 @@ namespace RagePhoto {
             ragephoto_clear(_instance);
         }
 
+        public static Photo From(Byte[] data) {
+            Photo photo = new Photo();
+            try {
+                photo.Load(data);
+                return photo;
+            }
+            catch {
+                photo.Dispose();
+                throw;
+            }
+        }
+
+        public static Photo FromFile(String path) {
+            Photo photo = new Photo();
+            try {
+                photo.LoadFile(path);
+                return photo;
+            }
+            catch {
+                photo.Dispose();
+                throw;
+            }
+        }
+
         public void Load(Byte[] data) {
             if (!ragephoto_load(_instance, data, (UIntPtr)data.LongLength))
                 throw new RagePhotoException(this, "Failed to load Photo", Error);

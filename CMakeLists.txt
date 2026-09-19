@@ -1,6 +1,6 @@
 #[[**************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2025 Syping
+* Copyright (C) 2021-2026 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -18,7 +18,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 cmake_policy(VERSION 3.16...3.28)
-project(ragephoto VERSION 0.8.2 LANGUAGES C CXX)
+project(ragephoto VERSION 0.8.3 LANGUAGES C CXX)
 include(GNUInstallDirs)
 
 # RagePhoto CMake includes

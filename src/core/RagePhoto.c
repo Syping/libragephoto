@@ -1,6 +1,6 @@
 /*****************************************************************************
 * libragephoto RAGE Photo Parser
-* Copyright (C) 2021-2025 Syping
+* Copyright (C) 2021-2026 Syping
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -55,28 +55,18 @@ static inline FILE* openFile(const char *filename, char accessMode)
         return NULL;
 #ifdef _WIN32
     int wideCharSize = MultiByteToWideChar(CP_UTF8, 0, filename, -1, NULL, 0);
-    if (wideCharSize <= 0)
+    if (!wideCharSize)
         return NULL;
     wchar_t *wideCharFilename = (wchar_t*)malloc(wideCharSize * sizeof(wchar_t));
-    MultiByteToWideChar(CP_UTF8, 0, filename, -1, wideCharFilename, wideCharSize);
-    HANDLE hFile = CreateFileW(wideCharFilename,
-                               accessMode == 'r' ? GENERIC_READ : GENERIC_WRITE,
-                               accessMode == 'r' ? FILE_SHARE_READ : 0,
-                               NULL,
-                               accessMode == 'r' ? OPEN_EXISTING : CREATE_ALWAYS,
-                               FILE_ATTRIBUTE_NORMAL,
-                               NULL);
+    if (!MultiByteToWideChar(CP_UTF8, 0, filename, -1, wideCharFilename, wideCharSize)) {
+        free(wideCharFilename);
+        return NULL;
+    }
+    FILE *file;
+    errno_t error = _wfopen_s(&file, wideCharFilename, accessMode == 'r' ? L"rb" : L"wb");
     free(wideCharFilename);
-    int fd = _open_osfhandle((intptr_t)hFile, accessMode == 'r' ? _O_RDONLY | _O_BINARY : _O_WRONLY | _O_BINARY);
-    if (fd == -1) {
-        CloseHandle(hFile);
+    if (error)
         return NULL;
-    }
-    FILE *file = _fdopen(fd, accessMode == 'r' ? "rb" : "wb");
-    if (!file) {
-        _close(fd);
-        return NULL;
-    }
 #else
     FILE *file = fopen(filename, accessMode == 'r' ? "rb" : "wb");
 #endif

@@ -13,8 +13,7 @@ using RagePhoto;
 
 /* Get Image from Photo */
 static Image GetImageFromPhoto(String inputFile) {
-    using Photo photo = new();
-    photo.LoadFile(inputFile);
+    using Photo photo = Photo.FromFile(inputFile);
     using MemoryStream jpegStream = new(photo.Jpeg);
     return Image.FromStream(jpegStream);
 }
